@@ -1,0 +1,1299 @@
+2026-03-04 11:57:25 [INFO] Loading application configuration from .env
+2026-03-04 11:58:15 [INFO] Loading application configuration from .env
+2026-03-04 11:58:17 [INFO] Loading application configuration from .env
+2026-03-04 11:59:16 [INFO] Loading application configuration from .env
+2026-03-04 11:59:25 [INFO] Loading application configuration from .env
+2026-03-04 11:59:27 [INFO] Loading application configuration from .env
+2026-03-04 12:00:57 [INFO] Loading application configuration from .env
+2026-03-04 12:01:09 [INFO] Loading application configuration from .env
+2026-03-04 12:01:29 [INFO] Loading application configuration from .env
+2026-03-04 12:01:33 [INFO] Loading application configuration from .env
+2026-03-04 12:01:40 [INFO] Loading application configuration from .env
+2026-03-04 12:01:42 [INFO] Loading application configuration from .env
+2026-03-04 12:02:26 [INFO] Loading application configuration from .env
+2026-03-04 12:02:30 [INFO] Loading application configuration from .env
+2026-03-04 12:02:35 [INFO] Loading application configuration from .env
+2026-03-04 12:03:30 [INFO] Loading application configuration from .env
+2026-03-04 12:03:48 [INFO] Loading application configuration from .env
+2026-03-04 12:03:49 [INFO] Application startup: initializing database.
+2026-03-04 12:03:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:03:49 [INFO] Initialising database schema...
+2026-03-04 12:03:49 [INFO] Database schema initialised successfully.
+2026-03-04 12:03:49 [INFO] Seeding demo data...
+2026-03-04 12:03:49 [INFO] Demo data seeded successfully (2 skills, 2 tags).
+2026-03-04 12:04:00 [INFO] Application shutdown complete.
+2026-03-04 12:04:01 [INFO] Loading application configuration from .env
+2026-03-04 12:04:01 [INFO] Application startup: initializing database.
+2026-03-04 12:04:01 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:04:01 [INFO] Initialising database schema...
+2026-03-04 12:04:01 [INFO] Database schema initialised successfully.
+2026-03-04 12:04:01 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:04:48 [INFO] Loading application configuration from .env
+2026-03-04 12:04:49 [INFO] Loading application configuration from .env
+2026-03-04 12:04:49 [INFO] Application startup: initializing database.
+2026-03-04 12:04:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:04:49 [INFO] Initialising database schema...
+2026-03-04 12:04:49 [INFO] Database schema initialised successfully.
+2026-03-04 12:04:49 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:07:17 [INFO] Application shutdown complete.
+2026-03-04 12:07:17 [INFO] Application shutdown complete.
+2026-03-04 12:07:18 [INFO] Loading application configuration from .env
+2026-03-04 12:07:18 [INFO] Loading application configuration from .env
+2026-03-04 12:07:19 [INFO] Application startup: initializing database.
+2026-03-04 12:07:19 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:07:19 [INFO] Initialising database schema...
+2026-03-04 12:07:19 [INFO] Database schema initialised successfully.
+2026-03-04 12:07:19 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:07:19 [INFO] Application startup: initializing database.
+2026-03-04 12:07:19 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:07:19 [INFO] Initialising database schema...
+2026-03-04 12:07:19 [INFO] Database schema initialised successfully.
+2026-03-04 12:07:19 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:10:02 [INFO] Application shutdown complete.
+2026-03-04 12:17:43 [INFO] Application shutdown complete.
+2026-03-04 12:17:44 [INFO] Loading application configuration from .env
+2026-03-04 12:17:44 [INFO] Loading application configuration from .env
+2026-03-04 12:17:44 [INFO] Application startup: initializing database.
+2026-03-04 12:17:44 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:17:44 [INFO] Initialising database schema...
+2026-03-04 12:17:44 [INFO] Database schema initialised successfully.
+2026-03-04 12:17:44 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:17:44 [INFO] Application startup: initializing database.
+2026-03-04 12:17:44 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:17:44 [INFO] Initialising database schema...
+2026-03-04 12:17:44 [INFO] Database schema initialised successfully.
+2026-03-04 12:17:44 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:22:46 [INFO] Application shutdown complete.
+2026-03-04 12:22:46 [INFO] Application shutdown complete.
+2026-03-04 12:22:47 [INFO] Loading application configuration from .env
+2026-03-04 12:22:47 [INFO] Loading application configuration from .env
+2026-03-04 12:22:48 [INFO] Application startup: initializing database.
+2026-03-04 12:22:48 [INFO] Application startup: initializing database.
+2026-03-04 12:22:48 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) database is locked
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 12:22:48 [INFO] Initialising database schema...
+2026-03-04 12:22:48 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 12:22:48 [INFO] Database schema initialised successfully.
+2026-03-04 12:22:48 [INFO] Initialising database schema...
+2026-03-04 12:22:48 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 12:22:48 [INFO] Database schema initialised successfully.
+2026-03-04 12:22:48 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:56:13 [INFO] Application shutdown complete.
+2026-03-04 13:56:13 [INFO] Application shutdown complete.
+2026-03-04 13:56:15 [INFO] Loading application configuration from .env
+2026-03-04 13:56:16 [INFO] Loading application configuration from .env
+2026-03-04 13:56:16 [INFO] Application startup: initializing database.
+2026-03-04 13:56:16 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:56:16 [INFO] Initialising database schema...
+2026-03-04 13:56:16 [INFO] Application startup: initializing database.
+2026-03-04 13:56:16 [INFO] Database schema initialised successfully.
+2026-03-04 13:56:16 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:56:16 [INFO] Initialising database schema...
+2026-03-04 13:56:16 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:56:16 [INFO] Database schema initialised successfully.
+2026-03-04 13:56:16 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:57:18 [INFO] Application shutdown complete.
+2026-03-04 13:57:18 [INFO] Application shutdown complete.
+2026-03-04 13:57:19 [INFO] Loading application configuration from .env
+2026-03-04 13:57:19 [INFO] Loading application configuration from .env
+2026-03-04 13:57:19 [INFO] Application startup: initializing database.
+2026-03-04 13:57:19 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:57:19 [INFO] Initialising database schema...
+2026-03-04 13:57:19 [INFO] Database schema initialised successfully.
+2026-03-04 13:57:19 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:57:19 [INFO] Application startup: initializing database.
+2026-03-04 13:57:19 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:57:19 [INFO] Initialising database schema...
+2026-03-04 13:57:19 [INFO] Database schema initialised successfully.
+2026-03-04 13:57:19 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:57:26 [INFO] Application shutdown complete.
+2026-03-04 13:57:26 [INFO] Application shutdown complete.
+2026-03-04 13:57:27 [INFO] Loading application configuration from .env
+2026-03-04 13:57:28 [INFO] Loading application configuration from .env
+2026-03-04 13:57:28 [INFO] Application startup: initializing database.
+2026-03-04 13:57:28 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:57:28 [INFO] Initialising database schema...
+2026-03-04 13:57:28 [INFO] Database schema initialised successfully.
+2026-03-04 13:57:28 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:57:28 [INFO] Application startup: initializing database.
+2026-03-04 13:57:28 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:57:28 [INFO] Initialising database schema...
+2026-03-04 13:57:28 [INFO] Database schema initialised successfully.
+2026-03-04 13:57:28 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:57:29 [INFO] Application shutdown complete.
+2026-03-04 13:57:29 [INFO] Application shutdown complete.
+2026-03-04 13:57:30 [INFO] Loading application configuration from .env
+2026-03-04 13:57:30 [INFO] Loading application configuration from .env
+2026-03-04 13:57:30 [INFO] Application startup: initializing database.
+2026-03-04 13:57:30 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:57:30 [INFO] Initialising database schema...
+2026-03-04 13:57:30 [INFO] Database schema initialised successfully.
+2026-03-04 13:57:30 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:57:30 [INFO] Application startup: initializing database.
+2026-03-04 13:57:30 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:57:30 [INFO] Initialising database schema...
+2026-03-04 13:57:30 [INFO] Database schema initialised successfully.
+2026-03-04 13:57:30 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:58:45 [INFO] Application shutdown complete.
+2026-03-04 13:58:45 [INFO] Application shutdown complete.
+2026-03-04 13:58:47 [INFO] Loading application configuration from .env
+2026-03-04 13:58:47 [INFO] Loading application configuration from .env
+2026-03-04 13:58:47 [INFO] Application startup: initializing database.
+2026-03-04 13:58:47 [INFO] Application startup: initializing database.
+2026-03-04 13:58:47 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:58:47 [INFO] Initialising database schema...
+2026-03-04 13:58:47 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:58:47 [INFO] Database schema initialised successfully.
+2026-03-04 13:58:47 [INFO] Initialising database schema...
+2026-03-04 13:58:47 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:58:47 [INFO] Database schema initialised successfully.
+2026-03-04 13:58:47 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:58:48 [INFO] Application shutdown complete.
+2026-03-04 13:58:48 [INFO] Application shutdown complete.
+2026-03-04 13:58:49 [INFO] Loading application configuration from .env
+2026-03-04 13:58:49 [INFO] Loading application configuration from .env
+2026-03-04 13:58:49 [INFO] Application startup: initializing database.
+2026-03-04 13:58:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:58:49 [INFO] Initialising database schema...
+2026-03-04 13:58:49 [INFO] Database schema initialised successfully.
+2026-03-04 13:58:49 [INFO] Application startup: initializing database.
+2026-03-04 13:58:49 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:58:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 13:58:49 [INFO] Initialising database schema...
+2026-03-04 13:58:49 [INFO] Database schema initialised successfully.
+2026-03-04 13:58:49 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 13:59:49 [INFO] Application shutdown complete.
+2026-03-04 14:00:06 [INFO] Loading application configuration from .env
+2026-03-04 14:00:07 [INFO] Loading application configuration from .env
+2026-03-04 14:00:08 [INFO] Application startup: initializing database.
+2026-03-04 14:00:08 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:00:08 [INFO] Initialising database schema...
+2026-03-04 14:00:08 [INFO] Database schema initialised successfully.
+2026-03-04 14:00:08 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 14:01:16 [INFO] \u2192 GET /health — 200 in 5ms
+2026-03-04 14:02:45 [INFO] \u2192 GET /health — 200 in 1ms
+2026-03-04 14:02:45 [INFO] Fetching skills list
+2026-03-04 14:02:45 [INFO] \u2192 GET /api/skills — 200 in 17ms
+2026-03-04 14:02:45 [INFO] Fetching designer actions for client=c_demo, env=dev
+2026-03-04 14:02:45 [INFO] \u2192 GET /api/designer/actions — 200 in 9ms
+2026-03-04 14:02:45 [INFO] Fetching designer actions for client=c_demo, env=prod
+2026-03-04 14:02:45 [INFO] \u2192 GET /api/designer/actions — 200 in 7ms
+2026-03-04 14:02:45 [INFO] Loading graph for version: sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68
+2026-03-04 14:02:45 [INFO] \u2192 GET /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/graph — 200 in 11ms
+2026-03-04 14:02:45 [INFO] \u2192 GET /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68 — 200 in 6ms
+2026-03-04 14:04:02 [INFO] Application shutdown complete.
+2026-03-04 14:04:02 [INFO] Application shutdown complete.
+2026-03-04 14:04:03 [INFO] Loading application configuration from .env
+2026-03-04 14:04:03 [INFO] Loading application configuration from .env
+2026-03-04 14:04:04 [INFO] Application startup: initializing database.
+2026-03-04 14:04:04 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:04:04 [INFO] Initialising database schema...
+2026-03-04 14:04:04 [INFO] Database schema initialised successfully.
+2026-03-04 14:04:04 [INFO] Application startup: initializing database.
+2026-03-04 14:04:04 [INFO] Seeded 5 published actions.
+2026-03-04 14:04:04 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:04:04 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:04:04 [INFO] Initialising database schema...
+2026-03-04 14:04:04 [INFO] Database schema initialised successfully.
+2026-03-04 14:04:04 [INFO] Demo data seeded successfully.
+2026-03-04 14:04:04 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:04:04 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:04:04 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:04:14 [INFO] Application shutdown complete.
+2026-03-04 14:04:45 [INFO] Loading application configuration from .env
+2026-03-04 14:04:46 [INFO] Loading application configuration from .env
+2026-03-04 14:04:47 [INFO] Application startup: initializing database.
+2026-03-04 14:04:47 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:04:47 [INFO] Initialising database schema...
+2026-03-04 14:04:47 [INFO] Database schema initialised successfully.
+2026-03-04 14:04:47 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:04:47 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:04:47 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:05:00 [INFO] \u2192 GET /health — 200 in 3ms
+2026-03-04 14:05:00 [INFO] Fetching skills list
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/skills — 200 in 7ms
+2026-03-04 14:05:00 [INFO] Fetching designer actions for client=c_demo, env=dev
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/designer/actions — 200 in 6ms
+2026-03-04 14:05:00 [INFO] Fetching designer actions for client=c_demo, env=prod
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/designer/actions — 200 in 5ms
+2026-03-04 14:05:00 [INFO] Loading graph for version: sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/graph — 200 in 6ms
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68 — 200 in 4ms
+2026-03-04 14:05:00 [INFO] Saving graph for version: sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68
+2026-03-04 14:05:00 [INFO] Saved graph for skill version sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68 (4 nodes, 3 routes, 2 action bindings)
+2026-03-04 14:05:00 [INFO] \u2192 PUT /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/graph — 200 in 12ms
+2026-03-04 14:05:00 [INFO] Loading graph for version: sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/graph — 200 in 7ms
+2026-03-04 14:05:00 [INFO] \u2192 POST /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/validate — 200 in 6ms
+2026-03-04 14:05:00 [INFO] Compiling skill version: sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68
+2026-03-04 14:05:00 [INFO] Compiled skill version sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68 (hash=3372641a7d9c)
+2026-03-04 14:05:00 [INFO] \u2192 POST /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/compile — 200 in 6ms
+2026-03-04 14:05:00 [INFO] Publishing skill version: sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68
+2026-03-04 14:05:00 [INFO] Published skill version sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68 at 2026-03-04T08:35:00Z
+2026-03-04 14:05:00 [INFO] \u2192 POST /api/skill-versions/sv_56a9a91e-2038-41a7-84fd-e1b1616f6b68/publish — 200 in 6ms
+2026-03-04 14:05:00 [INFO] Loading graph for version: sv_d2c43289-0d21-4f5d-aca4-a244dd7e5486
+2026-03-04 14:05:00 [INFO] \u2192 GET /api/skill-versions/sv_d2c43289-0d21-4f5d-aca4-a244dd7e5486/graph — 200 in 7ms
+2026-03-04 14:05:00 [INFO] Saving graph for version: sv_d2c43289-0d21-4f5d-aca4-a244dd7e5486
+2026-03-04 14:05:00 [INFO] \u2192 PUT /api/skill-versions/sv_d2c43289-0d21-4f5d-aca4-a244dd7e5486/graph — 400 in 5ms
+2026-03-04 14:05:00 [INFO] Saving graph for version: sv_d2c43289-0d21-4f5d-aca4-a244dd7e5486
+2026-03-04 14:05:00 [INFO] \u2192 PUT /api/skill-versions/sv_d2c43289-0d21-4f5d-aca4-a244dd7e5486/graph — 400 in 6ms
+2026-03-04 14:50:39 [INFO] Application shutdown complete.
+2026-03-04 14:50:39 [INFO] Application shutdown complete.
+2026-03-04 14:50:41 [INFO] Loading application configuration from .env
+2026-03-04 14:50:41 [INFO] Loading application configuration from .env
+2026-03-04 14:50:42 [INFO] Application startup: initializing database.
+2026-03-04 14:50:42 [INFO] Application startup: initializing database.
+2026-03-04 14:50:42 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:50:42 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:50:42 [INFO] Initialising database schema...
+2026-03-04 14:50:42 [INFO] Initialising database schema...
+2026-03-04 14:50:42 [INFO] Database schema initialised successfully.
+2026-03-04 14:50:42 [INFO] Database schema initialised successfully.
+2026-03-04 14:50:42 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:50:42 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:50:42 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:50:42 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:50:42 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:50:47 [INFO] Application shutdown complete.
+2026-03-04 14:50:47 [INFO] Application shutdown complete.
+2026-03-04 14:50:49 [INFO] Loading application configuration from .env
+2026-03-04 14:50:49 [INFO] Loading application configuration from .env
+2026-03-04 14:50:49 [INFO] Application startup: initializing database.
+2026-03-04 14:50:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:50:49 [INFO] Initialising database schema...
+2026-03-04 14:50:49 [INFO] Database schema initialised successfully.
+2026-03-04 14:50:49 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:50:49 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:50:49 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:50:49 [INFO] Application startup: initializing database.
+2026-03-04 14:50:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:50:49 [INFO] Initialising database schema...
+2026-03-04 14:50:49 [INFO] Database schema initialised successfully.
+2026-03-04 14:50:49 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:50:49 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:50:49 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:50:49 [INFO] Application shutdown complete.
+2026-03-04 14:50:49 [INFO] Application shutdown complete.
+2026-03-04 14:50:51 [INFO] Loading application configuration from .env
+2026-03-04 14:50:51 [INFO] Loading application configuration from .env
+2026-03-04 14:50:51 [INFO] Application startup: initializing database.
+2026-03-04 14:50:51 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:50:51 [INFO] Initialising database schema...
+2026-03-04 14:50:51 [INFO] Database schema initialised successfully.
+2026-03-04 14:50:51 [INFO] Application startup: initializing database.
+2026-03-04 14:50:51 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:50:51 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:50:51 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:50:51 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:50:51 [INFO] Initialising database schema...
+2026-03-04 14:50:51 [INFO] Database schema initialised successfully.
+2026-03-04 14:50:51 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:50:51 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:50:51 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:52:23 [INFO] Application shutdown complete.
+2026-03-04 14:52:23 [INFO] Application shutdown complete.
+2026-03-04 14:52:25 [INFO] Loading application configuration from .env
+2026-03-04 14:52:25 [INFO] Loading application configuration from .env
+2026-03-04 14:52:25 [INFO] Application startup: initializing database.
+2026-03-04 14:52:25 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:52:25 [INFO] Initialising database schema...
+2026-03-04 14:52:25 [INFO] Application startup: initializing database.
+2026-03-04 14:52:25 [INFO] Database schema initialised successfully.
+2026-03-04 14:52:25 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:52:25 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:52:25 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:52:25 [INFO] Initialising database schema...
+othing to seed.
+2026-03-04 14:52:25 [INFO] Database schema initialised successfully.
+2026-03-04 14:52:25 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:52:25 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:52:25 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:53:50 [INFO] Application shutdown complete.
+2026-03-04 14:53:50 [INFO] Application shutdown complete.
+2026-03-04 14:53:51 [INFO] Loading application configuration from .env
+2026-03-04 14:53:51 [INFO] Loading application configuration from .env
+2026-03-04 14:53:52 [INFO] Application startup: initializing database.
+2026-03-04 14:53:52 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:53:52 [INFO] Initialising database schema...
+2026-03-04 14:53:52 [INFO] Database schema initialised successfully.
+2026-03-04 14:53:52 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:53:52 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:53:52 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:53:52 [INFO] Application startup: initializing database.
+2026-03-04 14:53:52 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:53:52 [INFO] Initialising database schema...
+2026-03-04 14:53:52 [INFO] Database schema initialised successfully.
+2026-03-04 14:53:52 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:53:52 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:53:52 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:54:14 [INFO] Application shutdown complete.
+2026-03-04 14:54:14 [INFO] Application shutdown complete.
+2026-03-04 14:54:15 [INFO] Loading application configuration from .env
+2026-03-04 14:54:15 [INFO] Loading application configuration from .env
+2026-03-04 14:54:15 [INFO] Application startup: initializing database.
+2026-03-04 14:54:15 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:54:15 [INFO] Initialising database schema...
+2026-03-04 14:54:15 [INFO] Database schema initialised successfully.
+2026-03-04 14:54:15 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:54:15 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:54:15 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:54:15 [INFO] Application startup: initializing database.
+2026-03-04 14:54:15 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:54:15 [INFO] Initialising database schema...
+2026-03-04 14:54:15 [INFO] Database schema initialised successfully.
+2026-03-04 14:54:15 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:54:15 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:54:15 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:55:02 [INFO] Application shutdown complete.
+2026-03-04 14:55:02 [INFO] Application shutdown complete.
+2026-03-04 14:55:03 [INFO] Loading application configuration from .env
+2026-03-04 14:55:03 [INFO] Loading application configuration from .env
+2026-03-04 14:55:04 [INFO] Application startup: initializing database.
+2026-03-04 14:55:04 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:55:04 [INFO] Initialising database schema...
+2026-03-04 14:55:04 [INFO] Database schema initialised successfully.
+2026-03-04 14:55:04 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:55:04 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:55:04 [INFO] All seed data already present — nothing to seed.
+2026-03-04 14:55:04 [INFO] Application startup: initializing database.
+2026-03-04 14:55:04 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 14:55:04 [INFO] Initialising database schema...
+2026-03-04 14:55:04 [INFO] Database schema initialised successfully.
+2026-03-04 14:55:04 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 14:55:04 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 14:55:04 [INFO] All seed data already present — nothing to seed.
+2026-03-04 15:51:40 [INFO] Application shutdown complete.
+2026-03-04 15:51:40 [INFO] Application shutdown complete.
+2026-03-04 15:51:42 [INFO] Loading application configuration from .env
+2026-03-04 15:51:42 [INFO] Loading application configuration from .env
+2026-03-04 15:51:43 [INFO] Application startup: initializing database.
+2026-03-04 15:51:43 [INFO] Application startup: initializing database.
+2026-03-04 15:51:43 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:51:43 [INFO] Initialising database schema...
+2026-03-04 15:51:43 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:51:43 [INFO] Initialising database schema...
+2026-03-04 15:51:43 [INFO] Database schema initialised successfully.
+2026-03-04 15:51:43 [INFO] Database schema initialised successfully.
+2026-03-04 15:51:43 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 15:51:43 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 15:51:43 [INFO] Database already has 5 actions — skipping action seed.
+2026-03-04 15:51:43 [INFO] All seed data already present — nothing to seed.
+2026-03-04 15:51:43 [INFO] Database already has 2 skills — skipping skill seed.
+2026-03-04 15:51:43 [INFO] All seed data already present — nothing to seed.
+2026-03-04 15:53:01 [INFO] Application shutdown complete.
+2026-03-04 15:53:02 [INFO] Loading application configuration from .env
+2026-03-04 15:53:02 [INFO] Loading application configuration from .env
+2026-03-04 15:53:02 [INFO] Application startup: initializing database.
+2026-03-04 15:53:02 [INFO] Application startup: initializing database.
+2026-03-04 15:53:02 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:53:02 [INFO] Initialising database schema...
+2026-03-04 15:53:03 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:53:03 [INFO] Initialising database schema...
+2026-03-04 15:53:03 [INFO] Database schema initialised successfully.
+2026-03-04 15:53:03 [INFO] Database schema initialised successfully.
+2026-03-04 15:53:03 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:53:03 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:53:04 [INFO] Application shutdown complete.
+2026-03-04 15:53:04 [INFO] Application shutdown complete.
+2026-03-04 15:53:05 [INFO] Loading application configuration from .env
+2026-03-04 15:53:05 [INFO] Loading application configuration from .env
+2026-03-04 15:53:05 [INFO] Application startup: initializing database.
+2026-03-04 15:53:05 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:53:05 [INFO] Initialising database schema...
+2026-03-04 15:53:05 [INFO] Database schema initialised successfully.
+2026-03-04 15:53:05 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:53:05 [INFO] Application startup: initializing database.
+2026-03-04 15:53:05 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:53:05 [INFO] Initialising database schema...
+2026-03-04 15:53:05 [INFO] Database schema initialised successfully.
+2026-03-04 15:53:05 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:53:07 [INFO] Application shutdown complete.
+2026-03-04 15:53:07 [INFO] Application shutdown complete.
+2026-03-04 15:53:08 [INFO] Loading application configuration from .env
+2026-03-04 15:53:08 [INFO] Loading application configuration from .env
+2026-03-04 15:53:08 [INFO] Application startup: initializing database.
+2026-03-04 15:53:08 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:53:08 [INFO] Initialising database schema...
+2026-03-04 15:53:08 [INFO] Database schema initialised successfully.
+2026-03-04 15:53:08 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:53:08 [INFO] Application startup: initializing database.
+2026-03-04 15:53:08 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:53:08 [INFO] Initialising database schema...
+2026-03-04 15:53:08 [INFO] Database schema initialised successfully.
+2026-03-04 15:53:08 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:56:52 [INFO] Application shutdown complete.
+2026-03-04 15:56:52 [INFO] Application shutdown complete.
+2026-03-04 15:56:53 [INFO] Loading application configuration from .env
+2026-03-04 15:56:53 [INFO] Loading application configuration from .env
+2026-03-04 15:56:54 [INFO] Application startup: initializing database.
+2026-03-04 15:56:54 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:56:54 [INFO] Initialising database schema...
+2026-03-04 15:56:54 [INFO] Database schema initialised successfully.
+2026-03-04 15:56:54 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:56:54 [INFO] Application startup: initializing database.
+2026-03-04 15:56:54 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:56:54 [INFO] Initialising database schema...
+2026-03-04 15:56:54 [INFO] Database schema initialised successfully.
+2026-03-04 15:56:54 [INFO] Database already has 2 skills — skipping seed.
+2026-03-04 15:57:20 [INFO] Application shutdown complete.
+2026-03-04 15:57:20 [INFO] Application shutdown complete.
+2026-03-04 15:57:21 [INFO] Loading application configuration from .env
+2026-03-04 15:57:21 [INFO] Loading application configuration from .env
+2026-03-04 15:57:22 [INFO] Application startup: initializing database.
+2026-03-04 15:57:22 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:57:22 [INFO] Application startup: initializing database.
+2026-03-04 15:57:22 [INFO] Initialising database schema...
+2026-03-04 15:57:22 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 15:57:22 [INFO] Initialising database schema...
+2026-03-04 15:57:22 [INFO] Database schema initialised successfully.
+2026-03-04 15:57:22 [INFO] Seeding demo data...
+2026-03-04 15:57:22 [INFO] Demo data seeded successfully (6 actions, 1 skill, 2 tags).
+2026-03-04 15:57:22 [INFO] Database schema initialised successfully.
+2026-03-04 15:57:22 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 17:30:36 [INFO] Application shutdown complete.
+2026-03-04 17:30:36 [INFO] Application shutdown complete.
+2026-03-04 17:30:37 [INFO] Loading application configuration from .env
+2026-03-04 17:30:37 [INFO] Loading application configuration from .env
+2026-03-04 17:30:38 [INFO] Application startup: initializing database.
+2026-03-04 17:30:38 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:30:38 [INFO] Initialising database schema...
+2026-03-04 17:30:38 [INFO] Initialising database schema...
+2026-03-04 17:30:52 [INFO] Loading application configuration from .env
+2026-03-04 17:30:52 [INFO] Loading application configuration from .env
+2026-03-04 17:30:52 [INFO] Application startup: initializing database.
+2026-03-04 17:30:52 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:30:52 [INFO] Initialising database schema...
+2026-03-04 17:30:52 [INFO] Application startup: initializing database.
+2026-03-04 17:30:52 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:30:52 [INFO] Initialising database schema...
+2026-03-04 17:31:01 [INFO] Loading application configuration from .env
+2026-03-04 17:31:02 [INFO] Loading application configuration from .env
+2026-03-04 17:31:02 [INFO] Application startup: initializing database.
+2026-03-04 17:31:02 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:31:02 [INFO] Initialising database schema...
+2026-03-04 17:31:02 [INFO] Application startup: initializing database.
+2026-03-04 17:31:02 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:31:02 [INFO] Initialising database schema...
+2026-03-04 17:31:06 [INFO] Loading application configuration from .env
+2026-03-04 17:31:06 [INFO] Loading application configuration from .env
+2026-03-04 17:31:06 [INFO] Application startup: initializing database.
+2026-03-04 17:31:06 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:31:06 [INFO] Initialising database schema...
+2026-03-04 17:31:06 [INFO] Application startup: initializing database.
+2026-03-04 17:31:06 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:31:06 [INFO] Initialising database schema...
+2026-03-04 17:31:09 [INFO] Loading application configuration from .env
+2026-03-04 17:31:09 [INFO] Application startup: initializing database.
+2026-03-04 17:31:09 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:31:09 [INFO] Initialising database schema...
+2026-03-04 17:31:10 [INFO] Loading application configuration from .env
+2026-03-04 17:31:10 [INFO] Application startup: initializing database.
+2026-03-04 17:31:10 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:31:10 [INFO] Initialising database schema...
+2026-03-04 17:40:48 [INFO] Loading application configuration from .env
+2026-03-04 17:40:49 [INFO] Loading application configuration from .env
+2026-03-04 17:40:49 [INFO] Application startup: initializing database.
+2026-03-04 17:40:49 [ERROR] Failed to initialize DB connection pool: (sqlite3.OperationalError) unable to open database file
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-04 17:40:49 [INFO] Initialising database schema...
+2026-03-04 17:41:19 [INFO] Loading application configuration from .env
+2026-03-04 17:41:20 [INFO] Application startup: initializing database.
+2026-03-04 17:41:20 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 17:41:20 [INFO] Initialising database schema...
+2026-03-04 17:41:20 [INFO] Database schema initialised successfully.
+2026-03-04 17:41:20 [INFO] Seeding demo data...
+2026-03-04 17:41:20 [INFO] Demo data seeded successfully (6 actions, 1 skill, 2 tags).
+2026-03-04 17:41:41 [INFO] Loading application configuration from .env
+2026-03-04 17:41:44 [INFO] Loading application configuration from .env
+2026-03-04 17:41:44 [INFO] Application startup: initializing database.
+2026-03-04 17:41:44 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 17:41:44 [INFO] Initialising database schema...
+2026-03-04 17:41:44 [INFO] Database schema initialised successfully.
+2026-03-04 17:41:44 [INFO] Seeding demo data...
+2026-03-04 17:41:44 [INFO] Demo data seeded successfully (6 actions, 1 skill, 2 tags).
+2026-03-04 17:42:44 [INFO] \u2192 GET /health — 200 in 3ms
+2026-03-04 17:42:44 [INFO] Fetching skills list
+2026-03-04 17:42:44 [INFO] \u2192 GET /api/skills — 200 in 9ms
+2026-03-04 17:42:44 [INFO] Loading graph for version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] \u2192 GET /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/graph — 200 in 11ms
+2026-03-04 17:42:44 [INFO] \u2192 GET /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 — 200 in 8ms
+2026-03-04 17:42:44 [INFO] Fetching designer actions for client=c_demo, env=dev
+2026-03-04 17:42:44 [INFO] \u2192 GET /api/designer/actions — 200 in 8ms
+2026-03-04 17:42:44 [INFO] Saving graph for version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] Saved graph for skill version sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 (8 nodes, 7 routes, 2 action bindings)
+2026-03-04 17:42:44 [INFO] \u2192 PUT /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/graph — 200 in 16ms
+2026-03-04 17:42:44 [INFO] Saving graph for version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] Saved graph for skill version sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 (8 nodes, 7 routes, 0 action bindings)
+2026-03-04 17:42:44 [INFO] \u2192 PUT /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/graph — 200 in 14ms
+2026-03-04 17:42:44 [INFO] Saving graph for version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] Saved graph for skill version sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 (8 nodes, 7 routes, 0 action bindings)
+2026-03-04 17:42:44 [INFO] \u2192 PUT /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/graph — 200 in 14ms
+2026-03-04 17:42:44 [INFO] Saving graph for version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] Saved graph for skill version sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 (8 nodes, 7 routes, 2 action bindings)
+2026-03-04 17:42:44 [INFO] \u2192 PUT /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/graph — 200 in 15ms
+2026-03-04 17:42:44 [INFO] \u2192 POST /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/validate — 200 in 18ms
+2026-03-04 17:42:44 [INFO] Compiling skill version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] Compiled skill version sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 (hash=c38fef37dcf7)
+2026-03-04 17:42:44 [INFO] \u2192 POST /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/compile — 200 in 8ms
+2026-03-04 17:42:44 [INFO] Publishing skill version: sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8
+2026-03-04 17:42:44 [INFO] Published skill version sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8 at 2026-03-04T12:12:44Z
+2026-03-04 17:42:44 [INFO] \u2192 POST /api/skill-versions/sv_6d561a3c-eed6-4bd4-b1b7-92e3c92107b8/publish — 200 in 13ms
+2026-03-04 17:47:49 [INFO] Application shutdown complete.
+2026-03-04 17:47:49 [INFO] Application shutdown complete.
+2026-03-04 17:47:50 [INFO] Loading application configuration from .env
+2026-03-04 17:47:50 [INFO] Loading application configuration from .env
+2026-03-04 17:47:51 [INFO] Loading application configuration from .env
+2026-03-04 17:47:51 [INFO] Loading application configuration from .env
+2026-03-04 17:47:51 [INFO] Application startup: initializing database.
+2026-03-04 17:47:51 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 17:47:51 [INFO] Application startup: initializing database.
+2026-03-04 17:47:51 [INFO] Initialising database schema...
+2026-03-04 17:47:51 [INFO] Database schema initialised successfully.
+2026-03-04 17:47:52 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 17:47:52 [INFO] Initialising database schema...
+2026-03-04 17:47:52 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 17:47:52 [INFO] Database schema initialised successfully.
+2026-03-04 17:47:52 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 17:59:25 [INFO] Application shutdown complete.
+2026-03-04 17:59:25 [INFO] Application shutdown complete.
+2026-03-04 17:59:26 [INFO] Loading application configuration from .env
+2026-03-04 17:59:27 [INFO] Application startup: initializing database.
+2026-03-04 17:59:27 [INFO] Application startup: initializing database.
+2026-03-04 17:59:27 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 17:59:27 [INFO] Initialising database schema...
+2026-03-04 17:59:27 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 17:59:27 [INFO] Initialising database schema...
+2026-03-04 17:59:27 [INFO] Database schema initialised successfully.
+2026-03-04 17:59:27 [INFO] Seeding demo data...
+2026-03-04 17:59:27 [INFO] Database schema initialised successfully.
+2026-03-04 17:59:27 [INFO] Seeding demo data...
+2026-03-04 18:00:07 [INFO] Loading application configuration from .env
+2026-03-04 18:00:07 [INFO] Loading application configuration from .env
+2026-03-04 18:00:08 [INFO] Application startup: initializing database.
+2026-03-04 18:00:08 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:00:08 [INFO] Initialising database schema...
+2026-03-04 18:00:08 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:00:08 [INFO] Initialising database schema...
+2026-03-04 18:00:08 [INFO] Database schema initialised successfully.
+2026-03-04 18:00:09 [INFO] Seeding demo data...
+2026-03-04 18:00:09 [INFO] Database schema initialised successfully.
+2026-03-04 18:00:09 [INFO] Seeding demo data...
+2026-03-04 18:01:22 [INFO] Loading application configuration from .env
+2026-03-04 18:01:22 [INFO] Loading application configuration from .env
+2026-03-04 18:01:23 [INFO] Application startup: initializing database.
+2026-03-04 18:01:23 [INFO] Application startup: initializing database.
+2026-03-04 18:01:23 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:01:23 [INFO] Initialising database schema...
+2026-03-04 18:01:23 [INFO] Database schema initialised successfully.
+2026-03-04 18:01:23 [INFO] Seeding demo data...
+2026-03-04 18:01:23 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:01:23 [INFO] Initialising database schema...
+2026-03-04 18:01:23 [INFO] Database schema initialised successfully.
+2026-03-04 18:01:23 [INFO] Seeding demo data...
+2026-03-04 18:02:01 [INFO] Loading application configuration from .env
+2026-03-04 18:02:01 [INFO] Loading application configuration from .env
+2026-03-04 18:02:02 [INFO] Application startup: initializing database.
+2026-03-04 18:02:02 [INFO] Application startup: initializing database.
+2026-03-04 18:02:02 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:02:02 [INFO] Initialising database schema...
+2026-03-04 18:02:02 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:02:02 [INFO] Initialising database schema...
+2026-03-04 18:02:02 [INFO] Database schema initialised successfully.
+2026-03-04 18:02:02 [INFO] Seeding demo data...
+2026-03-04 18:02:02 [INFO] Database schema initialised successfully.
+2026-03-04 18:02:02 [INFO] Seeding demo data...
+2026-03-04 18:02:46 [INFO] Loading application configuration from .env
+2026-03-04 18:02:47 [INFO] Application startup: initializing database.
+2026-03-04 18:02:47 [INFO] Application startup: initializing database.
+2026-03-04 18:02:47 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:02:47 [INFO] Initialising database schema...
+2026-03-04 18:02:47 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:02:47 [INFO] Initialising database schema...
+2026-03-04 18:02:47 [INFO] Database schema initialised successfully.
+2026-03-04 18:02:47 [INFO] Database schema initialised successfully.
+2026-03-04 18:02:47 [INFO] Seeding demo data...
+2026-03-04 18:02:47 [INFO] Seeding demo data...
+2026-03-04 18:02:47 [INFO] Demo data seeded successfully (6 actions, 1 skill, 2 tags).
+2026-03-04 18:02:47 [INFO] Application shutdown complete.
+2026-03-04 18:02:48 [INFO] Loading application configuration from .env
+2026-03-04 18:02:48 [INFO] Loading application configuration from .env
+2026-03-04 18:02:49 [INFO] Application startup: initializing database.
+2026-03-04 18:02:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:02:49 [INFO] Initialising database schema...
+2026-03-04 18:02:49 [INFO] Database schema initialised successfully.
+2026-03-04 18:02:49 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 18:02:49 [INFO] Application startup: initializing database.
+2026-03-04 18:02:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:02:49 [INFO] Initialising database schema...
+2026-03-04 18:02:49 [INFO] Database schema initialised successfully.
+2026-03-04 18:02:49 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 18:03:03 [INFO] Application shutdown complete.
+2026-03-04 18:04:05 [INFO] Loading application configuration from .env
+2026-03-04 18:04:07 [INFO] Loading application configuration from .env
+2026-03-04 18:04:07 [INFO] Application startup: initializing database.
+2026-03-04 18:04:07 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 18:04:07 [INFO] Initialising database schema...
+2026-03-04 18:04:07 [INFO] Database schema initialised successfully.
+2026-03-04 18:04:07 [INFO] Seeding demo data...
+2026-03-04 18:04:07 [INFO] Demo data seeded successfully (6 actions, 1 skill, 2 tags).
+2026-03-04 18:04:38 [INFO] \u2192 GET /health — 200 in 2ms
+2026-03-04 18:04:38 [INFO] Fetching skills list
+2026-03-04 18:04:38 [INFO] \u2192 GET /api/skills — 200 in 5ms
+2026-03-04 18:04:38 [INFO] Loading graph for version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 18:04:38 [INFO] \u2192 GET /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/graph — 200 in 8ms
+2026-03-04 18:04:38 [INFO] Fetching designer actions for client=c_demo, env=dev
+2026-03-04 18:04:38 [INFO] \u2192 GET /api/designer/actions — 200 in 6ms
+2026-03-04 18:04:38 [INFO] Saving graph for version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 18:04:38 [INFO] Saved graph for skill version sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85 (8 nodes, 7 routes, 2 action bindings)
+2026-03-04 18:04:38 [INFO] \u2192 PUT /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/graph — 200 in 8ms
+2026-03-04 18:04:38 [INFO] \u2192 POST /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/validate — 200 in 13ms
+2026-03-04 18:04:38 [INFO] Compiling skill version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 18:04:38 [INFO] Compiled skill version sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85 (hash=23741d479798)
+2026-03-04 18:04:38 [INFO] \u2192 POST /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/compile — 200 in 31ms
+2026-03-04 18:04:38 [INFO] Publishing skill version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 18:04:38 [INFO] Published skill version sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85 at 2026-03-04T12:34:38Z
+2026-03-04 18:04:38 [INFO] \u2192 POST /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/publish — 200 in 13ms
+2026-03-04 21:16:05 [INFO] Application shutdown complete.
+2026-03-04 21:16:05 [INFO] Application shutdown complete.
+2026-03-04 21:16:06 [INFO] Loading application configuration from .env
+2026-03-04 21:16:08 [INFO] Loading application configuration from .env
+2026-03-04 21:16:08 [INFO] Loading application configuration from .env
+2026-03-04 21:16:08 [INFO] Loading application configuration from .env
+2026-03-04 21:16:09 [INFO] Application startup: initializing database.
+2026-03-04 21:16:09 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:16:09 [INFO] Initialising database schema...
+2026-03-04 21:16:09 [INFO] Database schema initialised successfully.
+2026-03-04 21:16:09 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:16:09 [INFO] Application startup: initializing database.
+2026-03-04 21:16:09 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:16:09 [INFO] Initialising database schema...
+2026-03-04 21:16:09 [INFO] Database schema initialised successfully.
+2026-03-04 21:16:09 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:16:09 [INFO] Application startup: initializing database.
+2026-03-04 21:16:09 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:16:09 [INFO] Initialising database schema...
+2026-03-04 21:16:09 [INFO] Database schema initialised successfully.
+2026-03-04 21:16:09 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:17:26 [INFO] Application shutdown complete.
+2026-03-04 21:17:26 [INFO] Application shutdown complete.
+2026-03-04 21:17:27 [INFO] Application shutdown complete.
+2026-03-04 21:17:28 [INFO] Loading application configuration from .env
+2026-03-04 21:17:28 [INFO] Loading application configuration from .env
+2026-03-04 21:17:28 [INFO] Loading application configuration from .env
+2026-03-04 21:17:30 [INFO] Loading application configuration from .env
+2026-03-04 21:17:30 [INFO] Loading application configuration from .env
+2026-03-04 21:17:30 [INFO] Loading application configuration from .env
+2026-03-04 21:17:31 [INFO] Application startup: initializing database.
+2026-03-04 21:17:31 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:17:31 [INFO] Initialising database schema...
+2026-03-04 21:17:31 [INFO] Database schema initialised successfully.
+2026-03-04 21:17:31 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:17:31 [INFO] Application startup: initializing database.
+2026-03-04 21:17:31 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:17:31 [INFO] Initialising database schema...
+2026-03-04 21:17:31 [INFO] Database schema initialised successfully.
+2026-03-04 21:17:31 [INFO] Application startup: initializing database.
+2026-03-04 21:17:31 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:17:31 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:17:31 [INFO] Initialising database schema...
+2026-03-04 21:17:31 [INFO] Database schema initialised successfully.
+2026-03-04 21:17:31 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:18:20 [INFO] Application shutdown complete.
+2026-03-04 21:18:20 [INFO] Application shutdown complete.
+2026-03-04 21:18:20 [INFO] Application shutdown complete.
+2026-03-04 21:18:22 [INFO] Loading application configuration from .env
+2026-03-04 21:18:22 [INFO] Loading application configuration from .env
+2026-03-04 21:18:22 [INFO] Loading application configuration from .env
+2026-03-04 21:18:22 [INFO] Application startup: initializing database.
+2026-03-04 21:18:22 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:18:22 [INFO] Initialising database schema...
+2026-03-04 21:18:22 [INFO] Database schema initialised successfully.
+2026-03-04 21:18:22 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:18:22 [INFO] Application startup: initializing database.
+2026-03-04 21:18:22 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:18:22 [INFO] Initialising database schema...
+2026-03-04 21:18:22 [INFO] Database schema initialised successfully.
+2026-03-04 21:18:22 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:18:22 [INFO] Application startup: initializing database.
+2026-03-04 21:18:22 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:18:22 [INFO] Initialising database schema...
+2026-03-04 21:18:22 [INFO] Database schema initialised successfully.
+2026-03-04 21:18:22 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:18:40 [INFO] Application shutdown complete.
+2026-03-04 21:20:05 [INFO] Loading application configuration from .env
+2026-03-04 21:20:07 [INFO] Loading application configuration from .env
+2026-03-04 21:20:07 [INFO] Application startup: initializing database.
+2026-03-04 21:20:07 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:20:07 [INFO] Initialising database schema...
+2026-03-04 21:20:07 [INFO] Database schema initialised successfully.
+2026-03-04 21:20:07 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:20:46 [INFO] \u2192 GET /health — 200 in 4ms
+2026-03-04 21:20:46 [INFO] Fetching skills list
+2026-03-04 21:20:46 [INFO] \u2192 GET /api/skills — 200 in 8ms
+2026-03-04 21:20:46 [INFO] Loading graph for version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 21:20:46 [ERROR] Error loading graph
+Traceback (most recent call last):
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\controller.py", line 21, in load_skill_version_graph
+    return workflow_service.get_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\service.py", line 16, in get_graph
+    return workflow_repository.load_skill_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\repository.py", line 88, in load_skill_graph
+    nodes = [SkillGraphNode(**n) for n in deserialise_json(version_row["nodes"] or "[]", [])]
+             ~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\acer\AppData\Roaming\Python\Python314\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for SkillGraphNode
+id
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+type
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-03-04 21:20:46 [INFO] \u2192 GET /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/graph — 500 in 12ms
+2026-03-04 21:21:41 [INFO] Fetching skills list
+2026-03-04 21:21:41 [INFO] \u2192 GET /api/skills — 200 in 3ms
+2026-03-04 21:21:54 [INFO] \u2192 GET /health — 200 in 1ms
+2026-03-04 21:21:54 [INFO] Fetching skills list
+2026-03-04 21:21:54 [INFO] \u2192 GET /api/skills — 200 in 5ms
+2026-03-04 21:21:54 [INFO] Loading graph for version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 21:21:54 [ERROR] Error loading graph
+Traceback (most recent call last):
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\controller.py", line 21, in load_skill_version_graph
+    return workflow_service.get_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\service.py", line 16, in get_graph
+    return workflow_repository.load_skill_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\repository.py", line 88, in load_skill_graph
+    nodes = [SkillGraphNode(**n) for n in deserialise_json(version_row["nodes"] or "[]", [])]
+             ~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\acer\AppData\Roaming\Python\Python314\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for SkillGraphNode
+id
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+type
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-03-04 21:21:54 [INFO] \u2192 GET /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/graph — 500 in 9ms
+2026-03-04 21:22:01 [INFO] Application shutdown complete.
+2026-03-04 21:22:15 [INFO] Loading application configuration from .env
+2026-03-04 21:22:17 [INFO] Loading application configuration from .env
+2026-03-04 21:22:18 [INFO] Application startup: initializing database.
+2026-03-04 21:22:18 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:22:18 [INFO] Initialising database schema...
+2026-03-04 21:22:18 [INFO] Database schema initialised successfully.
+2026-03-04 21:22:18 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:22:36 [INFO] \u2192 GET /health — 200 in 1ms
+2026-03-04 21:22:36 [INFO] Fetching skills list
+2026-03-04 21:22:36 [INFO] \u2192 GET /api/skills — 200 in 5ms
+2026-03-04 21:22:36 [INFO] Loading graph for version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 21:22:36 [ERROR] Error loading graph
+Traceback (most recent call last):
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\controller.py", line 21, in load_skill_version_graph
+    return workflow_service.get_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\service.py", line 16, in get_graph
+    return workflow_repository.load_skill_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\repository.py", line 88, in load_skill_graph
+    nodes = [SkillGraphNode(**n) for n in deserialise_json(version_row["nodes"] or "[]", [])]
+             ~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\acer\AppData\Roaming\Python\Python314\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for SkillGraphNode
+id
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+type
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-03-04 21:22:36 [INFO] \u2192 GET /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/graph — 500 in 8ms
+2026-03-04 21:23:46 [INFO] Fetching skills list
+2026-03-04 21:23:46 [INFO] \u2192 GET /api/skills — 200 in 4ms
+2026-03-04 21:23:46 [INFO] Loading graph for version: sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85
+2026-03-04 21:23:46 [ERROR] Error loading graph
+Traceback (most recent call last):
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\controller.py", line 21, in load_skill_version_graph
+    return workflow_service.get_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\service.py", line 16, in get_graph
+    return workflow_repository.load_skill_graph(db, skill_version_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Project\tensaw-studio\tensaw-skills-studio-api\app\workflow\repository.py", line 88, in load_skill_graph
+    nodes = [SkillGraphNode(**n) for n in deserialise_json(version_row["nodes"] or "[]", [])]
+             ~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\acer\AppData\Roaming\Python\Python314\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for SkillGraphNode
+id
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+type
+  Field required [type=missing, input_value={'node_key': 'start', 'no...alse, 'config_json': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-03-04 21:23:46 [INFO] \u2192 GET /api/skill-versions/sv_83a7bdd7-1d02-4b60-a09c-d8baeb6c4c85/graph — 500 in 7ms
+2026-03-04 21:24:09 [INFO] Loading application configuration from .env
+2026-03-04 21:24:25 [INFO] Loading application configuration from .env
+2026-03-04 21:24:47 [INFO] Application shutdown complete.
+2026-03-04 21:25:04 [INFO] Loading application configuration from .env
+2026-03-04 21:25:05 [INFO] Loading application configuration from .env
+2026-03-04 21:25:06 [INFO] Application startup: initializing database.
+2026-03-04 21:25:06 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:25:06 [INFO] Initialising database schema...
+2026-03-04 21:25:06 [INFO] Database schema initialised successfully.
+2026-03-04 21:25:06 [INFO] Seeding demo data...
+2026-03-04 21:25:53 [INFO] Application shutdown complete.
+2026-03-04 21:25:53 [INFO] Application shutdown complete.
+2026-03-04 21:25:54 [INFO] Loading application configuration from .env
+2026-03-04 21:25:54 [INFO] Loading application configuration from .env
+2026-03-04 21:25:54 [INFO] Loading application configuration from .env
+2026-03-04 21:25:55 [INFO] Application startup: initializing database.
+2026-03-04 21:25:55 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:25:55 [INFO] Initialising database schema...
+2026-03-04 21:25:55 [INFO] Database schema initialised successfully.
+2026-03-04 21:25:55 [INFO] Seeding demo data...
+2026-03-04 21:25:55 [INFO] Demo data seeded successfully (6 actions, 1 skill, 7 edges, 2 tags).
+2026-03-04 21:25:55 [INFO] Application startup: initializing database.
+2026-03-04 21:25:55 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:25:55 [INFO] Initialising database schema...
+2026-03-04 21:25:55 [INFO] Database schema initialised successfully.
+2026-03-04 21:25:55 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:25:55 [INFO] Application startup: initializing database.
+2026-03-04 21:25:55 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:25:55 [INFO] Initialising database schema...
+2026-03-04 21:25:55 [INFO] Database schema initialised successfully.
+2026-03-04 21:25:55 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 21:26:11 [INFO] Application shutdown complete.
+2026-03-04 21:26:12 [INFO] Application shutdown complete.
+2026-03-04 21:26:12 [INFO] Application shutdown complete.
+2026-03-04 21:26:13 [INFO] Loading application configuration from .env
+2026-03-04 21:26:13 [INFO] Loading application configuration from .env
+2026-03-04 21:26:13 [INFO] Loading application configuration from .env
+2026-03-04 21:26:14 [INFO] Application startup: initializing database.
+2026-03-04 21:26:14 [INFO] Application startup: initializing database.
+2026-03-04 21:26:14 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:26:14 [INFO] Initialising database schema...
+2026-03-04 21:26:14 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:26:14 [INFO] Initialising database schema...
+2026-03-04 21:26:14 [INFO] Application startup: initializing database.
+2026-03-04 21:26:14 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:26:14 [INFO] Initialising database schema...
+2026-03-04 21:26:14 [INFO] Database schema initialised successfully.
+2026-03-04 21:26:14 [INFO] Database schema initialised successfully.
+2026-03-04 21:26:14 [INFO] Database schema initialised successfully.
+2026-03-04 21:26:14 [INFO] Seeding demo data...
+2026-03-04 21:26:14 [INFO] Seeding demo data...
+2026-03-04 21:26:14 [INFO] Demo data seeded successfully (6 actions, 1 skill, 7 edges, 2 tags).
+2026-03-04 21:26:43 [INFO] Loading application configuration from .env
+2026-03-04 21:26:45 [INFO] Loading application configuration from .env
+2026-03-04 21:26:46 [INFO] Application startup: initializing database.
+2026-03-04 21:26:46 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:26:46 [INFO] Initialising database schema...
+2026-03-04 21:26:46 [INFO] Database schema initialised successfully.
+2026-03-04 21:26:46 [INFO] Seeding demo data...
+2026-03-04 21:26:46 [INFO] Demo data seeded successfully (6 actions, 1 skill, 7 edges, 2 tags).
+2026-03-04 21:41:51 [INFO] Loading application configuration from .env
+2026-03-04 21:41:53 [INFO] Loading application configuration from .env
+2026-03-04 21:41:53 [INFO] Application startup: initializing database.
+2026-03-04 21:41:53 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 21:41:53 [INFO] Initialising database schema...
+2026-03-04 21:41:53 [INFO] Database schema initialised successfully.
+2026-03-04 21:41:53 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 23:22:10 [INFO] Loading application configuration from .env
+2026-03-04 23:22:11 [INFO] Loading application configuration from .env
+2026-03-04 23:22:12 [INFO] Application startup: initializing database.
+2026-03-04 23:22:12 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 23:22:12 [INFO] Initialising database schema...
+2026-03-04 23:22:12 [INFO] Database schema initialised successfully.
+2026-03-04 23:22:12 [INFO] Seeding demo data...
+2026-03-04 23:22:12 [INFO] Demo data seeded successfully (6 actions, 1 skill, 7 edges, 2 tags).
+2026-03-04 23:23:10 [INFO] \u2192 GET /health — 200 in 3ms
+2026-03-04 23:23:10 [INFO] Fetching skills list
+2026-03-04 23:23:10 [INFO] \u2192 GET /api/skills — 200 in 8ms
+2026-03-04 23:23:10 [INFO] Loading graph for version: sv_14949a82-5a81-4650-b5f9-f349708936e5
+2026-03-04 23:23:10 [INFO] \u2192 GET /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/graph — 200 in 10ms
+2026-03-04 23:23:10 [INFO] Saving graph for version: sv_14949a82-5a81-4650-b5f9-f349708936e5
+2026-03-04 23:23:10 [INFO] Saved graph for skill version sv_14949a82-5a81-4650-b5f9-f349708936e5 (8 nodes, 7 connections)
+2026-03-04 23:23:10 [INFO] \u2192 PUT /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/graph — 200 in 9ms
+2026-03-04 23:23:10 [INFO] \u2192 POST /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/validate — 200 in 11ms
+2026-03-04 23:23:10 [INFO] Compiling skill version: sv_14949a82-5a81-4650-b5f9-f349708936e5
+2026-03-04 23:23:10 [INFO] Compiled skill version sv_14949a82-5a81-4650-b5f9-f349708936e5 (hash=4dc0ce4ed786)
+2026-03-04 23:23:10 [INFO] \u2192 POST /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/compile — 200 in 28ms
+2026-03-04 23:23:10 [INFO] Publishing skill version: sv_14949a82-5a81-4650-b5f9-f349708936e5
+2026-03-04 23:23:10 [INFO] Published skill version sv_14949a82-5a81-4650-b5f9-f349708936e5 at 2026-03-04T17:53:10Z
+2026-03-04 23:23:10 [INFO] \u2192 POST /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/publish — 200 in 13ms
+2026-03-04 23:25:17 [INFO] Application shutdown complete.
+2026-03-04 23:25:18 [INFO] Loading application configuration from .env
+2026-03-04 23:25:19 [INFO] Application startup: initializing database.
+2026-03-04 23:25:19 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-04 23:25:19 [INFO] Initialising database schema...
+2026-03-04 23:25:19 [INFO] Database schema initialised successfully.
+2026-03-04 23:25:19 [INFO] Database already has 1 skills — skipping seed.
+2026-03-04 23:25:58 [INFO] Loading application configuration from .env
+2026-03-05 15:48:14 [INFO] Loading application configuration from .env
+2026-03-05 15:48:18 [INFO] Loading application configuration from .env
+2026-03-05 15:48:18 [INFO] Application startup: initializing database.
+2026-03-05 15:48:18 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 15:48:18 [INFO] Initialising database schema...
+2026-03-05 15:48:18 [INFO] Database schema initialised successfully.
+2026-03-05 15:48:18 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 15:48:57 [INFO] \u2192 GET /health — 200 in 3ms
+2026-03-05 15:48:57 [INFO] Fetching skills list
+2026-03-05 15:48:57 [INFO] \u2192 GET /api/skills — 200 in 7ms
+2026-03-05 15:48:57 [INFO] Loading graph for version: sv_14949a82-5a81-4650-b5f9-f349708936e5
+2026-03-05 15:48:57 [INFO] \u2192 GET /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/graph — 200 in 11ms
+2026-03-05 15:48:57 [INFO] Saving graph for version: sv_14949a82-5a81-4650-b5f9-f349708936e5
+2026-03-05 15:48:57 [INFO] \u2192 PUT /api/skill-versions/sv_14949a82-5a81-4650-b5f9-f349708936e5/graph — 409 in 5ms
+2026-03-05 15:53:18 [INFO] Application shutdown complete.
+2026-03-05 15:53:19 [INFO] Loading application configuration from .env
+2026-03-05 15:53:19 [INFO] Application startup: initializing database.
+2026-03-05 15:53:19 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 15:53:19 [INFO] Initialising database schema...
+2026-03-05 15:53:19 [INFO] Database schema initialised successfully.
+2026-03-05 15:53:19 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 15:53:20 [INFO] Application shutdown complete.
+2026-03-05 15:53:21 [INFO] Loading application configuration from .env
+2026-03-05 15:53:21 [INFO] Application startup: initializing database.
+2026-03-05 15:53:21 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 15:53:21 [INFO] Initialising database schema...
+2026-03-05 15:53:21 [INFO] Database schema initialised successfully.
+2026-03-05 15:53:21 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 15:53:22 [INFO] Application shutdown complete.
+2026-03-05 15:53:23 [INFO] Loading application configuration from .env
+2026-03-05 15:53:24 [INFO] Application startup: initializing database.
+2026-03-05 15:53:24 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 15:53:24 [INFO] Initialising database schema...
+2026-03-05 15:53:24 [INFO] Database schema initialised successfully.
+2026-03-05 15:53:24 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 15:53:24 [INFO] Application shutdown complete.
+2026-03-05 15:53:27 [INFO] Loading application configuration from .env
+2026-03-05 15:53:28 [INFO] Application startup: initializing database.
+2026-03-05 15:53:28 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 15:53:28 [INFO] Initialising database schema...
+2026-03-05 15:53:28 [INFO] Database schema initialised successfully.
+2026-03-05 15:53:28 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:22:38 [INFO] Application shutdown complete.
+2026-03-05 16:22:40 [INFO] Loading application configuration from .env
+2026-03-05 16:22:41 [INFO] Application startup: initializing database.
+2026-03-05 16:22:41 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 16:22:41 [INFO] Initialising database schema...
+2026-03-05 16:22:41 [INFO] Database schema initialised successfully.
+2026-03-05 16:22:41 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:22:41 [INFO] Application shutdown complete.
+2026-03-05 16:22:42 [INFO] Loading application configuration from .env
+2026-03-05 16:22:42 [INFO] Application startup: initializing database.
+2026-03-05 16:22:42 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 16:22:42 [INFO] Initialising database schema...
+2026-03-05 16:22:42 [INFO] Database schema initialised successfully.
+2026-03-05 16:22:42 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:33:27 [INFO] Loading application configuration from .env
+2026-03-05 16:33:28 [INFO] Loading application configuration from .env
+2026-03-05 16:33:29 [INFO] Application startup: initializing database.
+2026-03-05 16:33:29 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 16:33:29 [INFO] Initialising database schema...
+2026-03-05 16:33:29 [INFO] Database schema initialised successfully.
+2026-03-05 16:33:29 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:34:07 [INFO] \u2192 GET /docs — 200 in 0ms
+2026-03-05 16:34:08 [INFO] \u2192 GET /openapi.json — 200 in 73ms
+2026-03-05 16:40:11 [INFO] Application shutdown complete.
+2026-03-05 16:40:12 [INFO] Loading application configuration from .env
+2026-03-05 16:40:13 [INFO] Application startup: initializing database.
+2026-03-05 16:40:13 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 16:40:13 [INFO] Initialising database schema...
+2026-03-05 16:40:13 [INFO] Database schema initialised successfully.
+2026-03-05 16:40:13 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:40:39 [INFO] Application shutdown complete.
+2026-03-05 16:40:40 [INFO] Loading application configuration from .env
+2026-03-05 16:40:41 [INFO] Application startup: initializing database.
+2026-03-05 16:40:41 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 16:40:41 [INFO] Initialising database schema...
+2026-03-05 16:40:41 [INFO] Database schema initialised successfully.
+2026-03-05 16:40:41 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:40:55 [INFO] Application shutdown complete.
+2026-03-05 16:40:56 [INFO] Loading application configuration from .env
+2026-03-05 16:40:56 [INFO] Application startup: initializing database.
+2026-03-05 16:40:56 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 16:40:56 [INFO] Initialising database schema...
+2026-03-05 16:40:56 [INFO] Database schema initialised successfully.
+2026-03-05 16:40:56 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 16:42:13 [INFO] \u2192 GET /docs — 200 in 0ms
+2026-03-05 16:42:13 [INFO] \u2192 GET /openapi.json — 200 in 74ms
+2026-03-05 17:24:10 [INFO] \u2192 POST /api/skills — 422 in 22ms
+2026-03-05 17:27:15 [INFO] Application shutdown complete.
+2026-03-05 17:27:17 [INFO] Loading application configuration from .env
+2026-03-05 17:27:17 [INFO] Application startup: initializing database.
+2026-03-05 17:27:17 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:27:17 [INFO] Initialising database schema...
+2026-03-05 17:27:17 [INFO] Database schema initialised successfully.
+2026-03-05 17:27:17 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:27:52 [INFO] Application shutdown complete.
+2026-03-05 17:27:53 [INFO] Loading application configuration from .env
+2026-03-05 17:27:53 [INFO] Application startup: initializing database.
+2026-03-05 17:27:53 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:27:53 [INFO] Initialising database schema...
+2026-03-05 17:27:53 [INFO] Database schema initialised successfully.
+2026-03-05 17:27:53 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:29:26 [INFO] Application shutdown complete.
+2026-03-05 17:29:27 [INFO] Loading application configuration from .env
+2026-03-05 17:29:28 [INFO] Application startup: initializing database.
+2026-03-05 17:29:28 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:29:28 [INFO] Initialising database schema...
+2026-03-05 17:29:28 [INFO] Database schema initialised successfully.
+2026-03-05 17:29:28 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:29:53 [INFO] Application shutdown complete.
+2026-03-05 17:29:54 [INFO] Loading application configuration from .env
+2026-03-05 17:29:55 [INFO] Application startup: initializing database.
+2026-03-05 17:29:55 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:29:55 [INFO] Initialising database schema...
+2026-03-05 17:29:55 [INFO] Database schema initialised successfully.
+2026-03-05 17:29:55 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:30:34 [INFO] Fetching skills list
+2026-03-05 17:30:34 [INFO] \u2192 GET /api/skills — 200 in 13ms
+2026-03-05 17:31:12 [INFO] \u2192 POST /api/skills — 422 in 2ms
+2026-03-05 17:33:56 [INFO] Application shutdown complete.
+2026-03-05 17:33:58 [INFO] Loading application configuration from .env
+2026-03-05 17:33:58 [INFO] Application startup: initializing database.
+2026-03-05 17:33:58 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:33:58 [INFO] Initialising database schema...
+2026-03-05 17:33:58 [INFO] Database schema initialised successfully.
+2026-03-05 17:33:58 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:34:02 [INFO] Application shutdown complete.
+2026-03-05 17:34:03 [INFO] Loading application configuration from .env
+2026-03-05 17:34:04 [INFO] Application startup: initializing database.
+2026-03-05 17:34:04 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:34:04 [INFO] Initialising database schema...
+2026-03-05 17:34:04 [INFO] Database schema initialised successfully.
+2026-03-05 17:34:04 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:34:08 [INFO] Application shutdown complete.
+2026-03-05 17:34:09 [INFO] Loading application configuration from .env
+2026-03-05 17:34:10 [INFO] Application startup: initializing database.
+2026-03-05 17:34:10 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:34:10 [INFO] Initialising database schema...
+2026-03-05 17:34:10 [INFO] Database schema initialised successfully.
+2026-03-05 17:34:10 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:34:25 [INFO] Application shutdown complete.
+2026-03-05 17:34:26 [INFO] Loading application configuration from .env
+2026-03-05 17:34:26 [INFO] Application startup: initializing database.
+2026-03-05 17:34:26 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:34:26 [INFO] Initialising database schema...
+2026-03-05 17:34:26 [INFO] Database schema initialised successfully.
+2026-03-05 17:34:26 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:36:32 [INFO] Application shutdown complete.
+2026-03-05 17:36:33 [INFO] Loading application configuration from .env
+2026-03-05 17:36:33 [INFO] Application startup: initializing database.
+2026-03-05 17:36:33 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:36:33 [INFO] Initialising database schema...
+2026-03-05 17:36:33 [INFO] Database schema initialised successfully.
+2026-03-05 17:36:33 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:36:57 [INFO] \u2192 POST /api/skills — 422 in 5ms
+2026-03-05 17:37:15 [INFO] Application shutdown complete.
+2026-03-05 17:37:16 [INFO] Loading application configuration from .env
+2026-03-05 17:37:17 [INFO] Application startup: initializing database.
+2026-03-05 17:37:17 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:37:17 [INFO] Initialising database schema...
+2026-03-05 17:37:17 [INFO] Database schema initialised successfully.
+2026-03-05 17:37:17 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:37:22 [INFO] Application shutdown complete.
+2026-03-05 17:37:23 [INFO] Loading application configuration from .env
+2026-03-05 17:37:23 [INFO] Application startup: initializing database.
+2026-03-05 17:37:23 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:37:23 [INFO] Initialising database schema...
+2026-03-05 17:37:23 [INFO] Database schema initialised successfully.
+2026-03-05 17:37:23 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:37:45 [INFO] \u2192 POST /api/skills — 422 in 6ms
+2026-03-05 17:38:03 [INFO] Application shutdown complete.
+2026-03-05 17:38:04 [INFO] Loading application configuration from .env
+2026-03-05 17:38:06 [INFO] Loading application configuration from .env
+2026-03-05 17:38:07 [INFO] Loading application configuration from .env
+2026-03-05 17:38:08 [INFO] Application startup: initializing database.
+2026-03-05 17:38:08 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:38:08 [INFO] Initialising database schema...
+2026-03-05 17:38:08 [INFO] Database schema initialised successfully.
+2026-03-05 17:38:08 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:38:09 [INFO] Application shutdown complete.
+2026-03-05 17:38:10 [INFO] Loading application configuration from .env
+2026-03-05 17:38:10 [INFO] Application startup: initializing database.
+2026-03-05 17:38:10 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:38:10 [INFO] Initialising database schema...
+2026-03-05 17:38:10 [INFO] Database schema initialised successfully.
+2026-03-05 17:38:10 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:38:12 [INFO] Application shutdown complete.
+2026-03-05 17:38:14 [INFO] Loading application configuration from .env
+2026-03-05 17:38:14 [INFO] Application startup: initializing database.
+2026-03-05 17:38:14 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:38:14 [INFO] Initialising database schema...
+2026-03-05 17:38:14 [INFO] Database schema initialised successfully.
+2026-03-05 17:38:14 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:38:15 [INFO] \u2192 POST /api/skills — 422 in 2ms
+2026-03-05 17:38:22 [INFO] \u2192 POST /api/skills — 422 in 4ms
+2026-03-05 17:38:27 [INFO] Application shutdown complete.
+2026-03-05 17:38:28 [INFO] Loading application configuration from .env
+2026-03-05 17:38:29 [INFO] Application startup: initializing database.
+2026-03-05 17:38:29 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:38:29 [INFO] Initialising database schema...
+2026-03-05 17:38:29 [INFO] Database schema initialised successfully.
+2026-03-05 17:38:29 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:15 [INFO] Application shutdown complete.
+2026-03-05 17:39:16 [INFO] Loading application configuration from .env
+2026-03-05 17:39:16 [INFO] Application startup: initializing database.
+2026-03-05 17:39:16 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:16 [INFO] Initialising database schema...
+2026-03-05 17:39:16 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:16 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:17 [INFO] Application shutdown complete.
+2026-03-05 17:39:18 [INFO] Loading application configuration from .env
+2026-03-05 17:39:20 [INFO] Loading application configuration from .env
+2026-03-05 17:39:20 [INFO] Application startup: initializing database.
+2026-03-05 17:39:20 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:20 [INFO] Initialising database schema...
+2026-03-05 17:39:20 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:20 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:21 [INFO] Application shutdown complete.
+2026-03-05 17:39:23 [INFO] Loading application configuration from .env
+2026-03-05 17:39:23 [INFO] Application startup: initializing database.
+2026-03-05 17:39:23 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:23 [INFO] Initialising database schema...
+2026-03-05 17:39:23 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:23 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:24 [INFO] Application shutdown complete.
+2026-03-05 17:39:25 [INFO] Loading application configuration from .env
+2026-03-05 17:39:25 [INFO] Application startup: initializing database.
+2026-03-05 17:39:25 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:25 [INFO] Initialising database schema...
+2026-03-05 17:39:25 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:25 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:27 [INFO] Application shutdown complete.
+2026-03-05 17:39:28 [INFO] Loading application configuration from .env
+2026-03-05 17:39:29 [INFO] Application startup: initializing database.
+2026-03-05 17:39:29 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:29 [INFO] Initialising database schema...
+2026-03-05 17:39:29 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:29 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:33 [INFO] Application shutdown complete.
+2026-03-05 17:39:34 [INFO] Loading application configuration from .env
+2026-03-05 17:39:35 [INFO] Application startup: initializing database.
+2026-03-05 17:39:35 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:35 [INFO] Initialising database schema...
+2026-03-05 17:39:35 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:35 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:39 [INFO] Application shutdown complete.
+2026-03-05 17:39:40 [INFO] Loading application configuration from .env
+2026-03-05 17:39:41 [INFO] Application startup: initializing database.
+2026-03-05 17:39:41 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:41 [INFO] Initialising database schema...
+2026-03-05 17:39:41 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:41 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:43 [INFO] Application shutdown complete.
+2026-03-05 17:39:44 [INFO] Loading application configuration from .env
+2026-03-05 17:39:45 [INFO] Application startup: initializing database.
+2026-03-05 17:39:45 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:45 [INFO] Initialising database schema...
+2026-03-05 17:39:45 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:45 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:47 [INFO] Application shutdown complete.
+2026-03-05 17:39:48 [INFO] Loading application configuration from .env
+2026-03-05 17:39:49 [INFO] Application startup: initializing database.
+2026-03-05 17:39:49 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:49 [INFO] Initialising database schema...
+2026-03-05 17:39:49 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:49 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:54 [INFO] Application shutdown complete.
+2026-03-05 17:39:56 [INFO] Loading application configuration from .env
+2026-03-05 17:39:56 [INFO] Application startup: initializing database.
+2026-03-05 17:39:56 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:56 [INFO] Initialising database schema...
+2026-03-05 17:39:56 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:56 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:57 [INFO] Application shutdown complete.
+2026-03-05 17:39:58 [INFO] Loading application configuration from .env
+2026-03-05 17:39:59 [INFO] Application startup: initializing database.
+2026-03-05 17:39:59 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:39:59 [INFO] Initialising database schema...
+2026-03-05 17:39:59 [INFO] Database schema initialised successfully.
+2026-03-05 17:39:59 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:39:59 [INFO] Application shutdown complete.
+2026-03-05 17:40:00 [INFO] Loading application configuration from .env
+2026-03-05 17:40:01 [INFO] Application startup: initializing database.
+2026-03-05 17:40:01 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:40:01 [INFO] Initialising database schema...
+2026-03-05 17:40:01 [INFO] Database schema initialised successfully.
+2026-03-05 17:40:01 [INFO] Database already has 1 skills — skipping seed.
+2026-03-05 17:40:04 [INFO] Creating skill: skill1
+2026-03-05 17:40:04 [INFO] Created skill 'skill1' (key=001, id=skill_26d6b729-133e-428a-86f3-1b5e4fbbefff)
+2026-03-05 17:40:04 [INFO] \u2192 POST /api/skills — 201 in 20ms
+2026-03-05 17:52:08 [INFO] Application shutdown complete.
+2026-03-05 17:52:09 [INFO] Loading application configuration from .env
+2026-03-05 17:52:38 [INFO] Loading application configuration from .env
+2026-03-05 17:52:40 [INFO] Loading application configuration from .env
+2026-03-05 17:53:14 [INFO] Loading application configuration from .env
+2026-03-05 17:53:22 [INFO] Loading application configuration from .env
+2026-03-05 17:53:24 [INFO] Loading application configuration from .env
+2026-03-05 17:53:57 [INFO] Loading application configuration from .env
+2026-03-05 17:54:41 [INFO] Loading application configuration from .env
+2026-03-05 17:55:31 [INFO] Loading application configuration from .env
+2026-03-05 17:56:01 [INFO] Loading application configuration from .env
+2026-03-05 17:56:02 [INFO] Application startup: initializing database.
+2026-03-05 17:56:02 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:56:02 [INFO] Initialising database schema...
+2026-03-05 17:56:02 [INFO] Database schema initialised successfully.
+2026-03-05 17:56:02 [INFO] Database already has 2 skills — skipping seed.
+2026-03-05 17:56:12 [INFO] Application shutdown complete.
+2026-03-05 17:56:14 [INFO] Loading application configuration from .env
+2026-03-05 17:56:14 [INFO] Application startup: initializing database.
+2026-03-05 17:56:14 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:56:14 [INFO] Initialising database schema...
+2026-03-05 17:56:14 [INFO] Database schema initialised successfully.
+2026-03-05 17:56:14 [INFO] Database already has 2 skills — skipping seed.
+2026-03-05 17:56:55 [INFO] Loading application configuration from .env
+2026-03-05 17:56:56 [INFO] Loading application configuration from .env
+2026-03-05 17:56:57 [INFO] Application startup: initializing database.
+2026-03-05 17:56:57 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:56:57 [INFO] Initialising database schema...
+2026-03-05 17:56:57 [INFO] Database schema initialised successfully.
+2026-03-05 17:56:57 [INFO] Database already has 2 skills — skipping seed.
+2026-03-05 17:57:46 [INFO] \u2192 GET /health — 200 in 4ms
+2026-03-05 17:57:46 [INFO] Fetching skills list
+2026-03-05 17:57:46 [INFO] \u2192 GET /api/skills — 200 in 12ms
+2026-03-05 17:57:46 [INFO] Creating skill: Test Skill Envelope
+2026-03-05 17:57:46 [INFO] Created skill 'Test Skill Envelope' (key=T01, id=skill_44f5b86a-f51c-4227-abc6-68f3acb8a449)
+2026-03-05 17:57:46 [INFO] \u2192 POST /api/skills — 201 in 18ms
+2026-03-05 17:57:46 [INFO] Loading graph for version: sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9
+2026-03-05 17:57:46 [INFO] \u2192 GET /api/skill-versions/sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9/graph — 200 in 13ms
+2026-03-05 17:57:46 [INFO] Saving graph for version: sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9
+2026-03-05 17:57:46 [INFO] Saved graph for skill version sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9 (2 nodes, 1 connections)
+2026-03-05 17:57:46 [INFO] \u2192 PUT /api/skill-versions/sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9/graph — 200 in 10ms
+2026-03-05 17:57:46 [INFO] \u2192 POST /api/skill-versions/sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9/validate — 200 in 8ms
+2026-03-05 17:57:46 [INFO] Compiling skill version: sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9
+2026-03-05 17:57:46 [INFO] Compiled skill version sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9 (hash=f572eb8648c6)
+2026-03-05 17:57:46 [INFO] \u2192 POST /api/skill-versions/sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9/compile — 200 in 8ms
+2026-03-05 17:57:46 [INFO] Publishing skill version: sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9
+2026-03-05 17:57:46 [INFO] Published skill version sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9 at 2026-03-05T12:27:46Z
+2026-03-05 17:57:46 [INFO] \u2192 POST /api/skill-versions/sv_29a4e486-4969-497e-81aa-2d0bc7ff11c9/publish — 200 in 9ms
+2026-03-05 17:57:46 [INFO] \u2192 POST /api/skill-versions/sv_nonexistent/validate — 404 in 6ms
+2026-03-05 17:57:46 [WARNING] Validation error on POST /api/skills: [{'type': 'missing', 'loc': ('body', 'client_id'), 'msg': 'Field required', 'input': {'bad': 'data'}}, {'type': 'missing', 'loc': ('body', 'environment'), 'msg': 'Field required', 'input': {'bad': 'data'}}, {'type': 'missing', 'loc': ('body', 'name'), 'msg': 'Field required', 'input': {'bad': 'data'}}]
+2026-03-05 17:57:46 [INFO] \u2192 POST /api/skills — 422 in 5ms
+2026-03-05 17:57:46 [INFO] Fetching actions list
+2026-03-05 17:57:46 [INFO] \u2192 GET /api/actions — 200 in 8ms
+2026-03-05 17:57:46 [INFO] Fetching designer actions for client=c_demo, env=dev
+2026-03-05 17:57:46 [INFO] \u2192 GET /api/designer/actions — 200 in 8ms
+2026-03-05 17:58:22 [INFO] Application shutdown complete.
+2026-03-05 17:58:25 [INFO] Loading application configuration from .env
+2026-03-05 17:58:27 [INFO] Loading application configuration from .env
+2026-03-05 17:58:28 [INFO] Application startup: initializing database.
+2026-03-05 17:58:28 [INFO] SQLAlchemy DB connection pool initialized successfully.
+2026-03-05 17:58:28 [INFO] Initialising database schema...
+2026-03-05 17:58:28 [INFO] Database schema initialised successfully.
+2026-03-05 17:58:28 [INFO] Database already has 3 skills — skipping seed.
