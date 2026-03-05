@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual env
+venv/
+env/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+logs/
+
+# SQLite
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# OS
+.DS_Store
+Thumbs.db
