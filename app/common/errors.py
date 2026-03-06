@@ -1,37 +1,40 @@
 """
-Centralised error helpers using the standard response envelope.
+Domain-specific error shortcuts using the standard response envelope.
 
-All errors produce: {"status": False, "message": "...", "data": None}
+All functions raise HTTPException producing:
+{"status": False, "message": "...", "data": None}
 """
-from app.common.response import bad_request, conflict, internal_error, not_found
+from app.common.response import raise_bad_request, raise_conflict, raise_not_found
 
 
-# =========================================================================
-# Domain-specific error shortcuts
-# =========================================================================
+# ── Skill ──
 def skill_not_found():
-    not_found("Skill not found")
-
-def skill_version_not_found():
-    not_found("Skill version not found")
+    raise_not_found("Skill not found")
 
 def skill_name_exists():
-    conflict("Skill name already exists")
+    raise_conflict("Skill name already exists")
 
 def skill_key_exists():
-    conflict("Skill key already exists")
+    raise_conflict("Skill key already exists")
+
+
+# ── Skill Version ──
+def skill_version_not_found():
+    raise_not_found("Skill version not found")
 
 def skill_version_not_draft():
-    conflict("Only draft versions can be modified")
+    raise_conflict("Only draft versions can be modified")
 
 def skill_version_not_compiled():
-    bad_request("Skill version must be compiled first")
+    raise_bad_request("Skill version must be compiled first")
 
 def skill_graph_validation_failed(errors: list = None):
-    bad_request("Graph validation failed")
+    raise_bad_request("Graph validation failed")
 
+
+# ── Action ──
 def action_not_found():
-    not_found("Action not found")
+    raise_not_found("Action not found")
 
 def action_key_exists():
-    conflict("Action key already exists")
+    raise_conflict("Action key already exists")

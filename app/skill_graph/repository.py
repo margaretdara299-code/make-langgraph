@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.common.errors import skill_version_not_found, skill_version_not_draft
-from app.common.response import bad_request, not_found
+from app.common.response import raise_bad_request, raise_not_found
 from app.common.utils import deserialise_json, generate_unique_id, generate_utc_timestamp, serialise_json
 from app.models.skill import SkillGraphConnection, SkillGraphNode, SkillGraphResponse
 
@@ -137,16 +137,16 @@ def save_graph(db: Session, skill_version_id: str,
     # Validate unique node ids
     node_ids = [n.id for n in nodes]
     if len(node_ids) != len(set(node_ids)):
-        bad_request("Duplicate node ids detected")
+        raise_bad_request("Duplicate node ids detected")
 
     node_id_set = set(node_ids)
 
     # Validate all connection source/target reference existing nodes
     for edge_id, conn in connections.items():
         if conn.source not in node_id_set:
-            bad_request(f"Connection '{edge_id}' source '{conn.source}' not found in nodes")
+            raise_bad_request(f"Connection '{edge_id}' source '{conn.source}' not found in nodes")
         if conn.target not in node_id_set:
-            bad_request(f"Connection '{edge_id}' target '{conn.target}' not found in nodes")
+            raise_bad_request(f"Connection '{edge_id}' target '{conn.target}' not found in nodes")
 
     # 1. Save nodes as JSON
     nodes_json = serialise_json([n.model_dump() for n in nodes])
@@ -208,7 +208,7 @@ def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dic
             found = True
             break
     if not found:
-        not_found(f"Node '{node_id}' not found in graph")
+        raise_not_found(f"Node '{node_id}' not found in graph")
 
     db.execute(
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),

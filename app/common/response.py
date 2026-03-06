@@ -1,43 +1,49 @@
 """
-Response helpers — standard API envelope for all endpoints.
+HTTP Response Helpers — standard API envelope for all endpoints.
 
-Success: {"status": True, "message": "...", "data": ...}
-Error:   {"status": False, "message": "...", "data": None}
+Success envelope: {"status": True, "message": "...", "data": ...}
+Error envelope:   {"status": False, "message": "...", "data": None}
 """
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import Any, NoReturn
+
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse
 
 
 # =========================================================================
-# Success helpers
+# Success Response Builder
 # =========================================================================
-def ok(data: Any = None, message: str = "Success") -> dict:
-    """Return a success envelope."""
+def build_success_response(message: str = "Success", data: Any = None) -> dict:
+    """Build a standard success envelope."""
     return {"status": True, "message": message, "data": data}
 
 
 # =========================================================================
-# Error helpers — all raise HTTPException with envelope body
+# Exception Raisers — all raise HTTPException with envelope body
 # =========================================================================
-def _raise(message: str, http_status: int) -> None:
+def _raise_http(message: str, http_status: int) -> NoReturn:
     raise HTTPException(
         status_code=http_status,
         detail={"status": False, "message": message, "data": None},
     )
 
 
-def bad_request(message: str = "Invalid request") -> None:
-    _raise(message, 400)
+def raise_bad_request(message: str = "Invalid request") -> NoReturn:
+    """Raise HTTP 400 with error envelope."""
+    _raise_http(message, 400)
 
 
-def not_found(message: str = "Not found") -> None:
-    _raise(message, 404)
+def raise_not_found(message: str = "Not found") -> NoReturn:
+    """Raise HTTP 404 with error envelope."""
+    _raise_http(message, 404)
 
 
-def conflict(message: str = "Conflict") -> None:
-    _raise(message, 409)
+def raise_conflict(message: str = "Conflict") -> NoReturn:
+    """Raise HTTP 409 with error envelope."""
+    _raise_http(message, 409)
 
 
-def internal_error(message: str = "Internal error") -> None:
-    _raise(message, 500)
+def raise_internal_server_error(message: str = "Internal error") -> NoReturn:
+    """Raise HTTP 500 with error envelope."""
+    _raise_http(message, 500)

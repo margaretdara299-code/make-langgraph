@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.common.errors import skill_version_not_found, skill_version_not_draft, skill_version_not_compiled, skill_graph_validation_failed
-from app.common.response import bad_request
+from app.common.response import raise_bad_request
 from app.common.utils import compute_sha256_hash, deserialise_json, serialise_json
 from app.models.skill import (RunSkillResponse, SaveSkillGraphRequest,
                                SkillGraphConnection, SkillGraphResponse)

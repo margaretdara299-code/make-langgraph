@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db_session
-from app.common.response import ok, internal_error
+from app.common.response import build_success_response, raise_internal_server_error
 from app.models.action import CreateActionDefinitionRequest
 from app.action import service as action_service
 from app.logger.logging import logger
@@ -25,12 +25,12 @@ def list_all_actions(
     try:
         result = action_service.list_all_actions(db, status=status, capability=capability,
                                                   category=category, search_query=search_query)
-        return ok(result, "Actions fetched")
+        return build_success_response("Actions fetched", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error fetching actions list")
-        internal_error()
+        raise_internal_server_error()
 
 
 @router.post("/actions", status_code=201)
@@ -41,12 +41,12 @@ def create_action(
     logger.info(f"Creating action: {request.name}")
     try:
         result = action_service.create_action_definition(db, request, "system")
-        return ok(result, "Action created")
+        return build_success_response("Action created", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error creating action")
-        internal_error()
+        raise_internal_server_error()
 
 
 @router.get("/designer/actions")
@@ -58,16 +58,16 @@ def get_designer_actions(
     category: Optional[str] = Query(default=None),
     search_query: Optional[str] = Query(default=None, alias="q"),
 ):
-    """Return published actions for the Designer left-rail, filtered by environment policy."""
+    """Return published actions for the Designer left-rail."""
     logger.info(f"Fetching designer actions for client={client_id}, env={environment}")
     try:
         result = action_service.get_designer_actions(
             db, client_id, environment=environment,
             capability=capability, category=category, search_query=search_query,
         )
-        return ok(result, "Designer actions fetched")
+        return build_success_response("Designer actions fetched", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error fetching designer actions")
-        internal_error()
+        raise_internal_server_error()

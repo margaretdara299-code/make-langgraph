@@ -4,7 +4,7 @@ Skill graph controller — API routes for the Visual Skill Designer.
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db_session
-from app.common.response import ok, internal_error
+from app.common.response import build_success_response, raise_internal_server_error
 from app.models.skill import (PublishSkillRequest, RunSkillRequest,
                                SaveSkillGraphRequest, UpdateNodeConfigRequest)
 from app.skill_graph import service as graph_service
@@ -19,12 +19,12 @@ def load_skill_version_graph(skill_version_id: str, db: Session = Depends(get_db
     logger.info(f"Loading graph for version: {skill_version_id}")
     try:
         result = graph_service.get_graph(db, skill_version_id)
-        return ok(result, "Graph loaded")
+        return build_success_response("Graph loaded", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error loading graph")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Alias GET ──
@@ -32,12 +32,12 @@ def load_skill_version_graph(skill_version_id: str, db: Session = Depends(get_db
 def get_skill_version(skill_version_id: str, db: Session = Depends(get_db_session)):
     try:
         result = graph_service.get_graph(db, skill_version_id)
-        return ok(result, "Skill version loaded")
+        return build_success_response("Skill version loaded", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error loading skill version")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Save graph ──
@@ -46,12 +46,12 @@ def save_skill_version_graph(skill_version_id: str, request: SaveSkillGraphReque
     logger.info(f"Saving graph for version: {skill_version_id}")
     try:
         result = graph_service.save_graph(db, skill_version_id, request)
-        return ok(result, "Graph saved")
+        return build_success_response("Graph saved", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error saving graph")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Update node data (PATCH) ──
@@ -59,12 +59,12 @@ def save_skill_version_graph(skill_version_id: str, request: SaveSkillGraphReque
 def update_node_data_patch(skill_version_id: str, node_id: str, request: UpdateNodeConfigRequest, db: Session = Depends(get_db_session)):
     try:
         graph_service.update_node_data(db, skill_version_id, node_id, request.data)
-        return ok(message="Node updated")
+        return build_success_response("Node updated")
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error updating node data")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Update node data (PUT) ──
@@ -72,12 +72,12 @@ def update_node_data_patch(skill_version_id: str, node_id: str, request: UpdateN
 def update_node_data_put(skill_version_id: str, node_id: str, request: UpdateNodeConfigRequest, db: Session = Depends(get_db_session)):
     try:
         graph_service.update_node_data(db, skill_version_id, node_id, request.data)
-        return ok(message="Node updated")
+        return build_success_response("Node updated")
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error updating node data")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Validate ──
@@ -85,12 +85,12 @@ def update_node_data_put(skill_version_id: str, node_id: str, request: UpdateNod
 def validate_skill_version(skill_version_id: str, db: Session = Depends(get_db_session)):
     try:
         result = graph_service.validate_graph(db, skill_version_id)
-        return ok(result, "Validation complete")
+        return build_success_response("Validation complete", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error validating graph")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Compile ──
@@ -99,12 +99,12 @@ def compile_skill_version(skill_version_id: str, db: Session = Depends(get_db_se
     logger.info(f"Compiling skill version: {skill_version_id}")
     try:
         result = graph_service.compile_graph(db, skill_version_id)
-        return ok(result, "Compiled successfully")
+        return build_success_response("Compiled successfully", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error compiling graph")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Publish ──
@@ -114,12 +114,12 @@ def publish_skill_version(skill_version_id: str, request: PublishSkillRequest = 
     try:
         notes = request.notes if request else None
         result = graph_service.publish_skill_version(db, skill_version_id, notes)
-        return ok(result, "Published successfully")
+        return build_success_response("Published successfully", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error publishing version")
-        internal_error()
+        raise_internal_server_error()
 
 
 # ── Run ──
@@ -127,9 +127,9 @@ def publish_skill_version(skill_version_id: str, request: PublishSkillRequest = 
 def run_skill_version(skill_version_id: str, request: RunSkillRequest, db: Session = Depends(get_db_session)):
     try:
         result = graph_service.run_skill(db, skill_version_id, request)
-        return ok(result, "Run complete")
+        return build_success_response("Run complete", result)
     except HTTPException:
         raise
     except Exception:
         logger.exception("Error running skill")
-        internal_error()
+        raise_internal_server_error()

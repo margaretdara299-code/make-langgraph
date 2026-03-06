@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.common.middleware import RequestLoggerMiddleware
 from app.common.utils import generate_utc_timestamp
+from app.common.response import build_success_response
 from app.core.config import app_config, server_config
 from app.core.lifespan import lifespan
 from app.logger.logging import logger
@@ -78,7 +79,7 @@ async def handle_unexpected_error(request: Request, error: Exception):
 # =========================================================================
 @application.get("/health", tags=["Health"])
 def health_check():
-    return {"status": True, "message": "Healthy", "data": {"time": generate_utc_timestamp()}}
+    return build_success_response("Healthy", {"time": generate_utc_timestamp()})
 
 
 # =========================================================================
