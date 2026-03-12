@@ -4,7 +4,7 @@ Action repository — database queries for the Action Catalog.
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
-from app.common.errors import action_key_exists, action_not_found, action_version_not_found, action_version_not_draft
+from app.common.errors import action_key_exists, action_name_exists, action_not_found, action_version_not_found, action_version_not_draft
 from app.common.utils import deserialise_json, serialise_json, generate_unique_id, generate_utc_timestamp
 
 
@@ -36,8 +36,12 @@ def fetch_all_actions(db: Session, status: str | None = None, capability: str | 
         params["search"] = f"%{search_query}%"
 
     rows = db.execute(text(f"""
-        SELECT action_definition.*, action_version.action_version_id,
-               action_version.version, action_version.status AS version_status, action_version.is_active
+        SELECT action_definition.action_definition_id, action_definition.action_key, 
+               action_definition.name, action_definition.description, action_definition.category, 
+               action_definition.capability, action_definition.icon, action_definition.default_node_title, 
+               action_definition.scope, action_definition.status,
+               action_version.action_version_id, action_version.version, 
+               action_version.status AS version_status, action_version.is_active
         FROM action_definition
         LEFT JOIN action_version ON action_version.action_definition_id = action_definition.action_definition_id AND action_version.is_active = 1
         WHERE {" AND ".join(where_clauses)}
@@ -49,6 +53,14 @@ def insert_action_definition(db: Session, request, user_id: str) -> dict:
     action_definition_id = generate_unique_id("ad_")
     action_version_id = generate_unique_id("av_")
     timestamp = generate_utc_timestamp()
+
+    # Check duplicate name
+    existing = db.execute(text(
+        "SELECT 1 FROM action_definition WHERE name = :name"),
+        {"name": request.name}).first()
+    if existing:
+        action_name_exists()
+
     try:
         db.execute(text("""INSERT INTO action_definition
                (action_definition_id, action_key, name, description, category, capability, icon,
@@ -66,21 +78,68 @@ def insert_action_definition(db: Session, request, user_id: str) -> dict:
             inputs_schema_json, execution_json, outputs_schema_json,
             configurations_json, ui_form_json, policy_json,
             created_by, created_at)
-           VALUES (:id, :ad_id, '0.1.0', 'draft', 0,
+           VALUES (:id, :ad_id, '0.1.0', 'published', 1,
                    :inputs, :execution, :outputs, :configurations, :ui_form, :policy,
                    :user, :ts)"""),
         {"id": action_version_id, "ad_id": action_definition_id, "user": user_id, "ts": timestamp,
-         "inputs": serialise_json(request.inputs_schema_json) if request.inputs_schema_json else None,
-         "execution": serialise_json(request.execution_json) if request.execution_json else None,
-         "outputs": serialise_json(request.outputs_schema_json) if request.outputs_schema_json else None,
-         "configurations": serialise_json(request.configurations_json) if request.configurations_json else None,
-         "ui_form": serialise_json(request.ui_form_json) if request.ui_form_json else None,
-         "policy": serialise_json(request.policy_json) if request.policy_json else None})
+         "inputs": serialise_json(request.inputs_schema_json) if request.inputs_schema_json else '{}',
+         "execution": serialise_json(request.execution_json) if request.execution_json else '{}',
+         "outputs": serialise_json(request.outputs_schema_json) if request.outputs_schema_json else '{}',
+         "configurations": serialise_json(request.configurations_json) if request.configurations_json else '{}',
+         "ui_form": serialise_json(request.ui_form_json) if request.ui_form_json else '{}',
+         "policy": serialise_json(request.policy_json) if request.policy_json else '{}'})
 
     return {
         "action_definition": {"id": action_definition_id, "action_key": request.action_key, "name": request.name},
-        "draft_version": {"id": action_version_id, "version": "0.1.0", "status": "draft"},
+        "draft_version": {"id": action_version_id, "version": "0.1.0", "status": "published"},
     }
+
+
+# =========================================================================
+# Update Action Definition (name, description, category, etc.)
+# =========================================================================
+def update_action_definition(db: Session, action_definition_id: str, request) -> dict:
+    """Update an action definition's metadata. Checks for duplicate name."""
+    row = db.execute(text(
+        "SELECT * FROM action_definition WHERE action_definition_id = :id"),
+        {"id": action_definition_id}).mappings().first()
+    if not row:
+        action_not_found()
+
+    # Check duplicate name (exclude self)
+    if request.name is not None:
+        existing = db.execute(text(
+            "SELECT 1 FROM action_definition WHERE name = :name AND action_definition_id != :id"),
+            {"name": request.name, "id": action_definition_id}).first()
+        if existing:
+            action_name_exists()
+
+    set_clauses = []
+    params = {"id": action_definition_id}
+    field_map = {
+        "name": request.name,
+        "description": request.description,
+        "category": request.category,
+        "capability": request.capability,
+        "icon": request.icon,
+        "default_node_title": request.default_node_title,
+    }
+    for col, value in field_map.items():
+        if value is not None:
+            set_clauses.append(f"{col} = :{col}")
+            params[col] = value
+
+    if not set_clauses:
+        return {"action_definition_id": action_definition_id, "message": "No fields to update"}
+
+    set_clauses.append("updated_at = :ts")
+    params["ts"] = generate_utc_timestamp()
+
+    db.execute(text(f"""
+        UPDATE action_definition SET {', '.join(set_clauses)}
+        WHERE action_definition_id = :id"""), params)
+
+    return {"action_definition_id": action_definition_id, "updated_fields": [k for k, v in field_map.items() if v is not None]}
 
 
 # =========================================================================

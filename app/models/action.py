@@ -33,13 +33,7 @@ class CreateActionDefinitionRequest(BaseModel):
     ui_form_json: Dict[str, Any] | None = None
     policy_json: Dict[str, Any] | None = None
 
-    @field_validator("action_key")
-    @classmethod
-    def validate_action_key(cls, value: str) -> str:
-        trimmed = value.strip()
-        if not ACTION_KEY_RE.match(trimmed):
-            raise ValueError("action_key must be lowercase dot notation")
-        return trimmed
+
 
     @field_validator("capability")
     @classmethod
@@ -48,6 +42,15 @@ class CreateActionDefinitionRequest(BaseModel):
         if normalised not in ACTION_CAPABILITIES:
             raise ValueError("invalid capability")
         return normalised
+
+class UpdateActionDefinitionRequest(BaseModel):
+    """Payload to update an action definition's metadata."""
+    name: str | None = None
+    description: str | None = Field(default=None, max_length=400)
+    category: str | None = None
+    capability: str | None = None
+    icon: str | None = None
+    default_node_title: str | None = None
 
 
 class UpdateActionVersionRequest(BaseModel):

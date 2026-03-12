@@ -23,4 +23,4 @@ ACTION_VERSION_STATUS = {"draft", "published", "archived"}
 # Validation patterns
 # ---------------------
 SKILL_KEY_RE = re.compile(r"^[A-Z][A-Z0-9]{1,7}$")        # e.g. D01, A02
-ACTION_KEY_RE = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$")  # e.g. eligibility.verify
+ACTION_KEY_RE = re.compile(r"^[a-z0-9][a-z0-9._-]*$")  # e.g. action1, eligibility.verify

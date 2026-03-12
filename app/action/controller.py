@@ -7,6 +7,7 @@ from app.core.database import get_db_session
 from app.common.response import build_success_response, raise_internal_server_error, raise_not_found
 from app.models.action import (
     CreateActionDefinitionRequest,
+    UpdateActionDefinitionRequest,
     UpdateActionVersionRequest,
     PublishActionRequest,
     CreateDraftFromPublishedRequest,
@@ -73,6 +74,24 @@ def get_action_by_id(
         raise
     except Exception:
         logger.exception("Error fetching action")
+        raise_internal_server_error()
+
+
+@router.put("/actions/{action_definition_id}")
+def update_action_definition(
+    action_definition_id: str,
+    request: UpdateActionDefinitionRequest,
+    db: Session = Depends(get_db_session),
+):
+    """Update an action definition's metadata (name, description, category, etc.)."""
+    logger.info(f"Updating action definition: {action_definition_id}")
+    try:
+        result = action_service.update_action_definition(db, action_definition_id, request)
+        return build_success_response("Action definition updated", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error updating action definition")
         raise_internal_server_error()
 
 

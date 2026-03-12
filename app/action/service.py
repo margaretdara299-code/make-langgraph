@@ -33,6 +33,12 @@ def get_action_by_id(db: Session, action_definition_id: str) -> dict | None:
     return action_repository.fetch_action_by_id(db, action_definition_id)
 
 
+def update_action_definition(db: Session, action_definition_id: str, request) -> dict:
+    result = action_repository.update_action_definition(db, action_definition_id, request)
+    logger.info(f"Updated action definition '{action_definition_id}'")
+    return result
+
+
 def update_action_version(db: Session, action_version_id: str, request) -> dict:
     result = action_repository.update_action_version(db, action_version_id, request)
     logger.info(f"Updated action version '{action_version_id}'")
