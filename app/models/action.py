@@ -3,7 +3,7 @@ Pydantic request and response schemas for the Action Catalog feature.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -17,13 +17,21 @@ class CreateActionDefinitionRequest(BaseModel):
     """Payload to create a new Action Definition in the catalog."""
     name: str
     action_key: str
-    description: Optional[str] = Field(default=None, max_length=400)
-    category: Optional[str] = None
+    description: str | None = Field(default=None, max_length=400)
+    category: str | None = None
     capability: str
-    icon: Optional[str] = None
+    icon: str | None = None
     default_node_title: str
     scope: Literal["global", "client"] = "global"
-    client_id: Optional[str] = None
+    client_id: str | None = None
+
+    # ── Version-level JSON blobs (populated by wizard steps 2–7) ──
+    inputs_schema_json: Dict[str, Any] | List[Dict[str, Any]] | None = None
+    execution_json: Dict[str, Any] | None = None
+    outputs_schema_json: Dict[str, Any] | List[Dict[str, Any]] | None = None
+    configurations_json: List[Dict[str, Any]] | None = None
+    ui_form_json: Dict[str, Any] | None = None
+    policy_json: Dict[str, Any] | None = None
 
     @field_validator("action_key")
     @classmethod
@@ -44,16 +52,17 @@ class CreateActionDefinitionRequest(BaseModel):
 
 class UpdateActionVersionRequest(BaseModel):
     """Payload to update a draft action version's schemas."""
-    inputs_schema_json: Optional[Dict[str, Any]] = None
-    execution_json: Optional[Dict[str, Any]] = None
-    outputs_schema_json: Optional[Dict[str, Any]] = None
-    ui_form_json: Optional[Dict[str, Any]] = None
-    policy_json: Optional[Dict[str, Any]] = None
+    inputs_schema_json: Dict[str, Any] | List[Dict[str, Any]] | None = None
+    execution_json: Dict[str, Any] | None = None
+    outputs_schema_json: Dict[str, Any] | List[Dict[str, Any]] | None = None
+    configurations_json: List[Dict[str, Any]] | None = None
+    ui_form_json: Dict[str, Any] | None = None
+    policy_json: Dict[str, Any] | None = None
 
 
 class PublishActionRequest(BaseModel):
     """Payload to publish a draft action version."""
-    release_notes: Optional[str] = None
+    release_notes: str | None = None
 
 
 class CreateDraftFromPublishedRequest(BaseModel):

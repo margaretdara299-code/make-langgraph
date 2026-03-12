@@ -1,7 +1,6 @@
 """
 Skill controller — API routes for the Skills Library.
 """
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db_session
@@ -17,9 +16,9 @@ router = APIRouter(prefix="/api", tags=["Skills"])
 @router.get("/skills")
 def list_all_skills(
     db: Session = Depends(get_db_session),
-    client_id: Optional[str] = Query(default=None),
-    status: Optional[str] = Query(default=None),
-    search_query: Optional[str] = Query(default=None, alias="search"),
+    client_id: str | None = Query(default=None),
+    status: str | None = Query(default=None),
+    search_query: str | None = Query(default=None, alias="search"),
 ):
     logger.info("Fetching skills list")
     try:

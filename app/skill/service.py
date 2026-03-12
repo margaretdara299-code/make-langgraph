@@ -1,7 +1,7 @@
 """
 Skill service — business logic for the Skills Library (list page).
 """
-from typing import Dict, Optional
+from typing import Dict
 from sqlalchemy.orm import Session
 from app.common.errors import skill_name_exists, skill_key_exists
 from app.common.utils import generate_unique_id
@@ -12,9 +12,9 @@ from app.logger.logging import logger
 
 def list_all_skills(
     db: Session,
-    client_id: Optional[str] = None,
-    status: Optional[str] = None,
-    search_query: Optional[str] = None,
+    client_id: str | None = None,
+    status: str | None = None,
+    search_query: str | None = None,
 ) -> Dict:
     items = skill_repository.fetch_all_skills(db, client_id=client_id, status=status, search_query=search_query)
     return {"items": items, "total": len(items)}

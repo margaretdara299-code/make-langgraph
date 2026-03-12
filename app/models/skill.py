@@ -3,7 +3,7 @@ Pydantic request and response schemas for the Skill feature.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -23,22 +23,22 @@ class CloneSourceDetails(BaseModel):
 class SkillStartFrom(BaseModel):
     """How to initialise the new skill graph."""
     mode: Literal["blank", "template", "clone"] = "blank"
-    template_id: Optional[str] = None
-    clone: Optional[CloneSourceDetails] = None
+    template_id: str | None = None
+    clone: CloneSourceDetails | None = None
 
 
 class CreateSkillRequest(BaseModel):
     """Payload to create a new Skill in the Skills Library."""
     client_id: str
-    payer_id: Optional[str] = None
+    payer_id: str | None = None
     environment: str
     name: str
-    skill_key: Optional[str] = None
-    description: Optional[str] = Field(default=None, max_length=240)
-    category: Optional[str] = None
+    skill_key: str | None = None
+    description: str | None = Field(default=None, max_length=240)
+    category: str | None = None
     tags: List[str] = Field(default_factory=list)
-    owner_user_id: Optional[str] = None
-    owner_team_id: Optional[str] = None
+    owner_user_id: str | None = None
+    owner_team_id: str | None = None
 
     start_from: SkillStartFrom = Field(default_factory=SkillStartFrom)
 
@@ -60,7 +60,7 @@ class CreateSkillRequest(BaseModel):
 
     # @field_validator("skill_key")
     # @classmethod
-    # def validate_skill_key(cls, value: Optional[str]) -> Optional[str]:
+    # def validate_skill_key(cls, value: str | None) -> str | None:
     #     if not value:
     #         return None
     #     normalised = value.strip().upper()
@@ -115,8 +115,8 @@ class SkillGraphConnection(BaseModel):
     id: str
     source: str
     target: str
-    sourceHandle: Optional[str] = None
-    targetHandle: Optional[str] = None
+    sourceHandle: str | None = None
+    targetHandle: str | None = None
     condition: Dict[str, Any] = Field(default_factory=dict)
     is_default: bool = False
 
@@ -164,7 +164,7 @@ class CompilationResult(BaseModel):
 
 class PublishSkillRequest(BaseModel):
     """Payload to publish a draft skill version."""
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class RunSkillRequest(BaseModel):

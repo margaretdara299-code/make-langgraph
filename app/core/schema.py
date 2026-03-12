@@ -160,6 +160,16 @@ def initialise_database() -> None:
             "ON skill(client_id, COALESCE(payer_id, ''), name);"
         )
 
+        # Safe column migrations for action_version table
+        av_column_names = set()
+        for row in raw_connection.execute("PRAGMA table_info(action_version);").fetchall():
+            av_column_names.add(row[1])
+
+        if "configurations_json" not in av_column_names:
+            raw_connection.execute(
+                "ALTER TABLE action_version ADD COLUMN configurations_json TEXT NOT NULL DEFAULT '{}';"
+            )
+
         raw_connection.commit()
         logger.info("Database schema initialised successfully.")
 

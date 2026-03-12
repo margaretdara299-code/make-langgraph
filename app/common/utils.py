@@ -7,7 +7,7 @@ import hashlib
 import json
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any
 
 
 def generate_utc_timestamp() -> str:
@@ -26,7 +26,7 @@ def serialise_json(data: Any) -> str:
     return json.dumps(data, separators=(",", ":"), ensure_ascii=False)
 
 
-def deserialise_json(text: Optional[str], fallback: Any) -> Any:
+def deserialise_json(text: str | None, fallback: Any) -> Any:
     """Safe JSON deserialisation with a fallback value on failure."""
     if not text:
         return fallback

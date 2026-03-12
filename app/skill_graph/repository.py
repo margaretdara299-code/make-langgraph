@@ -4,7 +4,7 @@ Skill graph repository — HYBRID storage model.
 Nodes:  stored as JSON in skill_version.nodes
 Edges:  stored in skill_route table (source of truth)
 """
-from typing import Dict, List, Optional
+from typing import Dict, List
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.common.errors import skill_version_not_found, skill_version_not_draft
@@ -235,7 +235,7 @@ def save_compiled_output(db: Session, skill_version_id: str, compiled_json_text:
 
 
 def publish_skill_version(db: Session, skill_version_id: str, skill_id: str,
-                           environment: str, publish_notes: Optional[str]) -> str:
+                           environment: str, publish_notes: str | None) -> str:
     timestamp = generate_utc_timestamp()
     db.execute(
         text("UPDATE skill_version SET is_active=0 WHERE skill_id=:skill_id AND environment=:env "

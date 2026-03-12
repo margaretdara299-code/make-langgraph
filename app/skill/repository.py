@@ -2,7 +2,7 @@
 Skill repository — database queries for skill metadata, tags, and listing.
 """
 import uuid
-from typing import List, Optional
+from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.common.utils import generate_unique_id, generate_utc_timestamp, serialise_json
@@ -24,7 +24,7 @@ def suggest_skill_key(db: Session, client_id: str, skill_name: str) -> str:
     return f"{first_letter}{uuid.uuid4().hex[:6].upper()}"
 
 
-def does_skill_name_exist(db: Session, client_id: str, payer_id: Optional[str], name: str) -> bool:
+def does_skill_name_exist(db: Session, client_id: str, payer_id: str | None, name: str) -> bool:
     row = db.execute(
         text("SELECT 1 FROM skill WHERE client_id=:client_id AND COALESCE(payer_id,'')=COALESCE(:payer_id,'') AND name=:name LIMIT 1"),
         {"client_id": client_id, "payer_id": payer_id, "name": name},
@@ -69,10 +69,10 @@ def attach_tags_to_skill(db: Session, skill_id: str, tag_ids: List[str]) -> None
 
 def insert_skill(
     db: Session,
-    skill_id: str, client_id: str, payer_id: Optional[str],
-    name: str, skill_key: str, description: Optional[str],
-    category: Optional[str], owner_user_id: Optional[str],
-    owner_team_id: Optional[str], created_by: str,
+    skill_id: str, client_id: str, payer_id: str | None,
+    name: str, skill_key: str, description: str | None,
+    category: str | None, owner_user_id: str | None,
+    owner_team_id: str | None, created_by: str,
 ) -> None:
     timestamp = generate_utc_timestamp()
     db.execute(
@@ -112,9 +112,9 @@ def insert_skill_version(
 
 def fetch_all_skills(
     db: Session,
-    client_id: Optional[str] = None,
-    status: Optional[str] = None,
-    search_query: Optional[str] = None,
+    client_id: str | None = None,
+    status: str | None = None,
+    search_query: str | None = None,
 ) -> list:
     """Fetch skills with their latest active version, tags, and node counts."""
     where_clauses = ["1=1"]

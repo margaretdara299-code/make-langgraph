@@ -38,3 +38,10 @@ def action_not_found():
 
 def action_key_exists():
     raise_conflict("Action key already exists")
+
+# ── Action Version ──
+def action_version_not_found():
+    raise_not_found("Action version not found")
+
+def action_version_not_draft():
+    raise_conflict("Only draft versions can be updated")
