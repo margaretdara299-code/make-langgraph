@@ -110,26 +110,15 @@ def initialise_database() -> None:
 
             CREATE TABLE IF NOT EXISTS action_version (
               action_version_id   TEXT PRIMARY KEY,
-              action_definition_id TEXT NOT NULL
+              action_definition_id TEXT NOT NULL UNIQUE
                                    REFERENCES action_definition(action_definition_id) ON DELETE CASCADE,
-              version             TEXT NOT NULL,
-              status              TEXT NOT NULL
-                                  CHECK (status IN ('draft','published','archived')),
-              is_active           INTEGER NOT NULL DEFAULT 0
-                                  CHECK (is_active IN (0,1)),
               inputs_schema_json  TEXT NOT NULL DEFAULT '{}',
               execution_json      TEXT NOT NULL DEFAULT '{}',
               outputs_schema_json TEXT NOT NULL DEFAULT '{}',
+              configurations_json TEXT NOT NULL DEFAULT '{}',
               ui_form_json        TEXT NOT NULL DEFAULT '{}',
-              policy_json         TEXT NOT NULL DEFAULT '{}',
-              created_by          TEXT,
-              created_at          TEXT NOT NULL DEFAULT (datetime('now')),
-              published_at        TEXT,
-              UNIQUE (action_definition_id, version)
+              policy_json         TEXT NOT NULL DEFAULT '{}'
             );
-
-            CREATE INDEX IF NOT EXISTS idx_action_version_def_status
-              ON action_version(action_definition_id, status, is_active);
 
 
             """
@@ -160,6 +149,70 @@ def initialise_database() -> None:
             "ON skill(client_id, COALESCE(payer_id, ''), name);"
         )
 
+        # Migrate action_definition: fix status CHECK constraint to allow 'draft'/'published'
+        # SQLite doesn't support ALTER COLUMN, so we rebuild the table if needed.
+        ad_check_sql = raw_connection.execute(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name='action_definition'"
+        ).fetchone()
+        ad_needs_rebuild = ad_check_sql and (
+            "active','deprecated','disabled" in ad_check_sql[0]
+            or "'active','deprecated'" in ad_check_sql[0]
+        )
+
+        if ad_needs_rebuild:
+            logger.info("Migrating action_definition: fixing status CHECK constraint...")
+            raw_connection.executescript("""
+                PRAGMA foreign_keys = OFF;
+
+                CREATE TABLE IF NOT EXISTS action_definition_new (
+                  action_definition_id TEXT PRIMARY KEY,
+                  action_key           TEXT NOT NULL UNIQUE,
+                  name                 TEXT NOT NULL,
+                  description          TEXT,
+                  category             TEXT,
+                  capability           TEXT,
+                  icon                 TEXT,
+                  default_node_title   TEXT,
+                  scope                TEXT NOT NULL DEFAULT 'global'
+                                       CHECK (scope IN ('global','client')),
+                  client_id            TEXT,
+                  status               TEXT NOT NULL DEFAULT 'published'
+                                       CHECK (status IN ('draft','published')),
+                  is_active            INTEGER NOT NULL DEFAULT 1
+                                       CHECK (is_active IN (0,1)),
+                  created_by           TEXT,
+                  created_at           TEXT NOT NULL DEFAULT (datetime('now')),
+                  updated_at           TEXT NOT NULL DEFAULT (datetime('now'))
+                );
+
+                INSERT INTO action_definition_new
+                  (action_definition_id, action_key, name, description, category,
+                   capability, icon, default_node_title, scope, client_id,
+                   status, is_active, created_by, created_at, updated_at)
+                SELECT
+                  action_definition_id, action_key, name, description, category,
+                  capability, icon, default_node_title,
+                  'global',
+                  client_id,
+                  CASE WHEN status IN ('draft','published') THEN status ELSE 'published' END,
+                  1,
+                  created_by, created_at, updated_at
+                FROM action_definition;
+
+                DROP TABLE action_definition;
+                ALTER TABLE action_definition_new RENAME TO action_definition;
+
+                PRAGMA foreign_keys = ON;
+            """)
+            logger.info("action_definition migration complete.")
+        else:
+            # Just add is_active if missing (for fresh DBs)
+            ad_column_names = {row[1] for row in raw_connection.execute("PRAGMA table_info(action_definition);").fetchall()}
+            if "is_active" not in ad_column_names:
+                raw_connection.execute(
+                    "ALTER TABLE action_definition ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1;"
+                )
+
         # Safe column migrations for action_version table
         av_column_names = set()
         for row in raw_connection.execute("PRAGMA table_info(action_version);").fetchall():
@@ -169,6 +222,46 @@ def initialise_database() -> None:
             raw_connection.execute(
                 "ALTER TABLE action_version ADD COLUMN configurations_json TEXT NOT NULL DEFAULT '{}';"
             )
+        if "ui_form_json" not in av_column_names:
+            raw_connection.execute(
+                "ALTER TABLE action_version ADD COLUMN ui_form_json TEXT NOT NULL DEFAULT '{}';"
+            )
+
+        # Migrate action_version: remove versioning columns
+        av_column_names = {row[1] for row in raw_connection.execute("PRAGMA table_info(action_version);").fetchall()}
+        if "version" in av_column_names:
+            logger.info("Migrating action_version: removing versioning columns...")
+            raw_connection.executescript("""
+                PRAGMA foreign_keys = OFF;
+
+                CREATE TABLE IF NOT EXISTS action_version_new (
+                  action_version_id   TEXT PRIMARY KEY,
+                  action_definition_id TEXT NOT NULL UNIQUE
+                                       REFERENCES action_definition(action_definition_id) ON DELETE CASCADE,
+                  inputs_schema_json  TEXT NOT NULL DEFAULT '{}',
+                  execution_json      TEXT NOT NULL DEFAULT '{}',
+                  outputs_schema_json TEXT NOT NULL DEFAULT '{}',
+                  configurations_json TEXT NOT NULL DEFAULT '{}',
+                  ui_form_json        TEXT NOT NULL DEFAULT '{}',
+                  policy_json         TEXT NOT NULL DEFAULT '{}'
+                );
+
+                INSERT INTO action_version_new
+                  (action_version_id, action_definition_id,
+                   inputs_schema_json, execution_json, outputs_schema_json,
+                   configurations_json, ui_form_json, policy_json)
+                SELECT
+                  action_version_id, action_definition_id,
+                  inputs_schema_json, execution_json, outputs_schema_json,
+                  configurations_json, ui_form_json, policy_json
+                FROM action_version;
+
+                DROP TABLE action_version;
+                ALTER TABLE action_version_new RENAME TO action_version;
+
+                PRAGMA foreign_keys = ON;
+            """)
+            logger.info("action_version migration complete.")
 
         raw_connection.commit()
         logger.info("Database schema initialised successfully.")

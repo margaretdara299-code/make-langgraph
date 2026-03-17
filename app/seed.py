@@ -106,14 +106,13 @@ def seed_demo_data() -> None:
                 "INSERT INTO action_definition (action_definition_id, action_key, name, description, category, capability, icon, default_node_title, scope, status, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (ad_id, action["action_key"], action["name"], action["description"],
                  action["category"], action["capability"], action["icon"], action["default_node_title"],
-                 "global", "active", "system", timestamp, timestamp),
+                 "global", "published", "system", timestamp, timestamp),
             )
             raw.execute(
-                "INSERT INTO action_version (action_version_id, action_definition_id, version, status, is_active, inputs_schema_json, execution_json, outputs_schema_json, policy_json, created_by, created_at, published_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-                (av_id, ad_id, "1.0.0", "published", 1,
+                "INSERT INTO action_version (action_version_id, action_definition_id, inputs_schema_json, execution_json, outputs_schema_json, policy_json) VALUES (?,?,?,?,?,?)",
+                (av_id, ad_id,
                  serialise_json(action["inputs_schema"]), serialise_json(action["execution"]),
-                 serialise_json(action["outputs_schema"]), serialise_json(action["policy"]),
-                 "system", timestamp, timestamp),
+                 serialise_json(action["outputs_schema"]), serialise_json(action["policy"])),
             )
 
         # ── Skill + Version ─────────────────────────────────────────────────────

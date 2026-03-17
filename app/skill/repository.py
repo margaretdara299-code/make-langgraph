@@ -173,3 +173,135 @@ def fetch_all_skills(
             "updated_at": skill_row["updated_at"],
         })
     return result_items
+
+
+# =========================================================================
+# Skill Version Lookup
+# =========================================================================
+def fetch_skill_version_by_id(db: Session, skill_version_id: str) -> dict | None:
+    """Return a single skill_version row."""
+    row = db.execute(
+        text("SELECT * FROM skill_version WHERE skill_version_id = :id"),
+        {"id": skill_version_id}
+    ).mappings().first()
+    return dict(row) if row else None
+
+
+# =========================================================================
+# Graph — GET (load nodes + connections for a skill version)
+# =========================================================================
+def fetch_skill_graph(db: Session, skill_version_id: str) -> dict | None:
+    """Return the graph (nodes + connections) for a skill version."""
+    import json
+    row = db.execute(
+        text("""
+            SELECT sv.skill_version_id, sv.skill_id, sv.environment, sv.version, sv.status,
+                   sv.nodes, sv.connections
+            FROM skill_version sv
+            WHERE sv.skill_version_id = :id
+        """),
+        {"id": skill_version_id}
+    ).mappings().first()
+    if not row:
+        return None
+
+    try:
+        nodes = json.loads(row["nodes"] or "[]")
+    except Exception:
+        nodes = []
+    try:
+        connections = json.loads(row["connections"] or "{}")
+    except Exception:
+        connections = {}
+
+    return {
+        "skill_version_id": row["skill_version_id"],
+        "skill_id": row["skill_id"],
+        "environment": row["environment"],
+        "version": row["version"],
+        "status": row["status"],
+        "nodes": nodes,
+        "connections": connections,
+    }
+
+
+# =========================================================================
+# Graph — PUT (bulk save nodes + connections)
+# =========================================================================
+def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connections: dict) -> dict:
+    """Bulk-save the entire graph for a skill version."""
+    import json
+    timestamp = generate_utc_timestamp()
+
+    nodes_json = json.dumps(nodes, separators=(",", ":"))
+    connections_json = json.dumps(connections, separators=(",", ":"))
+
+    db.execute(
+        text("""
+            UPDATE skill_version
+            SET nodes = :nodes, connections = :connections
+            WHERE skill_version_id = :id
+        """),
+        {"id": skill_version_id, "nodes": nodes_json, "connections": connections_json}
+    )
+
+    # Also bump the parent skill's updated_at
+    db.execute(
+        text("""
+            UPDATE skill SET updated_at = :ts
+            WHERE skill_id = (SELECT skill_id FROM skill_version WHERE skill_version_id = :id)
+        """),
+        {"id": skill_version_id, "ts": timestamp}
+    )
+
+    return {
+        "skill_version_id": skill_version_id,
+        "node_count": len(nodes),
+        "connection_count": len(connections),
+        "saved_at": timestamp,
+    }
+
+
+# =========================================================================
+# Single Node — PATCH (update one node's data from the right panel)
+# =========================================================================
+def update_single_node(db: Session, skill_version_id: str, node_id: str, data: dict) -> dict:
+    """Update a single node's `data` object inside the nodes JSON array."""
+    import json
+    row = db.execute(
+        text("SELECT nodes FROM skill_version WHERE skill_version_id = :id"),
+        {"id": skill_version_id}
+    ).mappings().first()
+    if not row:
+        return None
+
+    try:
+        nodes = json.loads(row["nodes"] or "[]")
+    except Exception:
+        nodes = []
+
+    node_found = False
+    for node in nodes:
+        if node.get("id") == node_id:
+            node["data"] = data
+            node_found = True
+            break
+
+    if not node_found:
+        return None
+
+    db.execute(
+        text("UPDATE skill_version SET nodes = :nodes WHERE skill_version_id = :id"),
+        {"id": skill_version_id, "nodes": json.dumps(nodes, separators=(",", ":"))}
+    )
+
+    # Bump the parent skill's updated_at
+    db.execute(
+        text("""
+            UPDATE skill SET updated_at = :ts
+            WHERE skill_id = (SELECT skill_id FROM skill_version WHERE skill_version_id = :id)
+        """),
+        {"id": skill_version_id, "ts": generate_utc_timestamp()}
+    )
+
+    return {"skill_version_id": skill_version_id, "node_id": node_id, "updated": True}

@@ -60,3 +60,23 @@ def create_skill(db: Session, request, user_id: str) -> Dict:
         "skill_id": skill_id,
         "skill_version_id": skill_version_id,
     }
+
+
+def get_skill_graph(db: Session, skill_version_id: str) -> dict | None:
+    """Load the graph (nodes + connections) for a skill version."""
+    return skill_repository.fetch_skill_graph(db, skill_version_id)
+
+
+def save_graph(db: Session, skill_version_id: str, nodes: list, connections: dict) -> dict:
+    """Bulk-save the entire graph for a skill version."""
+    result = skill_repository.save_skill_graph(db, skill_version_id, nodes, connections)
+    logger.info(f"Saved graph for skill version '{skill_version_id}': {result['node_count']} nodes, {result['connection_count']} connections")
+    return result
+
+
+def update_node(db: Session, skill_version_id: str, node_id: str, data: dict) -> dict | None:
+    """Update a single node's configuration data."""
+    result = skill_repository.update_single_node(db, skill_version_id, node_id, data)
+    if result:
+        logger.info(f"Updated node '{node_id}' in skill version '{skill_version_id}'")
+    return result

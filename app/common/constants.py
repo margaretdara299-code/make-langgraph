@@ -16,7 +16,7 @@ SKILL_STATUSES = {"draft", "published", "archived"}
 # ---------------------
 ACTION_CAPABILITIES = {"API", "AI", "RPA", "HUMAN", "RULES", "MESSAGE", "DOCS"}
 ACTION_SCOPE = {"global", "client"}
-ACTION_DEF_STATUS = {"active", "deprecated", "disabled"}
+ACTION_DEF_STATUS = {"draft", "published"}
 ACTION_VERSION_STATUS = {"draft", "published", "archived"}
 
 # ---------------------
