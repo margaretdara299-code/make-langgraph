@@ -20,10 +20,10 @@ def list_all_skills(
     return {"items": items, "total": len(items)}
 
 
-def create_skill(db: Session, request, user_id: str) -> Dict:
+def create_skill(db: Session, request, user_id: str = "1") -> Dict:
     """Create a new Skill with an initial draft version and starter graph.
     Returns only skill_id and skill_version_id."""
-    if skill_repository.does_skill_name_exist(db, request.client_id, request.payer_id, request.name):
+    if skill_repository.does_skill_name_exist(db, request.client_id, request.name):
         skill_name_exists()
 
     skill_key = request.skill_key or skill_repository.suggest_skill_key(db, request.client_id, request.name)
@@ -34,10 +34,9 @@ def create_skill(db: Session, request, user_id: str) -> Dict:
     skill_version_id = generate_unique_id("sv_")
 
     skill_repository.insert_skill(
-        db, skill_id=skill_id, client_id=request.client_id, payer_id=request.payer_id,
+        db, skill_id=skill_id, client_id=request.client_id,
         name=request.name, skill_key=skill_key, description=request.description,
-        category=request.category, owner_user_id=request.owner_user_id,
-        owner_team_id=request.owner_team_id, created_by=user_id,
+        category=request.category, created_by=user_id,
     )
     skill_repository.insert_skill_version(
         db, skill_version_id=skill_version_id, skill_id=skill_id,

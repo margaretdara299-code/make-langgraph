@@ -19,7 +19,7 @@ class CreateActionDefinitionRequest(BaseModel):
     icon: str | None = None
     default_node_title: str | None = None
     scope: str | None = "global"
-    client_id: str | None = None
+    client_id: str | None = "1"
     status: str | None = "published"
     is_active: bool = True
 

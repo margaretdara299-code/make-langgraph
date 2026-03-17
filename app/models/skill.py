@@ -30,61 +30,14 @@ class SkillStartFrom(BaseModel):
 class CreateSkillRequest(BaseModel):
     """Payload to create a new Skill in the Skills Library."""
     client_id: str
-    payer_id: str | None = None
-    environment: str
+    environment: str = "dev"
     name: str
     skill_key: str | None = None
     description: str | None = Field(default=None, max_length=240)
     category: str | None = None
     tags: List[str] = Field(default_factory=list)
-    owner_user_id: str | None = None
-    owner_team_id: str | None = None
 
     start_from: SkillStartFrom = Field(default_factory=SkillStartFrom)
-
-    @field_validator("environment")
-    @classmethod
-    def validate_environment(cls, value: str) -> str:
-        normalised = value.strip().lower()
-        if normalised not in ENVIRONMENTS:
-            raise ValueError("Invalid environment")
-        return normalised
-
-    @field_validator("name")
-    @classmethod
-    def validate_name(cls, value: str) -> str:
-        trimmed = value.strip()
-        if len(trimmed) < 3 or len(trimmed) > 80:
-            raise ValueError("name must be 3-80 characters")
-        return trimmed
-
-    # @field_validator("skill_key")
-    # @classmethod
-    # def validate_skill_key(cls, value: str | None) -> str | None:
-    #     if not value:
-    #         return None
-    #     normalised = value.strip().upper()
-    #     if not SKILL_KEY_RE.match(normalised):
-    #         raise ValueError("skill_key must match ^[A-Z][A-Z0-9]{1,7}$")
-    #     return normalised
-
-    @field_validator("tags")
-    @classmethod
-    def validate_tags(cls, tag_list: List[str]) -> List[str]:
-        normalised_tags: List[str] = []
-        seen_tags = set()
-        for tag in tag_list:
-            cleaned_tag = (tag or "").strip().lower()
-            if not cleaned_tag:
-                continue
-            if len(cleaned_tag) > 24:
-                raise ValueError("each tag must be <= 24 characters")
-            if cleaned_tag not in seen_tags:
-                seen_tags.add(cleaned_tag)
-                normalised_tags.append(cleaned_tag)
-        if len(normalised_tags) > 10:
-            raise ValueError("at most 10 tags allowed")
-        return normalised_tags
 
 
 class CreateSkillResponse(BaseModel):
@@ -129,8 +82,8 @@ class SkillGraphResponse(BaseModel):
     skill_version_id: str
     skill_id: str
     environment: str
-    version: str
-    status: str
+    version: str = "1.0.1"
+    status: str = "published"
     nodes: List[SkillGraphNode]
     connections: Dict[str, SkillGraphConnection] = Field(default_factory=dict)
 

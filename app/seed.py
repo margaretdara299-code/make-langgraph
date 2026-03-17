@@ -120,10 +120,10 @@ def seed_demo_data() -> None:
         demo_version_id = generate_unique_id("sv_")
 
         raw.execute(
-            "INSERT INTO skill (skill_id, client_id, name, skill_key, description, category, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO skill (skill_id, client_id, name, skill_key, description, category, is_active, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
             (demo_skill_id, "c_demo", "Ops Workflow Demo", "W01",
              "Demo: AI → Rules → Human → Task → PM → Message", "Workflow",
-             "system", timestamp, timestamp),
+             1, "1", timestamp, timestamp),
         )
 
         # ── Nodes (JSON in skill_version.nodes) ─────────────────────────────────
@@ -150,7 +150,7 @@ def seed_demo_data() -> None:
 
         raw.execute(
             "INSERT INTO skill_version (skill_version_id, skill_id, environment, version, status, is_active, created_by, created_at, nodes) VALUES (?,?,?,?,?,?,?,?,?)",
-            (demo_version_id, demo_skill_id, "dev", "0.1.0", "draft", 1, "system", timestamp, nodes_json),
+            (demo_version_id, demo_skill_id, "dev", "1.0.1", "published", 1, "1", timestamp, nodes_json),
         )
 
         # ── Edges (in skill_route table) ─────────────────────────────────────────

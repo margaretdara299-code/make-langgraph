@@ -65,7 +65,7 @@ def insert_action(db: Session, request, user_id: str) -> dict:
             "icon": request.icon,
             "title": request.default_node_title,
             "scope": request.scope or "global",
-            "client": request.client_id,
+            "client": request.client_id or "1",
             "status": request.status or "published",
             "is_active": 1 if request.is_active else 0,
             "user": user_id,

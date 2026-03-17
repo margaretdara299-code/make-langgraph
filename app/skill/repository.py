@@ -24,10 +24,10 @@ def suggest_skill_key(db: Session, client_id: str, skill_name: str) -> str:
     return f"{first_letter}{uuid.uuid4().hex[:6].upper()}"
 
 
-def does_skill_name_exist(db: Session, client_id: str, payer_id: str | None, name: str) -> bool:
+def does_skill_name_exist(db: Session, client_id: str, name: str) -> bool:
     row = db.execute(
-        text("SELECT 1 FROM skill WHERE client_id=:client_id AND COALESCE(payer_id,'')=COALESCE(:payer_id,'') AND name=:name LIMIT 1"),
-        {"client_id": client_id, "payer_id": payer_id, "name": name},
+        text("SELECT 1 FROM skill WHERE client_id=:client_id AND name=:name LIMIT 1"),
+        {"client_id": client_id, "name": name},
     ).mappings().first()
     return row is not None
 
@@ -69,25 +69,23 @@ def attach_tags_to_skill(db: Session, skill_id: str, tag_ids: List[str]) -> None
 
 def insert_skill(
     db: Session,
-    skill_id: str, client_id: str, payer_id: str | None,
+    skill_id: str, client_id: str,
     name: str, skill_key: str, description: str | None,
-    category: str | None, owner_user_id: str | None,
-    owner_team_id: str | None, created_by: str,
+    category: str | None, is_active: int = 1, created_by: str = "1",
 ) -> None:
     timestamp = generate_utc_timestamp()
     db.execute(
         text("""INSERT INTO skill
-           (skill_id, client_id, payer_id, name, skill_key, description,
-            category, owner_user_id, owner_team_id, metadata_json,
+           (skill_id, client_id, name, skill_key, description,
+            category, is_active,
             created_by, created_at, updated_at)
-           VALUES (:skill_id, :client_id, :payer_id, :name, :skill_key, :description,
-                   :category, :owner_user_id, :owner_team_id, :metadata_json,
+           VALUES (:skill_id, :client_id, :name, :skill_key, :description,
+                   :category, :is_active,
                    :created_by, :created_at, :updated_at)"""),
         {
-            "skill_id": skill_id, "client_id": client_id, "payer_id": payer_id,
+            "skill_id": skill_id, "client_id": client_id,
             "name": name, "skill_key": skill_key, "description": description,
-            "category": category, "owner_user_id": owner_user_id,
-            "owner_team_id": owner_team_id, "metadata_json": serialise_json({}),
+            "category": category, "is_active": is_active,
             "created_by": created_by, "created_at": timestamp, "updated_at": timestamp,
         },
     )
@@ -96,12 +94,12 @@ def insert_skill(
 def insert_skill_version(
     db: Session,
     skill_version_id: str, skill_id: str,
-    environment: str, created_by: str, version: str = "0.1.0",
+    environment: str, created_by: str = "1", version: str = "1.0.1",
 ) -> None:
     db.execute(
         text("""INSERT INTO skill_version
            (skill_version_id, skill_id, environment, version, status, is_active, created_by, created_at)
-           VALUES (:skill_version_id, :skill_id, :environment, :version, 'draft', 1, :created_by, :created_at)"""),
+           VALUES (:skill_version_id, :skill_id, :environment, :version, 'published', 1, :created_by, :created_at)"""),
         {
             "skill_version_id": skill_version_id, "skill_id": skill_id,
             "environment": environment, "version": version,
@@ -165,6 +163,7 @@ def fetch_all_skills(
             "skill_key": skill_row["skill_key"],
             "description": skill_row["description"],
             "category": skill_row["category"],
+            "is_active": skill_row["is_active"],
             "tags": associated_tags,
             "latest_version_id": skill_row["latest_version_id"],
             "version": skill_row["version"],
