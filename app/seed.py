@@ -63,10 +63,34 @@ def seed_demo_data() -> None:
         # ── Connectors ──────────────────────────────────────────────────────────
         connector_map = {}
         connectors = [
+            {"old_id": "conn_primrose", "name": "Primrose Database", "type": "database", "desc": "Primrose Ops DB",
+             "config": {
+                 "host": "54.211.59.215",
+                 "port": 3306,
+                 "user": "af_user",
+                 "password": "prim1615test",
+                 "database": "alloFactorV4"
+             }},
+            {"old_id": "conn_trillium", "name": "Trillium Database", "type": "database", "desc": "Trillium Workflow DB",
+             "config": {
+                 "host": "54.211.59.215",
+                 "port": 3306,
+                 "user": "af_user",
+                 "password": "prim1615test",
+                 "database": "trillium_stage_workflow_v4"
+             }},
+            {"old_id": "conn_api_example", "name": "External API Service", "type": "api", "desc": "Configurable API Connector",
+             "config": {
+                 "method": "POST",
+                 "url": "https://api.example.com/data",
+                 "pathparam": {"id": "123"},
+                 "queryparam": {"version": "v1"},
+                 "bodyrequest": {"item": "sample"},
+                 "header": {"Authorization": "Bearer ...", "Content-Type": "application/json"},
+                 "response": {"status": "success", "data": {}}
+             }},
             {"old_id": "conn_jira", "name": "Jira Product", "type": "api", "desc": "Company Jira instance", "config": {"url": "https://jira.company.com", "token": "tkn_12345"}},
             {"old_id": "conn_slack", "name": "Slack Operations", "type": "api", "desc": "Slack workspace for ops", "config": {"webhook_url": "https://hooks.slack.com/services/...", "token": "xoxb-..."}},
-            {"old_id": "conn_crm", "name": "CRM Database", "type": "database", "desc": "Production CRM (Postgres)", "config": {"host": "crm-db.internal", "port": 5432, "user": "svc_crm", "token": "pass_crm"}},
-            {"old_id": "conn_rcm", "name": "RCM Database", "type": "database", "desc": "Claims & Billing DB", "config": {"host": "rcm-db.internal", "port": 5432, "user": "svc_rcm", "token": "pass_rcm"}},
         ]
         for conn in connectors:
             cursor.execute(
@@ -81,7 +105,7 @@ def seed_demo_data() -> None:
                 "action_key": "ai.classify",
                 "name": "AI Classify",
                 "description": "LLM-based classification (category, intent, next-step suggestion)",
-                "category_id": "cat_ai", "capability_id": "cap_ai", "connector_id": None, "icon": "brain",
+                "category_id": "cat_ai", "capability_id": "cap_ai", "icon": "brain",
                 "default_node_title": "AI Classify",
                 "inputs_schema": {"fields": [
                     {"name": "record_id", "type": "string", "required": True},
@@ -98,7 +122,7 @@ def seed_demo_data() -> None:
                 "action_key": "rules.evaluate",
                 "name": "Rules Engine",
                 "description": "Rules-based decisioning and routing",
-                "category_id": "cat_rules", "capability_id": "cap_rules", "connector_id": None, "icon": "git-branch",
+                "category_id": "cat_rules", "capability_id": "cap_rules", "icon": "git-branch",
                 "default_node_title": "Rules Engine",
                 "inputs_schema": {"fields": [{"name": "record_id", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "decision", "type": "string", "required": True}]},
@@ -109,7 +133,7 @@ def seed_demo_data() -> None:
                 "action_key": "human.review",
                 "name": "Human Review",
                 "description": "Route to human reviewer for manual decision",
-                "category_id": "cat_human", "capability_id": "cap_human", "connector_id": None, "icon": "user-check",
+                "category_id": "cat_human", "capability_id": "cap_human", "icon": "user-check",
                 "default_node_title": "Human Review",
                 "inputs_schema": {"fields": [{"name": "record_id", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "decision", "type": "string", "required": True}]},
@@ -120,7 +144,7 @@ def seed_demo_data() -> None:
                 "action_key": "task.create",
                 "name": "Create Task",
                 "description": "Create an operational task in a task system",
-                "category_id": "cat_tasks", "capability_id": "cap_api", "connector_id": "conn_jira", "icon": "clipboard-plus",
+                "category_id": "cat_tasks", "capability_id": "cap_api", "icon": "clipboard-plus",
                 "default_node_title": "Create Task",
                 "inputs_schema": {"fields": [{"name": "record_id", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "task_id", "type": "string", "required": True}]},
@@ -131,7 +155,7 @@ def seed_demo_data() -> None:
                 "action_key": "pm.update",
                 "name": "Update PM",
                 "description": "Update a project-management item",
-                "category_id": "cat_pm", "capability_id": "cap_api", "connector_id": "conn_jira", "icon": "list-check",
+                "category_id": "cat_pm", "capability_id": "cap_api", "icon": "list-check",
                 "default_node_title": "Update PM",
                 "inputs_schema": {"fields": [{"name": "project_key", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "ok", "type": "boolean", "required": True}]},
@@ -142,7 +166,7 @@ def seed_demo_data() -> None:
                 "action_key": "message.send",
                 "name": "Send Message",
                 "description": "Send a message (email/sms/webhook)",
-                "category_id": "cat_messaging", "capability_id": "cap_msg", "connector_id": "conn_slack", "icon": "send",
+                "category_id": "cat_messaging", "capability_id": "cap_msg", "icon": "send",
                 "default_node_title": "Send Message",
                 "inputs_schema": {"fields": [{"name": "to", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "message_id", "type": "string", "required": True}]},
@@ -235,7 +259,7 @@ def seed_demo_data() -> None:
         cursor.execute("INSERT OR IGNORE INTO skill_tag (skill_id, tag_id) VALUES (?,?)", (demo_skill_id, tag_auto_id))
 
         raw.commit()
-        logger.info("Demo data seeded successfully (6 actions, 1 skill, 7 edges, 2 tags).")
+        logger.info("Demo data seeded successfully (5 connectors, 6 actions, 1 skill, 7 edges, 2 tags).")
 
     finally:
-        raw.close()
+        raw.close()

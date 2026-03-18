@@ -15,9 +15,9 @@ class RequestLoggerMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
             elapsed_ms = (time.time() - start_time) * 1000
-            logger.info(f"→ {request.method} {request.url.path} — {response.status_code} in {elapsed_ms:.0f}ms")
+            logger.info(f"-> {request.method} {request.url.path} - {response.status_code} in {elapsed_ms:.0f}ms")
             return response
         except Exception as error:
             elapsed_ms = (time.time() - start_time) * 1000
-            logger.exception(f"→ {request.method} {request.url.path} — ERROR in {elapsed_ms:.0f}ms")
+            logger.exception(f"-> {request.method} {request.url.path} - ERROR in {elapsed_ms:.0f}ms")
             raise
