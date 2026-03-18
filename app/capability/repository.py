@@ -16,6 +16,15 @@ def get_capability(db: Session, capability_id: int) -> CapabilityResponse | None
     return CapabilityResponse(**dict(row)) if row else None
 
 def create_capability(db: Session, name: str, description: str | None) -> CapabilityResponse | None:
+    # Check for duplicate name
+    existing = db.execute(
+        text("SELECT 1 FROM capability WHERE name = :name"),
+        {"name": name}
+    ).first()
+    if existing:
+        from app.common.errors import capability_name_exists
+        capability_name_exists()
+
     res = db.execute(
         text("INSERT INTO capability (name, description) VALUES (:name, :desc)"),
         {"name": name, "desc": description}

@@ -55,11 +55,15 @@ app/
 | `skill_tag` | Skill ↔ Tag junction |
 | `action_definition` | Action catalog master |
 | `action_version` | Versioned action configs (inputs/outputs/execution) |
+| `connector` | External system integrations (Jira, Slack, DBs) |
+| `category` | Taxonomy Categories |
+| `capability` | Taxonomy Capabilities |
 
 **Storage model (hybrid):**
 - **Nodes** → JSON in `skill_version.nodes`
 - **Edges** → rows in `skill_route` table
 - **Tags** → rows in `tag` + `skill_tag`
+- **Taxonomy** → normalized `category` and `capability` tables
 
 ---
 
@@ -404,8 +408,9 @@ GET /api/actions?capability=AI&category=AI&search=classify
       "action_definition_id": "ad_abc123",
       "action_key": "ai.classify",
       "name": "AI Classify",
-      "category": "AI",
-      "capability": "AI",
+      "category_id": 1,
+      "capability_id": 1,
+      "icon": "brain",
       "action_version_id": "av_xyz789",
       "version": "1.0.0",
       "version_status": "published"
@@ -414,6 +419,49 @@ GET /api/actions?capability=AI&category=AI&search=classify
   "total": 6
 }
 ```
+
+---
+
+### Connectors
+
+#### `GET /api/v1/connectors` — List Connectors
+```json
+// Response
+{
+  "status": true,
+  "message": "Connectors fetched",
+  "data": [
+    {
+      "connector_id": 1,
+      "name": "Jira Production",
+      "connector_type": "jira",
+      "description": "Main Jira instance",
+      "config_json": {"url": "https://jira.com", "token": "***"},
+      "is_active": 1,
+      "created_at": "2026-03-18T10:00:00Z"
+    }
+  ]
+}
+```
+
+#### `POST /api/v1/connectors` — Create Connector
+```json
+// Request
+{
+  "name": "New Database",
+  "connector_type": "database",
+  "description": "RCM DB",
+  "config_json": {"host": "localhost"}
+}
+```
+
+---
+
+### Taxonomy (Categories & Capabilities)
+
+#### `GET /api/v1/categories` — List All Categories
+#### `GET /api/v1/capabilities` — List All Capabilities
+Returns a simple list of normalized integer-ID resources.
 
 ---
 
@@ -490,6 +538,9 @@ All errors follow this shape:
 | 404 | `SKILL_VERSION_NOT_FOUND` | Skill version ID doesn't exist |
 | 409 | `CONFLICT` | Generic conflict |
 | 409 | `SKILL_NAME_EXISTS` | Duplicate skill name in scope |
+| 409 | `ACTION_NAME_EXISTS` | Duplicate action name |
+| 409 | `CATEGORY_NAME_EXISTS` | Duplicate category name |
+| 409 | `CAPABILITY_NAME_EXISTS` | Duplicate capability name |
 | 409 | `SKILL_VERSION_NOT_DRAFT` | Trying to edit a non-draft version |
 | 409 | `SKILL_VERSION_NOT_COMPILED` | Trying to publish without compiling |
 | 422 | `SKILL_GRAPH_VALIDATION_FAILED` | Graph has validation errors |

@@ -40,8 +40,8 @@ def list_actions(
     """List all actions. Optional filters: status, capability, category, q (search)."""
     logger.info("Fetching actions list")
     try:
-        result = action_service.list_actions(db, status=status, capability=capability,
-                                              category=category, search_query=q)
+        result = action_service.list_actions(db, status=status, capability_id=capability,
+                                              category_id=category, search_query=q)
         return build_success_response("Actions fetched", result)
     except HTTPException:
         raise

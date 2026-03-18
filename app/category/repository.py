@@ -16,12 +16,20 @@ def get_category(db: Session, category_id: int) -> CategoryResponse | None:
     return CategoryResponse(**dict(row)) if row else None
 
 def create_category(db: Session, name: str, description: str | None) -> CategoryResponse | None:
+    # Check for duplicate name
+    existing = db.execute(
+        text("SELECT 1 FROM category WHERE name = :name"),
+        {"name": name}
+    ).first()
+    if existing:
+        from app.common.errors import category_name_exists
+        category_name_exists()
+
     res = db.execute(
         text("INSERT INTO category (name, description) VALUES (:name, :desc)"),
         {"name": name, "desc": description}
     )
     db.commit()
-    # In SQLite with SQLAlchemy, lastrowid is available on the Result object
     return get_category(db, res.lastrowid)
 
 def update_category(db: Session, category_id: int, name: str | None, description: str | None) -> CategoryResponse | None:

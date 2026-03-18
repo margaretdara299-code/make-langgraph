@@ -132,11 +132,12 @@ def initialise_database() -> None:
         ad_needs_rebuild = bool(ad_info) and (
             "category_id" not in ad_column_names or
             "client_id" not in ad_column_names or
+            "connector_id" in ad_column_names or
             is_ad_old_type
         )
 
         if ad_needs_rebuild:
-            logger.info("Rebuilding action_definition table to use INTEGER IDs...")
+            logger.info("Rebuilding action_definition table to support INTEGER IDs...")
             raw_connection.executescript("""
                 PRAGMA foreign_keys = OFF;
                 DROP TABLE IF EXISTS action_definition_new;
@@ -164,11 +165,13 @@ def initialise_database() -> None:
                 );
                 INSERT INTO action_definition_new (
                     action_definition_id, action_key, name, description,
-                    icon, default_node_title, scope, client_id,
-                    status, is_active, created_by, created_at, updated_at
+                    category_id, capability_id, icon, default_node_title, 
+                    scope, client_id, status, is_active, created_by, created_at, updated_at
                 )
                 SELECT 
                     action_definition_id, action_key, name, description,
+                    CASE WHEN typeof(category_id)='integer' THEN category_id ELSE NULL END,
+                    CASE WHEN typeof(capability_id)='integer' THEN capability_id ELSE NULL END,
                     icon, default_node_title, scope, COALESCE(client_id, '1'),
                     status, is_active, created_by, created_at, updated_at
                 FROM action_definition;
@@ -179,6 +182,32 @@ def initialise_database() -> None:
 
         # 4. Create all tables with final definitions
         raw_connection.executescript("""
+            CREATE TABLE IF NOT EXISTS category (
+              category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name        TEXT NOT NULL UNIQUE,
+              description TEXT,
+              created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+
+            CREATE TABLE IF NOT EXISTS capability (
+              capability_id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name          TEXT NOT NULL UNIQUE,
+              description   TEXT,
+              created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+
+            CREATE TABLE IF NOT EXISTS connector (
+              connector_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+              name           TEXT NOT NULL,
+              connector_type TEXT NOT NULL,
+              description    TEXT,
+              config_json    TEXT NOT NULL DEFAULT '{}',
+              status         TEXT NOT NULL DEFAULT 'active',
+              is_active      INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
+              created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+              updated_at     TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+
             CREATE TABLE IF NOT EXISTS skill (
               skill_id          TEXT PRIMARY KEY,
               client_id         TEXT NOT NULL,

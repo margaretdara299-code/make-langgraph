@@ -15,6 +15,7 @@ from app.logger.logging import logger
 # Feature routers
 from app.skill.controller import router as skill_router
 from app.action.controller import router as action_router
+from app.connector.controller import router as connector_router
 from app.category.controller import router as category_router
 from app.capability.controller import router as capability_router
 
@@ -88,6 +89,7 @@ def health_check():
 # =========================================================================
 application.include_router(skill_router)
 application.include_router(action_router)
+application.include_router(connector_router)
 application.include_router(category_router)
 application.include_router(capability_router)
 

@@ -94,7 +94,6 @@ def insert_action(db: Session, request, user_id: str) -> dict:
         "ui_form": serialize_to_json(request.ui_form_json),
         "policy": serialize_to_json(request.policy_json),
     })
-    db.commit()
 
     return {
         "action_definition_id": action_definition_id,
@@ -143,7 +142,6 @@ def fetch_all_actions(db: Session,
     """), params).mappings().all()
 
     return [dict(r) for r in rows]
-
 
 
 # =========================================================================

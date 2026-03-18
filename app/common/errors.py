@@ -48,3 +48,17 @@ def action_version_not_found():
 
 def action_version_not_draft():
     raise_conflict("Only draft versions can be updated")
+
+
+# ── Category & Capability ──
+def category_not_found():
+    raise_not_found("Category not found")
+
+def category_name_exists():
+    raise_conflict("Category name already exists")
+
+def capability_not_found():
+    raise_not_found("Capability not found")
+
+def capability_name_exists():
+    raise_conflict("Capability name already exists")

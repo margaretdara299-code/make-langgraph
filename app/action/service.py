@@ -12,10 +12,10 @@ def create_action(db: Session, request, user_id: str) -> dict:
     return result
 
 
-def list_actions(db: Session, status: str | None = None, capability: str | None = None,
-                 category: str | None = None, search_query: str | None = None) -> dict:
-    items = repo.fetch_all_actions(db, status=status, capability_id=capability,
-                                   category_id=category, search_query=search_query)
+def list_actions(db: Session, status: str | None = None, capability_id: int | str | None = None,
+                 category_id: int | str | None = None, search_query: str | None = None) -> dict:
+    items = repo.fetch_all_actions(db, status=status, capability_id=capability_id,
+                                   category_id=category_id, search_query=search_query)
     return {"items": items, "total": len(items)}
 
 
