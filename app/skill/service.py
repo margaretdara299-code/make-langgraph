@@ -60,7 +60,7 @@ def create_skill(db: Session, request, user_id: str = "1") -> Dict:
         tag_ids = skill_repository.upsert_tags(db, request.tags)
         skill_repository.attach_tags_to_skill(db, skill_id, tag_ids)
 
-    logger.info(f"Created skill '{request.name}' (key={skill_key}, id={skill_id})")
+    logger.debug(f"Created skill '{request.name}' (key={skill_key}, id={skill_id})")
 
     return {
         "skill_id": skill_id,
@@ -88,7 +88,7 @@ def update_skill(db: Session, skill_id: str, request) -> bool:
             skill_repository.attach_tags_to_skill(db, skill_id, tag_ids)
 
     if success:
-        logger.info(f"Updated skill '{skill_id}'")
+        logger.debug(f"Updated skill '{skill_id}'")
     return success
 
 
@@ -96,7 +96,7 @@ def delete_skill(db: Session, skill_id: str) -> bool:
     """Delete a skill and all its versions."""
     success = skill_repository.delete_skill(db, skill_id)
     if success:
-        logger.info(f"Deleted skill '{skill_id}'")
+        logger.debug(f"Deleted skill '{skill_id}'")
     return success
 
 
@@ -112,7 +112,7 @@ def get_skill_graph(db: Session, skill_version_id: str) -> SkillGraphResponse:
 def save_graph(db: Session, skill_version_id: str, request: SaveSkillGraphRequest) -> SkillGraphResponse:
     """Bulk-save the entire graph (nodes + connections) for a skill version."""
     skill_repository.save_skill_graph(db, skill_version_id, request.nodes, request.connections)
-    logger.info(f"Saved graph for skill version {skill_version_id} "
+    logger.debug(f"Saved graph for skill version {skill_version_id} "
                 f"({len(request.nodes)} nodes, {len(request.connections)} connections)")
     return skill_repository.fetch_skill_graph(db, skill_version_id)
 
@@ -226,7 +226,7 @@ def compile_graph(db: Session, skill_version_id: str) -> dict:
     compiled_text = serialise_json(compiled)
     compile_hash = compute_sha256_hash(compiled_text)
     skill_repository.save_compiled_output(db, skill_version_id, compiled_text, compile_hash)
-    logger.info(f"Compiled skill version {skill_version_id} (hash={compile_hash[:12]})")
+    logger.debug(f"Compiled skill version {skill_version_id} (hash={compile_hash[:12]})")
     return {"compile_hash": compile_hash, "compiled_skill_json": compiled}
 
 
@@ -246,7 +246,7 @@ def publish_skill_version(db: Session, skill_version_id: str, publish_notes: str
     published_at = skill_repository.publish_skill_version(
         db, skill_version_id, version_row["skill_id"], version_row["environment"], publish_notes)
     
-    logger.info(f"Published skill version {skill_version_id} at {published_at}")
+    logger.debug(f"Published skill version {skill_version_id} at {published_at}")
     return {"status": "published", "published_at": published_at}
 
 

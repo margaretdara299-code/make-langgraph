@@ -22,7 +22,7 @@ def create_connector(
         result = connector_service.create_connector(db, request)
         return build_success_response("Connector created", result)
     except Exception:
-        logger.exception("Error creating connector")
+        logger.debug("Error creating connector")
         raise_internal_server_error()
 
 

@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from app.logger.logging import logger
 
 
-logger.info("Loading application configuration from .env")
+logger.debug("Loading application configuration from .env")
 
 
 class DatabaseConfig(BaseSettings):

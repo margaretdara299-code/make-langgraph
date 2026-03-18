@@ -25,7 +25,7 @@ def list_all_skills(
     status: str | None = Query(default=None),
     search_query: str | None = Query(default=None, alias="search"),
 ):
-    logger.info("Fetching skills list")
+    logger.debug("Fetching skills list")
     try:
         result = skill_service.list_all_skills(db, client_id=client_id, status=status, search_query=search_query)
         return build_success_response("Skills fetched", result)
@@ -41,7 +41,7 @@ def create_skill(
     request: CreateSkillRequest,
     db: Session = Depends(get_db_session),
 ):
-    logger.info(f"Creating skill: {request.name}")
+    logger.debug(f"Creating skill: {request.name}")
     try:
         result = skill_service.create_skill(db, request, "system")
         return build_success_response("Skill created", result)
@@ -58,7 +58,7 @@ def get_skill(
     db: Session = Depends(get_db_session),
 ):
     """Fetch a single skill's full metadata."""
-    logger.info(f"Fetching skill: {skill_id}")
+    logger.debug(f"Fetching skill: {skill_id}")
     try:
         result = skill_service.get_skill(db, skill_id)
         if not result:
@@ -78,7 +78,7 @@ def update_skill(
     db: Session = Depends(get_db_session),
 ):
     """Update skill metadata."""
-    logger.info(f"Updating skill: {skill_id}")
+    logger.debug(f"Updating skill: {skill_id}")
     try:
         success = skill_service.update_skill(db, skill_id, request)
         if not success:
@@ -97,7 +97,7 @@ def delete_skill(
     db: Session = Depends(get_db_session),
 ):
     """Delete a skill and all its versions."""
-    logger.info(f"Deleting skill: {skill_id}")
+    logger.debug(f"Deleting skill: {skill_id}")
     try:
         success = skill_service.delete_skill(db, skill_id)
         if not success:
@@ -120,7 +120,7 @@ def load_skill_graph(
     db: Session = Depends(get_db_session)
 ):
     """Load the current workflow graph (nodes + connections) for a skill version."""
-    logger.info(f"Loading graph for version: {skill_version_id}")
+    logger.debug(f"Loading graph for version: {skill_version_id}")
     try:
         result = skill_service.get_skill_graph(db, skill_version_id)
         return build_success_response("Graph loaded", result)
@@ -154,7 +154,7 @@ def save_skill_graph(
     db: Session = Depends(get_db_session)
 ):
     """Bulk-save nodes and connections for a skill version."""
-    logger.info(f"Saving graph for version: {skill_version_id}")
+    logger.debug(f"Saving graph for version: {skill_version_id}")
     try:
         result = skill_service.save_graph(db, skill_version_id, request)
         return build_success_response("Graph saved", result)
@@ -205,7 +205,7 @@ def compile_skill_version(
     db: Session = Depends(get_db_session)
 ):
     """Compile the graph into a runnable JSON format (LangGraph style)."""
-    logger.info(f"Compiling skill version: {skill_version_id}")
+    logger.debug(f"Compiling skill version: {skill_version_id}")
     try:
         result = skill_service.compile_graph(db, skill_version_id)
         return build_success_response("Compiled successfully", result)
@@ -223,7 +223,7 @@ def publish_skill_version(
     db: Session = Depends(get_db_session)
 ):
     """Mark a compiled draft as published and active for the environment."""
-    logger.info(f"Publishing skill version: {skill_version_id}")
+    logger.debug(f"Publishing skill version: {skill_version_id}")
     try:
         notes = request.notes if request else None
         result = skill_service.publish_skill_version(db, skill_version_id, notes)

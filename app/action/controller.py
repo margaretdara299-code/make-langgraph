@@ -18,7 +18,7 @@ def create_action(
     db: Session = Depends(get_db_session),
 ):
     """Create a new action. Default: status=published, is_active=true."""
-    logger.info(f"Creating action: {request.name}")
+    logger.debug(f"Creating action: {request.name}")
     try:
         result = action_service.create_action(db, request, "system")
         return build_success_response("Action created", result)
@@ -38,7 +38,7 @@ def list_actions(
     q: str | None = Query(default=None),
 ):
     """List all actions. Optional filters: status, capability, category, q (search)."""
-    logger.info("Fetching actions list")
+    logger.debug("Fetching actions list")
     try:
         result = action_service.list_actions(db, status=status, capability_id=capability,
                                               category_id=category, search_query=q)
@@ -57,7 +57,7 @@ def update_action_status(
     db: Session = Depends(get_db_session)
 ):
     """Update only the status (draft/published) and/or is_active flag."""
-    logger.info(f"Updating status for action: {action_definition_id}")
+    logger.debug(f"Updating status for action: {action_definition_id}")
     try:
         result = action_service.update_action_status(db, action_definition_id, request)
         return build_success_response("Action status updated", result)
@@ -74,7 +74,7 @@ def get_action(
     db: Session = Depends(get_db_session),
 ):
     """Get a single action with all its JSON blobs."""
-    logger.info(f"Fetching action: {action_definition_id}")
+    logger.debug(f"Fetching action: {action_definition_id}")
     try:
         result = action_service.get_action_by_id(db, action_definition_id)
         if not result:
@@ -94,7 +94,7 @@ def update_action(
     db: Session = Depends(get_db_session),
 ):
     """Update action metadata and/or JSON blobs. Also supports status and is_active."""
-    logger.info(f"Updating action: {action_definition_id}")
+    logger.debug(f"Updating action: {action_definition_id}")
     try:
         result = action_service.update_action(db, action_definition_id, request)
         return build_success_response("Action updated", result)

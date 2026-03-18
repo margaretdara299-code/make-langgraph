@@ -47,7 +47,8 @@ application.add_middleware(
 # =========================================================================
 @application.exception_handler(HTTPException)
 async def handle_http_exception(request: Request, exc: HTTPException):
-    """If detail is already our envelope dict, return it. Else wrap it."""
+    """Store for middleware and return envelope."""
+    request.state.error = exc
     if isinstance(exc.detail, dict) and "status" in exc.detail:
         return JSONResponse(status_code=exc.status_code, content=exc.detail)
     return JSONResponse(
@@ -58,8 +59,8 @@ async def handle_http_exception(request: Request, exc: HTTPException):
 
 @application.exception_handler(RequestValidationError)
 async def handle_validation_error(request: Request, exc: RequestValidationError):
-    """Pydantic / query-param validation errors → simple message, no details."""
-    logger.warning(f"Validation error on {request.method} {request.url.path}: {exc.errors()}")
+    """Store for middleware and return simple message."""
+    request.state.error = exc
     return JSONResponse(
         status_code=422,
         content={"status": False, "message": "Invalid request", "data": None},
@@ -68,8 +69,8 @@ async def handle_validation_error(request: Request, exc: RequestValidationError)
 
 @application.exception_handler(Exception)
 async def handle_unexpected_error(request: Request, error: Exception):
-    """Catch-all for unhandled exceptions."""
-    logger.exception(f"Unhandled exception on {request.method} {request.url.path}")
+    """Store for middleware and return generic error."""
+    request.state.error = error
     return JSONResponse(
         status_code=500,
         content={"status": False, "message": "Internal error", "data": None},

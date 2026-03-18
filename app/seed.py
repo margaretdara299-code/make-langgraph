@@ -19,10 +19,10 @@ def seed_demo_data() -> None:
         cursor.execute("SELECT COUNT(*) FROM skill")
         count = cursor.fetchone()[0]
         if count > 0:
-            logger.info(f"Database already has {count} skills — skipping seed.")
+            logger.debug(f"Database already has {count} skills — skipping seed.")
             return
 
-        logger.info("Seeding demo data...")
+        logger.debug("Seeding demo data...")
         timestamp = generate_utc_timestamp()
 
         # ── Categories ──────────────────────────────────────────────────────────

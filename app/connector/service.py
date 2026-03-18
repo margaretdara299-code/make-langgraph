@@ -18,17 +18,17 @@ def get_connector(db: Session, connector_id: int) -> dict | None:
 
 def create_connector(db: Session, request) -> dict:
     """Business logic for creating a connector."""
-    logger.info(f"Creating connector: {request.name} (type={request.connector_type})")
+    logger.debug(f"Creating connector: {request.name} (type={request.connector_type})")
     return repo.create_connector(db, request)
 
 
 def update_connector(db: Session, connector_id: int, request) -> dict:
     """Business logic for updating a connector."""
-    logger.info(f"Updating connector: {connector_id}")
+    logger.debug(f"Updating connector: {connector_id}")
     return repo.update_connector(db, connector_id, request)
 
 
 def delete_connector(db: Session, connector_id: int) -> bool:
     """Business logic for deleting a connector."""
-    logger.info(f"Attempting to delete connector: {connector_id}")
+    logger.debug(f"Attempting to delete connector: {connector_id}")
     return repo.delete_connector(db, connector_id)

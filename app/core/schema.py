@@ -10,7 +10,7 @@ from app.logger.logging import logger
 
 def initialise_database() -> None:
     """Create all tables and indexes if they do not already exist."""
-    logger.info("Initialising database schema...")
+    logger.debug("Initialising database schema...")
     raw_connection = engine.raw_connection()
     try:
         # 0. Explicitly enable foreign keys for this connection
@@ -318,7 +318,7 @@ def initialise_database() -> None:
         """)
 
         raw_connection.commit()
-        logger.info("Database schema initialised successfully.")
+        logger.debug("Database schema initialised successfully.")
 
     except Exception as e:
         logger.error(f"Error during database initialization: {e}")

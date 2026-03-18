@@ -47,15 +47,17 @@ def log_execution(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.time()
-        logger.info(f"STARTED: {func.__name__}")
+        # Move internal tracking to DEBUG level to keep INFO log clean
+        logger.debug(f"STARTED: {func.__name__}")
         try:
             result = func(*args, **kwargs)
             return result
         except Exception as error:
-            # We use logger.error with only the error message to avoid long Tracebacks
+            # Keep errors as ERROR level
             logger.error(f"ERROR in {func.__name__}: {error}")
             raise
         finally:
             elapsed_time = time.time() - start_time
-            logger.info(f"FINISHED: {func.__name__} in {elapsed_time:.2f}s")
+            # Move internal tracking to DEBUG level
+            logger.debug(f"FINISHED: {func.__name__} in {elapsed_time:.2f}s")
     return wrapper

@@ -8,7 +8,7 @@ from app.logger.logging import logger
 
 def create_action(db: Session, request, user_id: str) -> dict:
     result = repo.insert_action(db, request, user_id)
-    logger.info(f"Created action '{request.name}' (key={request.action_key})")
+    logger.debug(f"Created action '{request.name}' (key={request.action_key})")
     return result
 
 
@@ -25,11 +25,11 @@ def get_action_by_id(db: Session, action_definition_id: str) -> dict | None:
 
 def update_action(db: Session, action_definition_id: str, request) -> dict:
     result = repo.update_action(db, action_definition_id, request)
-    logger.info(f"Updated action '{action_definition_id}'")
+    logger.debug(f"Updated action '{action_definition_id}'")
     return result
 
 
 def update_action_status(db: Session, action_definition_id: str, request) -> dict:
     result = repo.update_action_status(db, action_definition_id, request)
-    logger.info(f"Updated status for action '{action_definition_id}'")
+    logger.debug(f"Updated status for action '{action_definition_id}'")
     return result
