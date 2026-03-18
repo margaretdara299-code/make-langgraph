@@ -48,8 +48,8 @@ def insert_action(db: Session, request, user_id: str) -> dict:
     try:
         db.execute(text("""
             INSERT INTO action_definition
-              (action_definition_id, action_key, name, description, category,
-               capability, icon, default_node_title, scope, client_id,
+              (action_definition_id, action_key, name, description, category_id,
+               capability_id, icon, default_node_title, scope, client_id,
                status, is_active, created_by, created_at, updated_at)
             VALUES
               (:id, :key, :name, :desc, :cat,
@@ -60,8 +60,8 @@ def insert_action(db: Session, request, user_id: str) -> dict:
             "key": request.action_key,
             "name": request.name,
             "desc": request.description,
-            "cat": request.category,
-            "cap": request.capability,
+            "cat": request.category_id,
+            "cap": request.capability_id,
             "icon": request.icon,
             "title": request.default_node_title,
             "scope": request.scope or "global",
@@ -94,6 +94,7 @@ def insert_action(db: Session, request, user_id: str) -> dict:
         "ui_form": serialize_to_json(request.ui_form_json),
         "policy": serialize_to_json(request.policy_json),
     })
+    db.commit()
 
     return {
         "action_definition_id": action_definition_id,
@@ -109,8 +110,8 @@ def insert_action(db: Session, request, user_id: str) -> dict:
 # =========================================================================
 def fetch_all_actions(db: Session,
                       status: str | None = None,
-                      capability: str | None = None,
-                      category: str | None = None,
+                      capability_id: int | str | None = None,
+                      category_id: int | str | None = None,
                       search_query: str | None = None) -> list:
     """List all actions with their JSON blobs joined from action_version."""
     where = ["1=1"]
@@ -118,15 +119,15 @@ def fetch_all_actions(db: Session,
     if status:
         where.append("ad.status = :status")
         params["status"] = status
-    if capability:
-        where.append("ad.capability = :capability")
-        params["capability"] = capability
-    if category:
-        if category.lower() == "uncategorized":
-            where.append("(ad.category IS NULL OR ad.category = '')")
+    if capability_id:
+        where.append("ad.capability_id = :capability_id")
+        params["capability_id"] = capability_id
+    if category_id:
+        if isinstance(category_id, str) and category_id.lower() == "uncategorized":
+            where.append("(ad.category_id IS NULL OR ad.category_id = 0 OR ad.category_id = '')")
         else:
-            where.append("ad.category = :category")
-            params["category"] = category
+            where.append("ad.category_id = :category_id")
+            params["category_id"] = category_id
     if search_query:
         where.append("(ad.name LIKE :q OR ad.action_key LIKE :q)")
         params["q"] = f"%{search_query}%"
@@ -134,7 +135,7 @@ def fetch_all_actions(db: Session,
     rows = db.execute(text(f"""
         SELECT
             ad.action_definition_id, ad.action_key, ad.name, ad.description,
-            ad.category, ad.capability, ad.icon, ad.default_node_title,
+            ad.category_id, ad.capability_id, ad.icon, ad.default_node_title,
             ad.scope, ad.status, ad.is_active, ad.updated_at
         FROM action_definition ad
         WHERE {" AND ".join(where)}
@@ -142,6 +143,7 @@ def fetch_all_actions(db: Session,
     """), params).mappings().all()
 
     return [dict(r) for r in rows]
+
 
 
 # =========================================================================
@@ -152,7 +154,7 @@ def fetch_action_by_id(db: Session, action_definition_id: str) -> dict | None:
     row = db.execute(text("""
         SELECT
             ad.action_definition_id, ad.action_key, ad.name, ad.description,
-            ad.category, ad.capability, ad.icon, ad.default_node_title,
+            ad.category_id, ad.capability_id, ad.icon, ad.default_node_title,
             ad.scope, ad.client_id,
             ad.status      AS status,
             ad.is_active   AS is_active,
@@ -171,7 +173,7 @@ def fetch_action_by_id(db: Session, action_definition_id: str) -> dict | None:
         return None
 
     keys = ["action_definition_id", "action_key", "name", "description",
-            "category", "capability", "icon", "default_node_title",
+            "category_id", "capability_id", "icon", "default_node_title",
             "scope", "client_id", "status", "is_active",
             "created_at", "updated_at", "action_version_id",
             "inputs_schema_json", "execution_json", "outputs_schema_json",
@@ -213,7 +215,7 @@ def update_action(db: Session, action_definition_id: str, request) -> dict:
     update_data = request.model_dump(exclude_unset=True)
     
     action_def_fields = {}
-    for field_name in ["name", "action_key", "description", "category", "capability", "icon", "default_node_title", "scope", "status"]:
+    for field_name in ["name", "action_key", "description", "category_id", "capability_id", "icon", "default_node_title", "scope", "status"]:
         if field_name in update_data:
             action_def_fields[field_name] = update_data[field_name]
             

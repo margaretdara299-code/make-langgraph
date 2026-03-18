@@ -14,8 +14,8 @@ def create_action(db: Session, request, user_id: str) -> dict:
 
 def list_actions(db: Session, status: str | None = None, capability: str | None = None,
                  category: str | None = None, search_query: str | None = None) -> dict:
-    items = repo.fetch_all_actions(db, status=status, capability=capability,
-                                   category=category, search_query=search_query)
+    items = repo.fetch_all_actions(db, status=status, capability_id=capability,
+                                   category_id=category, search_query=search_query)
     return {"items": items, "total": len(items)}
 
 

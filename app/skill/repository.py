@@ -73,21 +73,21 @@ def insert_skill(
     db: Session,
     skill_id: str, client_id: str,
     name: str, skill_key: str, description: str | None,
-    category: str | None, is_active: int = 1, created_by: str = "1",
+    category_id: int | None, capability_id: int | None, is_active: int = 1, created_by: str = "1",
 ) -> None:
     timestamp = generate_utc_timestamp()
     db.execute(
         text("""INSERT INTO skill
            (skill_id, client_id, name, skill_key, description,
-            category, is_active,
+            category_id, capability_id, is_active,
             created_by, created_at, updated_at)
            VALUES (:skill_id, :client_id, :name, :skill_key, :description,
-                   :category, :is_active,
+                   :category_id, :capability_id, :is_active,
                    :created_by, :created_at, :updated_at)"""),
         {
             "skill_id": skill_id, "client_id": client_id,
             "name": name, "skill_key": skill_key, "description": description,
-            "category": category, "is_active": is_active,
+            "category_id": category_id, "capability_id": capability_id, "is_active": is_active,
             "created_by": created_by, "created_at": timestamp, "updated_at": timestamp,
         },
     )
@@ -147,7 +147,8 @@ def fetch_all_skills(
             "name": skill_row["name"],
             "skill_key": skill_row["skill_key"],
             "description": skill_row["description"],
-            "category": skill_row["category"],
+            "category_id": skill_row["category_id"],
+            "capability_id": skill_row["capability_id"],
             "is_active": skill_row["is_active"],
             "tags": associated_tags,
             "latest_version_id": skill_row["latest_version_id"],
@@ -196,7 +197,8 @@ def fetch_skill_by_id(db: Session, skill_id: str) -> dict | None:
         "name": skill_row["name"],
         "skill_key": skill_row["skill_key"],
         "description": skill_row["description"],
-        "category": skill_row["category"],
+        "category_id": skill_row["category_id"],
+        "capability_id": skill_row["capability_id"],
         "is_active": skill_row["is_active"],
         "tags": associated_tags,
         "latest_version_id": skill_row["latest_version_id"],

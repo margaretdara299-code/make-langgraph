@@ -14,8 +14,10 @@ from app.logger.logging import logger
 def seed_demo_data() -> None:
     """Insert demo skills and actions if the database is empty. Uses raw_connection for batch inserts."""
     raw = engine.raw_connection()
+    cursor = raw.cursor()
     try:
-        count = raw.execute("SELECT COUNT(*) FROM skill").fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM skill")
+        count = cursor.fetchone()[0]
         if count > 0:
             logger.info(f"Database already has {count} skills — skipping seed.")
             return
@@ -23,13 +25,48 @@ def seed_demo_data() -> None:
         logger.info("Seeding demo data...")
         timestamp = generate_utc_timestamp()
 
+        # ── Categories ──────────────────────────────────────────────────────────
+        category_map = {}
+        categories = [
+            {"old_id": "cat_ai", "name": "AI", "desc": "Artificial Intelligence & LLMs"},
+            {"old_id": "cat_rules", "name": "Rules", "desc": "Business Logic & Routing"},
+            {"old_id": "cat_human", "name": "Human", "desc": "Human-in-the-loop tasks"},
+            {"old_id": "cat_tasks", "name": "Tasks", "desc": "Operational Task Management"},
+            {"old_id": "cat_pm", "name": "PM", "desc": "Project Management Integration"},
+            {"old_id": "cat_messaging", "name": "Messaging", "desc": "Communication Channels"},
+            {"old_id": "cat_workflow", "name": "Workflow", "desc": "End-to-end Process Flows"},
+        ]
+        for cat in categories:
+            cursor.execute(
+                "INSERT INTO category (name, description) VALUES (?,?)",
+                (cat["name"], cat["desc"])
+            )
+            category_map[cat["old_id"]] = cursor.lastrowid
+
+        # ── Capabilities ────────────────────────────────────────────────────────
+        capability_map = {}
+        capabilities = [
+            {"old_id": "cap_ai", "name": "AI", "desc": "LLM Inference & Processing"},
+            {"old_id": "cap_rules", "name": "RULES", "desc": "Static & Dynamic Rule Execution"},
+            {"old_id": "cap_human", "name": "HUMAN", "desc": "Manual Approval & Review"},
+            {"old_id": "cap_api", "name": "API", "desc": "External System Integrations"},
+            {"old_id": "cap_msg", "name": "MESSAGE", "desc": "Notification & Messaging"},
+            {"old_id": "cap_workflow", "name": "Workflow", "desc": "Orchestration & State Management"},
+        ]
+        for cap in capabilities:
+            cursor.execute(
+                "INSERT INTO capability (name, description) VALUES (?,?)",
+                (cap["name"], cap["desc"])
+            )
+            capability_map[cap["old_id"]] = cursor.lastrowid
+
         # ── Actions (MASTER DATA) ───────────────────────────────────────────────
         actions = [
             {
                 "action_key": "ai.classify",
                 "name": "AI Classify",
                 "description": "LLM-based classification (category, intent, next-step suggestion)",
-                "category": "AI", "capability": "AI", "icon": "brain",
+                "category_id": "cat_ai", "capability_id": "cap_ai", "icon": "brain",
                 "default_node_title": "AI Classify",
                 "inputs_schema": {"fields": [
                     {"name": "record_id", "type": "string", "required": True},
@@ -46,7 +83,7 @@ def seed_demo_data() -> None:
                 "action_key": "rules.evaluate",
                 "name": "Rules Engine",
                 "description": "Rules-based decisioning and routing",
-                "category": "Rules", "capability": "RULES", "icon": "git-branch",
+                "category_id": "cat_rules", "capability_id": "cap_rules", "icon": "git-branch",
                 "default_node_title": "Rules Engine",
                 "inputs_schema": {"fields": [{"name": "record_id", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "decision", "type": "string", "required": True}]},
@@ -57,7 +94,7 @@ def seed_demo_data() -> None:
                 "action_key": "human.review",
                 "name": "Human Review",
                 "description": "Route to human reviewer for manual decision",
-                "category": "Human", "capability": "HUMAN", "icon": "user-check",
+                "category_id": "cat_human", "capability_id": "cap_human", "icon": "user-check",
                 "default_node_title": "Human Review",
                 "inputs_schema": {"fields": [{"name": "record_id", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "decision", "type": "string", "required": True}]},
@@ -68,7 +105,7 @@ def seed_demo_data() -> None:
                 "action_key": "task.create",
                 "name": "Create Task",
                 "description": "Create an operational task in a task system",
-                "category": "Tasks", "capability": "API", "icon": "clipboard-plus",
+                "category_id": "cat_tasks", "capability_id": "cap_api", "icon": "clipboard-plus",
                 "default_node_title": "Create Task",
                 "inputs_schema": {"fields": [{"name": "record_id", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "task_id", "type": "string", "required": True}]},
@@ -79,7 +116,7 @@ def seed_demo_data() -> None:
                 "action_key": "pm.update",
                 "name": "Update PM",
                 "description": "Update a project-management item",
-                "category": "PM", "capability": "API", "icon": "list-check",
+                "category_id": "cat_pm", "capability_id": "cap_api", "icon": "list-check",
                 "default_node_title": "Update PM",
                 "inputs_schema": {"fields": [{"name": "project_key", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "ok", "type": "boolean", "required": True}]},
@@ -90,7 +127,7 @@ def seed_demo_data() -> None:
                 "action_key": "message.send",
                 "name": "Send Message",
                 "description": "Send a message (email/sms/webhook)",
-                "category": "Messaging", "capability": "MESSAGE", "icon": "send",
+                "category_id": "cat_messaging", "capability_id": "cap_msg", "icon": "send",
                 "default_node_title": "Send Message",
                 "inputs_schema": {"fields": [{"name": "to", "type": "string", "required": True}]},
                 "outputs_schema": {"fields": [{"name": "message_id", "type": "string", "required": True}]},
@@ -102,13 +139,15 @@ def seed_demo_data() -> None:
         for action in actions:
             ad_id = generate_unique_id("ad_")
             av_id = generate_unique_id("av_")
-            raw.execute(
-                "INSERT INTO action_definition (action_definition_id, action_key, name, description, category, capability, icon, default_node_title, scope, status, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            cat_id = category_map.get(action["category_id"])
+            cap_id = capability_map.get(action["capability_id"])
+            cursor.execute(
+                "INSERT INTO action_definition (action_definition_id, action_key, name, description, category_id, capability_id, icon, default_node_title, scope, client_id, status, is_active, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (ad_id, action["action_key"], action["name"], action["description"],
-                 action["category"], action["capability"], action["icon"], action["default_node_title"],
-                 "global", "published", "system", timestamp, timestamp),
+                 cat_id, cap_id, action["icon"], action["default_node_title"],
+                 "global", "1", "published", 1, "system", timestamp, timestamp),
             )
-            raw.execute(
+            cursor.execute(
                 "INSERT INTO action_version (action_version_id, action_definition_id, inputs_schema_json, execution_json, outputs_schema_json, policy_json) VALUES (?,?,?,?,?,?)",
                 (av_id, ad_id,
                  serialise_json(action["inputs_schema"]), serialise_json(action["execution"]),
@@ -119,10 +158,11 @@ def seed_demo_data() -> None:
         demo_skill_id = generate_unique_id("skill_")
         demo_version_id = generate_unique_id("sv_")
 
-        raw.execute(
-            "INSERT INTO skill (skill_id, client_id, name, skill_key, description, category, is_active, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        cursor.execute(
+            "INSERT INTO skill (skill_id, client_id, name, skill_key, description, category_id, capability_id, is_active, created_by, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
             (demo_skill_id, "c_demo", "Ops Workflow Demo", "W01",
-             "Demo: AI → Rules → Human → Task → PM → Message", "Workflow",
+             "Demo: AI → Rules → Human → Task → PM → Message", 
+             category_map.get("cat_workflow"), capability_map.get("cap_workflow"),
              1, "1", timestamp, timestamp),
         )
 
@@ -148,7 +188,7 @@ def seed_demo_data() -> None:
 
         nodes_json = serialise_json(nodes_data)
 
-        raw.execute(
+        cursor.execute(
             "INSERT INTO skill_version (skill_version_id, skill_id, environment, version, status, is_active, created_by, created_at, nodes) VALUES (?,?,?,?,?,?,?,?,?)",
             (demo_version_id, demo_skill_id, "dev", "1.0.1", "published", 1, "1", timestamp, nodes_json),
         )
@@ -166,7 +206,7 @@ def seed_demo_data() -> None:
 
         for from_key, to_key in edges:
             edge_id = generate_unique_id("edge_")
-            raw.execute(
+            cursor.execute(
                 "INSERT INTO skill_route (skill_route_id, skill_version_id, from_node_key, to_node_key, condition_json, is_default, created_at) VALUES (?,?,?,?,?,?,?)",
                 (edge_id, demo_version_id, from_key, to_key, serialise_json({}), 1, timestamp),
             )
@@ -174,13 +214,13 @@ def seed_demo_data() -> None:
         # ── Tags (in tag + skill_tag) ────────────────────────────────────────────
         tag_demo_id = generate_unique_id("tag_")
         tag_auto_id = generate_unique_id("tag_")
-        raw.execute("INSERT INTO tag (tag_id, name) VALUES (?,?)", (tag_demo_id, "workflow-demo"))
-        raw.execute("INSERT INTO tag (tag_id, name) VALUES (?,?)", (tag_auto_id, "automation"))
-        raw.execute("INSERT OR IGNORE INTO skill_tag (skill_id, tag_id) VALUES (?,?)", (demo_skill_id, tag_demo_id))
-        raw.execute("INSERT OR IGNORE INTO skill_tag (skill_id, tag_id) VALUES (?,?)", (demo_skill_id, tag_auto_id))
+        cursor.execute("INSERT INTO tag (tag_id, name) VALUES (?,?)", (tag_demo_id, "workflow-demo"))
+        cursor.execute("INSERT INTO tag (tag_id, name) VALUES (?,?)", (tag_auto_id, "automation"))
+        cursor.execute("INSERT OR IGNORE INTO skill_tag (skill_id, tag_id) VALUES (?,?)", (demo_skill_id, tag_demo_id))
+        cursor.execute("INSERT OR IGNORE INTO skill_tag (skill_id, tag_id) VALUES (?,?)", (demo_skill_id, tag_auto_id))
 
         raw.commit()
         logger.info("Demo data seeded successfully (6 actions, 1 skill, 7 edges, 2 tags).")
 
     finally:
-        raw.close()
+        raw.close()

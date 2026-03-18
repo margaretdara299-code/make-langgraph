@@ -43,7 +43,7 @@ def create_skill(db: Session, request, user_id: str = "1") -> Dict:
     skill_repository.insert_skill(
         db, skill_id=skill_id, client_id=request.client_id,
         name=request.name, skill_key=skill_key, description=request.description,
-        category=request.category, created_by=user_id,
+        category_id=request.category_id, capability_id=request.capability_id, created_by=user_id,
     )
     skill_repository.insert_skill_version(
         db, skill_version_id=skill_version_id, skill_id=skill_id,

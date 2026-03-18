@@ -14,8 +14,8 @@ class CreateActionDefinitionRequest(BaseModel):
     name: str
     action_key: str
     description: str | None = Field(default=None, max_length=400)
-    category: str | None = None
-    capability: str | None = None
+    category_id: int | None = None
+    capability_id: int | None = None
     icon: str | None = None
     default_node_title: str | None = None
     scope: str | None = "global"
@@ -39,8 +39,8 @@ class UpdateActionDefinitionRequest(BaseModel):
     name: str | None = None
     action_key: str | None = None
     description: str | None = Field(default=None, max_length=400)
-    category: str | None = None
-    capability: str | None = None
+    category_id: int | None = None
+    capability_id: int | None = None
     icon: str | None = None
     default_node_title: str | None = None
     scope: str | None = None

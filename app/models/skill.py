@@ -34,7 +34,8 @@ class CreateSkillRequest(BaseModel):
     name: str
     skill_key: str | None = None
     description: str | None = Field(default=None, max_length=240)
-    category: str | None = None
+    category_id: int | None = None
+    capability_id: int | None = None
     tags: List[str] = Field(default_factory=list)
 
     start_from: SkillStartFrom = Field(default_factory=SkillStartFrom)
@@ -44,7 +45,8 @@ class UpdateSkillRequest(BaseModel):
     """Payload to update an existing skill's metadata."""
     name: str | None = None
     description: str | None = Field(default=None, max_length=240)
-    category: str | None = None
+    category_id: int | None = None
+    capability_id: int | None = None
     is_active: bool | None = None
     tags: List[str] | None = None
 
