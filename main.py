@@ -14,7 +14,6 @@ from app.logger.logging import logger
 
 # Feature routers
 from app.skill.controller import router as skill_router
-from app.skill_graph.controller import router as graph_router
 from app.action.controller import router as action_router
 
 
@@ -86,7 +85,6 @@ def health_check():
 # Register Routers
 # =========================================================================
 application.include_router(skill_router)
-application.include_router(graph_router)
 application.include_router(action_router)
 
 

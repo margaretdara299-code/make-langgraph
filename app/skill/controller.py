@@ -1,17 +1,22 @@
 """
-Skill controller — API routes for the Skills Library.
+Skill controller — API routes for Skills Library and Visual Skill Designer.
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db_session
 from app.common.response import build_success_response, raise_internal_server_error, raise_not_found
-from app.models.skill import CreateSkillRequest, SaveSkillGraphRequest, UpdateNodeConfigRequest
+from app.models.skill import (CreateSkillRequest, UpdateSkillRequest, 
+                               SaveSkillGraphRequest, UpdateNodeConfigRequest,
+                               PublishSkillRequest, RunSkillRequest)
 from app.skill import service as skill_service
-from app.skill import repository as skill_repository
 from app.logger.logging import logger
 
 router = APIRouter(prefix="/api", tags=["Skills"])
 
+
+# =========================================================================
+# Skills Library (Metadata CRUD)
+# =========================================================================
 
 @router.get("/skills")
 def list_all_skills(
@@ -47,81 +52,201 @@ def create_skill(
         raise_internal_server_error()
 
 
-@router.get("/skills/suggest-key")
-def suggest_skill_key(
-    db: Session = Depends(get_db_session),
-    client_id: str = Query(...),
-    name: str = Query(...),
-):
-    suggested = skill_repository.suggest_skill_key(db, client_id, name)
-    return build_success_response("Key suggested", {"suggested_skill_key": suggested})
-
-
-# =========================================================================
-# Graph Endpoints (per skill version)
-# =========================================================================
-
-@router.get("/skills/versions/{skill_version_id}/graph")
-def get_skill_graph(
-    skill_version_id: str,
+@router.get("/skills/{skill_id}")
+def get_skill(
+    skill_id: str,
     db: Session = Depends(get_db_session),
 ):
-    """Load the current workflow graph (nodes + connections) for a skill version."""
-    logger.info(f"Fetching graph for version: {skill_version_id}")
+    """Fetch a single skill's full metadata."""
+    logger.info(f"Fetching skill: {skill_id}")
     try:
-        result = skill_service.get_skill_graph(db, skill_version_id)
+        result = skill_service.get_skill(db, skill_id)
         if not result:
-            raise_not_found("Skill version not found")
-        return build_success_response("Graph fetched", result)
+            raise_not_found("Skill not found")
+        return build_success_response("Skill fetched", result)
     except HTTPException:
         raise
     except Exception:
-        logger.exception("Error fetching skill graph")
+        logger.exception(f"Error fetching skill {skill_id}")
+        raise_internal_server_error()
+
+
+@router.patch("/skills/{skill_id}")
+def update_skill(
+    skill_id: str,
+    request: UpdateSkillRequest,
+    db: Session = Depends(get_db_session),
+):
+    """Update skill metadata."""
+    logger.info(f"Updating skill: {skill_id}")
+    try:
+        success = skill_service.update_skill(db, skill_id, request)
+        if not success:
+            raise_not_found("Skill not found")
+        return build_success_response("Skill updated", {"id": skill_id})
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception(f"Error updating skill {skill_id}")
+        raise_internal_server_error()
+
+
+@router.delete("/skills/{skill_id}")
+def delete_skill(
+    skill_id: str,
+    db: Session = Depends(get_db_session),
+):
+    """Delete a skill and all its versions."""
+    logger.info(f"Deleting skill: {skill_id}")
+    try:
+        success = skill_service.delete_skill(db, skill_id)
+        if not success:
+            raise_not_found("Skill not found")
+        return build_success_response("Skill deleted", {"id": skill_id})
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception(f"Error deleting skill {skill_id}")
+        raise_internal_server_error()
+
+
+# =========================================================================
+# Visual Designer (Graph Lifecycle)
+# =========================================================================
+
+@router.get("/skills/versions/{skill_version_id}/graph")
+def load_skill_graph(
+    skill_version_id: str, 
+    db: Session = Depends(get_db_session)
+):
+    """Load the current workflow graph (nodes + connections) for a skill version."""
+    logger.info(f"Loading graph for version: {skill_version_id}")
+    try:
+        result = skill_service.get_skill_graph(db, skill_version_id)
+        return build_success_response("Graph loaded", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error loading graph")
+        raise_internal_server_error()
+
+
+@router.get("/skills/versions/{skill_version_id}")
+def get_skill_version_detail(
+    skill_version_id: str, 
+    db: Session = Depends(get_db_session)
+):
+    """Alias to load graph and version metadata."""
+    try:
+        result = skill_service.get_skill_graph(db, skill_version_id)
+        return build_success_response("Skill version loaded", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error loading skill version")
         raise_internal_server_error()
 
 
 @router.put("/skills/versions/{skill_version_id}/graph")
 def save_skill_graph(
-    skill_version_id: str,
-    request: SaveSkillGraphRequest,
-    db: Session = Depends(get_db_session),
+    skill_version_id: str, 
+    request: SaveSkillGraphRequest, 
+    db: Session = Depends(get_db_session)
 ):
-    """Bulk-save the entire workflow graph (nodes + connections) for a skill version."""
+    """Bulk-save nodes and connections for a skill version."""
     logger.info(f"Saving graph for version: {skill_version_id}")
     try:
-        # Verify version exists
-        version = skill_repository.fetch_skill_version_by_id(db, skill_version_id)
-        if not version:
-            raise_not_found("Skill version not found")
-
-        nodes = [n.model_dump() for n in request.nodes]
-        connections = {k: v.model_dump() for k, v in request.connections.items()}
-
-        result = skill_service.save_graph(db, skill_version_id, nodes, connections)
+        result = skill_service.save_graph(db, skill_version_id, request)
         return build_success_response("Graph saved", result)
     except HTTPException:
         raise
     except Exception:
-        logger.exception("Error saving skill graph")
+        logger.exception("Error saving graph")
         raise_internal_server_error()
 
 
-@router.patch("/skills/versions/{skill_version_id}/nodes/{node_id}")
-def update_node(
-    skill_version_id: str,
-    node_id: str,
-    request: UpdateNodeConfigRequest,
-    db: Session = Depends(get_db_session),
+@router.patch("/skills/versions/{skill_version_id}/nodes/{node_id}/data")
+def update_node_data(
+    skill_version_id: str, 
+    node_id: str, 
+    request: UpdateNodeConfigRequest, 
+    db: Session = Depends(get_db_session)
 ):
-    """Update a single node's configuration data (from the right-panel form)."""
-    logger.info(f"Updating node '{node_id}' in version: {skill_version_id}")
+    """Update a single node's configuration data."""
     try:
-        result = skill_service.update_node(db, skill_version_id, node_id, request.data)
-        if not result:
-            raise_not_found("Skill version or node not found")
-        return build_success_response("Node updated", result)
+        skill_service.update_node(db, skill_version_id, node_id, request.data)
+        return build_success_response("Node updated")
     except HTTPException:
         raise
     except Exception:
-        logger.exception("Error updating node")
+        logger.exception("Error updating node data")
+        raise_internal_server_error()
+
+
+@router.post("/skills/versions/{skill_version_id}/validate")
+def validate_skill_version(
+    skill_version_id: str, 
+    db: Session = Depends(get_db_session)
+):
+    """Run server-side validation on the skill graph."""
+    try:
+        result = skill_service.validate_graph(db, skill_version_id)
+        return build_success_response("Validation complete", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error validating graph")
+        raise_internal_server_error()
+
+
+@router.post("/skills/versions/{skill_version_id}/compile")
+def compile_skill_version(
+    skill_version_id: str, 
+    db: Session = Depends(get_db_session)
+):
+    """Compile the graph into a runnable JSON format (LangGraph style)."""
+    logger.info(f"Compiling skill version: {skill_version_id}")
+    try:
+        result = skill_service.compile_graph(db, skill_version_id)
+        return build_success_response("Compiled successfully", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error compiling graph")
+        raise_internal_server_error()
+
+
+@router.post("/skills/versions/{skill_version_id}/publish")
+def publish_skill_version(
+    skill_version_id: str, 
+    request: PublishSkillRequest = None, 
+    db: Session = Depends(get_db_session)
+):
+    """Mark a compiled draft as published and active for the environment."""
+    logger.info(f"Publishing skill version: {skill_version_id}")
+    try:
+        notes = request.notes if request else None
+        result = skill_service.publish_skill_version(db, skill_version_id, notes)
+        return build_success_response("Published successfully", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error publishing version")
+        raise_internal_server_error()
+
+
+@router.post("/skills/versions/{skill_version_id}/run")
+def run_skill_version(
+    skill_version_id: str, 
+    request: RunSkillRequest, 
+    db: Session = Depends(get_db_session)
+):
+    """Execute the compiled skill logic locally for testing."""
+    try:
+        result = skill_service.run_skill(db, skill_version_id, request)
+        return build_success_response("Run complete", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error running skill")
         raise_internal_server_error()

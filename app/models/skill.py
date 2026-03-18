@@ -40,6 +40,15 @@ class CreateSkillRequest(BaseModel):
     start_from: SkillStartFrom = Field(default_factory=SkillStartFrom)
 
 
+class UpdateSkillRequest(BaseModel):
+    """Payload to update an existing skill's metadata."""
+    name: str | None = None
+    description: str | None = Field(default=None, max_length=240)
+    category: str | None = None
+    is_active: bool | None = None
+    tags: List[str] | None = None
+
+
 class CreateSkillResponse(BaseModel):
     """Response after successfully creating a Skill."""
     skill: Dict[str, Any]

@@ -1,28 +1,18 @@
 """
-Skill repository — database queries for skill metadata, tags, and listing.
+Skill repository — database queries for skill metadata, tags, listing, and graph lifecycle.
 """
-import uuid
 from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.common.utils import generate_unique_id, generate_utc_timestamp, serialise_json
+from app.common.utils import generate_unique_id, generate_utc_timestamp, serialise_json, deserialise_json
+from app.models.skill import SkillGraphNode, SkillGraphConnection, SkillGraphResponse
+from app.common.errors import skill_version_not_found, skill_version_not_draft
+from app.common.response import raise_bad_request, raise_not_found
 
 
-def suggest_skill_key(db: Session, client_id: str, skill_name: str) -> str:
-    """Auto-generate a unique skill key like D01, D02, etc."""
-    first_letter = (skill_name.strip()[:1] or "S").upper()
-    existing_rows = db.execute(
-        text("SELECT skill_key FROM skill WHERE client_id = :client_id AND skill_key LIKE :pattern"),
-        {"client_id": client_id, "pattern": f"{first_letter}%"},
-    ).mappings().all()
-    existing_keys = {row["skill_key"] for row in existing_rows}
-
-    for sequence_number in range(1, 1000):
-        candidate_key = f"{first_letter}{sequence_number:02d}"
-        if candidate_key not in existing_keys:
-            return candidate_key
-    return f"{first_letter}{uuid.uuid4().hex[:6].upper()}"
-
+# =========================================================================
+# Metadata & Tags Helpers
+# =========================================================================
 
 def does_skill_name_exist(db: Session, client_id: str, name: str) -> bool:
     row = db.execute(
@@ -67,6 +57,18 @@ def attach_tags_to_skill(db: Session, skill_id: str, tag_ids: List[str]) -> None
         )
 
 
+def remove_all_tags_from_skill(db: Session, skill_id: str) -> None:
+    """Clear all tags for a skill."""
+    db.execute(
+        text("DELETE FROM skill_tag WHERE skill_id = :skill_id"),
+        {"skill_id": skill_id}
+    )
+
+
+# =========================================================================
+# Skill CRUD
+# =========================================================================
+
 def insert_skill(
     db: Session,
     skill_id: str, client_id: str,
@@ -87,23 +89,6 @@ def insert_skill(
             "name": name, "skill_key": skill_key, "description": description,
             "category": category, "is_active": is_active,
             "created_by": created_by, "created_at": timestamp, "updated_at": timestamp,
-        },
-    )
-
-
-def insert_skill_version(
-    db: Session,
-    skill_version_id: str, skill_id: str,
-    environment: str, created_by: str = "1", version: str = "1.0.1",
-) -> None:
-    db.execute(
-        text("""INSERT INTO skill_version
-           (skill_version_id, skill_id, environment, version, status, is_active, created_by, created_at)
-           VALUES (:skill_version_id, :skill_id, :environment, :version, 'published', 1, :created_by, :created_at)"""),
-        {
-            "skill_version_id": skill_version_id, "skill_id": skill_id,
-            "environment": environment, "version": version,
-            "created_by": created_by, "created_at": generate_utc_timestamp(),
         },
     )
 
@@ -174,9 +159,111 @@ def fetch_all_skills(
     return result_items
 
 
+def fetch_skill_by_id(db: Session, skill_id: str) -> dict | None:
+    """Fetch a single skill with its latest active version and tags."""
+    skill_row = db.execute(
+        text("""
+        SELECT skill.*,
+               skill_version.skill_version_id AS latest_version_id,
+               skill_version.version,
+               skill_version.status AS version_status,
+               skill_version.environment
+        FROM skill
+        LEFT JOIN skill_version
+          ON skill_version.skill_id = skill.skill_id AND skill_version.is_active = 1
+        WHERE skill.skill_id = :skill_id
+        LIMIT 1
+        """),
+        {"skill_id": skill_id},
+    ).mappings().first()
+
+    if not skill_row:
+        return None
+
+    associated_tags = [
+        tag_row["name"]
+        for tag_row in db.execute(
+            text("""SELECT tag.name FROM tag
+               JOIN skill_tag ON skill_tag.tag_id = tag.tag_id
+               WHERE skill_tag.skill_id=:skill_id"""),
+            {"skill_id": skill_id},
+        ).mappings().all()
+    ]
+
+    return {
+        "id": skill_row["skill_id"],
+        "client_id": skill_row["client_id"],
+        "name": skill_row["name"],
+        "skill_key": skill_row["skill_key"],
+        "description": skill_row["description"],
+        "category": skill_row["category"],
+        "is_active": skill_row["is_active"],
+        "tags": associated_tags,
+        "latest_version_id": skill_row["latest_version_id"],
+        "version": skill_row["version"],
+        "status": skill_row["version_status"],
+        "environment": skill_row["environment"],
+        "created_at": skill_row["created_at"],
+        "updated_at": skill_row["updated_at"],
+    }
+
+
+def update_skill(db: Session, skill_id: str, update_data: dict) -> bool:
+    """Update skill metadata in the database."""
+    if not update_data:
+        return False
+
+    set_clauses = []
+    params = {"skill_id": skill_id, "ts": generate_utc_timestamp()}
+
+    for key, value in update_data.items():
+        if key == "tags":
+            continue
+        set_clauses.append(f"{key} = :{key}")
+        params[key] = 1 if key == "is_active" and isinstance(value, bool) else value
+
+    if not set_clauses and "tags" not in update_data:
+        return False
+
+    if set_clauses:
+        set_clauses.append("updated_at = :ts")
+        query = f"UPDATE skill SET {', '.join(set_clauses)} WHERE skill_id = :skill_id"
+        db.execute(text(query), params)
+
+    return True
+
+
+def delete_skill(db: Session, skill_id: str) -> bool:
+    """Delete a skill and all associated data (versions, routes)."""
+    # Foreign keys ON DELETE CASCADE handle skill_version and skill_route
+    result = db.execute(
+        text("DELETE FROM skill WHERE skill_id = :skill_id"),
+        {"skill_id": skill_id}
+    )
+    return result.rowcount > 0
+
+
 # =========================================================================
-# Skill Version Lookup
+# Skill Version Lifecycle
 # =========================================================================
+
+def insert_skill_version(
+    db: Session,
+    skill_version_id: str, skill_id: str,
+    environment: str, created_by: str = "1", version: str = "1.0.1",
+) -> None:
+    db.execute(
+        text("""INSERT INTO skill_version
+           (skill_version_id, skill_id, environment, version, status, is_active, created_by, created_at)
+           VALUES (:skill_version_id, :skill_id, :environment, :version, 'draft', 1, :created_by, :created_at)"""),
+        {
+            "skill_version_id": skill_version_id, "skill_id": skill_id,
+            "environment": environment, "version": version,
+            "created_by": created_by, "created_at": generate_utc_timestamp(),
+        },
+    )
+
+
 def fetch_skill_version_by_id(db: Session, skill_version_id: str) -> dict | None:
     """Return a single skill_version row."""
     row = db.execute(
@@ -186,121 +273,232 @@ def fetch_skill_version_by_id(db: Session, skill_version_id: str) -> dict | None
     return dict(row) if row else None
 
 
-# =========================================================================
-# Graph — GET (load nodes + connections for a skill version)
-# =========================================================================
-def fetch_skill_graph(db: Session, skill_version_id: str) -> dict | None:
-    """Return the graph (nodes + connections) for a skill version."""
-    import json
-    row = db.execute(
-        text("""
-            SELECT sv.skill_version_id, sv.skill_id, sv.environment, sv.version, sv.status,
-                   sv.nodes, sv.connections
-            FROM skill_version sv
-            WHERE sv.skill_version_id = :id
-        """),
-        {"id": skill_version_id}
-    ).mappings().first()
-    if not row:
-        return None
-
-    try:
-        nodes = json.loads(row["nodes"] or "[]")
-    except Exception:
-        nodes = []
-    try:
-        connections = json.loads(row["connections"] or "{}")
-    except Exception:
-        connections = {}
-
-    return {
-        "skill_version_id": row["skill_version_id"],
-        "skill_id": row["skill_id"],
-        "environment": row["environment"],
-        "version": row["version"],
-        "status": row["status"],
-        "nodes": nodes,
-        "connections": connections,
-    }
-
-
-# =========================================================================
-# Graph — PUT (bulk save nodes + connections)
-# =========================================================================
-def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connections: dict) -> dict:
-    """Bulk-save the entire graph for a skill version."""
-    import json
+def publish_skill_version(db: Session, skill_version_id: str, skill_id: str,
+                           environment: str, publish_notes: str | None) -> str:
     timestamp = generate_utc_timestamp()
-
-    nodes_json = json.dumps(nodes, separators=(",", ":"))
-    connections_json = json.dumps(connections, separators=(",", ":"))
-
     db.execute(
-        text("""
-            UPDATE skill_version
-            SET nodes = :nodes, connections = :connections
-            WHERE skill_version_id = :id
-        """),
-        {"id": skill_version_id, "nodes": nodes_json, "connections": connections_json}
+        text("UPDATE skill_version SET is_active=0 WHERE skill_id=:skill_id AND environment=:env "
+             "AND status='published' AND is_active=1"),
+        {"skill_id": skill_id, "env": environment},
+    )
+    db.execute(
+        text("UPDATE skill_version SET status='published', is_active=1, published_at=:ts, "
+             "notes=:notes WHERE skill_version_id=:sv_id"),
+        {"ts": timestamp, "notes": publish_notes, "sv_id": skill_version_id},
+    )
+    return timestamp
+
+
+# =========================================================================
+# Graph Lifecycle (Hybrid Model: Nodes in JSON, Edges in skill_route)
+# =========================================================================
+
+def create_blank_graph(db: Session, skill_version_id: str) -> None:
+    """Write a minimal starter graph: trigger → end node, plus one edge in skill_route."""
+    nodes_json = serialise_json([
+        {"id": "start", "type": "trigger.queue", "position": {"x": 120, "y": 160},
+         "data": {"label": "Start", "description": "Entry trigger"}},
+        {"id": "end", "type": "end.success", "position": {"x": 520, "y": 160},
+         "data": {"label": "End", "description": "Terminal node"}},
+    ])
+    db.execute(
+        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
+        {"nodes": nodes_json, "sv_id": skill_version_id},
+    )
+    edge_id = generate_unique_id("edge_")
+    db.execute(
+        text("""INSERT INTO skill_route
+           (skill_route_id, skill_version_id, from_node_key, to_node_key,
+            condition_json, is_default)
+           VALUES (:id, :sv_id, :from_key, :to_key, :cond, :default)"""),
+        {"id": edge_id, "sv_id": skill_version_id,
+         "from_key": "start", "to_key": "end",
+         "cond": serialise_json({}), "default": 1},
     )
 
-    # Also bump the parent skill's updated_at
+
+def clone_graph(db: Session, new_skill_version_id: str, source_skill_version_id: str) -> None:
+    """Copy nodes JSON + skill_route rows from source to new version."""
+    source = db.execute(
+        text("SELECT nodes FROM skill_version WHERE skill_version_id=:sv_id"),
+        {"sv_id": source_skill_version_id},
+    ).mappings().first()
+    if not source:
+        return
     db.execute(
-        text("""
-            UPDATE skill SET updated_at = :ts
-            WHERE skill_id = (SELECT skill_id FROM skill_version WHERE skill_version_id = :id)
-        """),
-        {"id": skill_version_id, "ts": timestamp}
+        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
+        {"nodes": source["nodes"], "sv_id": new_skill_version_id},
+    )
+    source_routes = db.execute(
+        text("SELECT from_node_key, to_node_key, from_handle, to_handle, condition_json, is_default "
+             "FROM skill_route WHERE skill_version_id=:sv_id"),
+        {"sv_id": source_skill_version_id},
+    ).mappings().all()
+    for r in source_routes:
+        db.execute(
+            text("""INSERT INTO skill_route
+               (skill_route_id, skill_version_id, from_node_key, to_node_key,
+                from_handle, to_handle, condition_json, is_default)
+               VALUES (:id, :sv_id, :from_key, :to_key, :from_h, :to_h, :cond, :default)"""),
+            {"id": generate_unique_id("edge_"), "sv_id": new_skill_version_id,
+             "from_key": r["from_node_key"], "to_key": r["to_node_key"],
+             "from_h": r["from_handle"], "to_h": r["to_handle"],
+             "cond": r["condition_json"], "default": r["is_default"]},
+        )
+
+
+def fetch_skill_graph(db: Session, skill_version_id: str) -> SkillGraphResponse:
+    """Load the graph (nodes + connections) for a skill version."""
+    version_row = db.execute(
+        text("SELECT skill_version.*, skill.skill_id AS _skill_id "
+             "FROM skill_version JOIN skill ON skill.skill_id = skill_version.skill_id "
+             "WHERE skill_version.skill_version_id=:sv_id"),
+        {"sv_id": skill_version_id},
+    ).mappings().first()
+    if not version_row:
+        skill_version_not_found()
+
+    # Parse nodes from JSON
+    nodes_data = deserialise_json(version_row["nodes"] or "[]", [])
+    nodes = [SkillGraphNode(**n) for n in nodes_data]
+
+    # Read edges from skill_route
+    route_rows = db.execute(
+        text("SELECT skill_route_id, from_node_key, to_node_key, from_handle, to_handle, "
+             "condition_json, is_default FROM skill_route "
+             "WHERE skill_version_id=:sv_id ORDER BY created_at ASC"),
+        {"sv_id": skill_version_id},
+    ).mappings().all()
+
+    connections: dict = {}
+    for r in route_rows:
+        edge_id = r["skill_route_id"]
+        connections[edge_id] = SkillGraphConnection(
+            id=edge_id,
+            source=r["from_node_key"],
+            target=r["to_node_key"],
+            sourceHandle=r["from_handle"],
+            targetHandle=r["to_handle"],
+            condition=deserialise_json(r["condition_json"], {}),
+            is_default=bool(r["is_default"]),
+        )
+
+    return SkillGraphResponse(
+        skill_version_id=version_row["skill_version_id"],
+        skill_id=version_row["_skill_id"],
+        environment=version_row["environment"],
+        version=version_row["version"],
+        status=version_row["status"],
+        nodes=nodes,
+        connections=connections,
     )
 
-    return {
-        "skill_version_id": skill_version_id,
-        "node_count": len(nodes),
-        "connection_count": len(connections),
-        "saved_at": timestamp,
+
+def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connections: dict) -> None:
+    """Persist the full canvas: nodes into skill_version.nodes, edges into skill_route."""
+    version_row = db.execute(
+        text("SELECT status FROM skill_version WHERE skill_version_id=:sv_id"),
+        {"sv_id": skill_version_id},
+    ).mappings().first()
+    if not version_row:
+        skill_version_not_found()
+    if version_row["status"] != "draft":
+        skill_version_not_draft()
+
+    # 1. Save nodes as JSON — convert Pydantic models to plain dicts if needed
+    nodes_serialisable = [
+        n.model_dump() if hasattr(n, "model_dump") else n
+        for n in nodes
+    ]
+    nodes_json = serialise_json(nodes_serialisable)
+    db.execute(
+        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
+        {"nodes": nodes_json, "sv_id": skill_version_id},
+    )
+
+    # 2. Sync edges into skill_route (upsert + delete stale)
+    incoming_edge_ids = set(connections.keys())
+    existing_edge_ids = {
+        row["skill_route_id"] for row in db.execute(
+            text("SELECT skill_route_id FROM skill_route WHERE skill_version_id=:sv_id"),
+            {"sv_id": skill_version_id},
+        ).mappings().all()
     }
 
+    stale_ids = existing_edge_ids - incoming_edge_ids
+    for stale_id in stale_ids:
+        db.execute(
+            text("DELETE FROM skill_route WHERE skill_route_id=:id"),
+            {"id": stale_id},
+        )
 
-# =========================================================================
-# Single Node — PATCH (update one node's data from the right panel)
-# =========================================================================
-def update_single_node(db: Session, skill_version_id: str, node_id: str, data: dict) -> dict:
+    for edge_id, conn in connections.items():
+        # Handle dict or Pydantic if passed
+        source = conn["source"] if isinstance(conn, dict) else conn.source
+        target = conn["target"] if isinstance(conn, dict) else conn.target
+        source_h = conn.get("sourceHandle") if isinstance(conn, dict) else conn.sourceHandle
+        target_h = conn.get("targetHandle") if isinstance(conn, dict) else conn.targetHandle
+        cond = conn.get("condition") if isinstance(conn, dict) else conn.condition
+        comp_default = conn.get("is_default") if isinstance(conn, dict) else conn.is_default
+
+        db.execute(
+            text("""INSERT INTO skill_route
+               (skill_route_id, skill_version_id, from_node_key, to_node_key,
+                from_handle, to_handle, condition_json, is_default)
+               VALUES (:id, :sv_id, :from_key, :to_key, :from_h, :to_h, :cond, :default)
+               ON CONFLICT(skill_route_id) DO UPDATE SET
+                 from_node_key=excluded.from_node_key, to_node_key=excluded.to_node_key,
+                 from_handle=excluded.from_handle, to_handle=excluded.to_handle,
+                 condition_json=excluded.condition_json, is_default=excluded.is_default"""),
+            {"id": edge_id, "sv_id": skill_version_id,
+             "from_key": source, "to_key": target,
+             "from_h": source_h, "to_h": target_h,
+             "cond": serialise_json(cond or {}),
+             "default": 1 if comp_default else 0},
+        )
+
+    # 3. Bump updated_at
+    db.execute(
+        text("""UPDATE skill SET updated_at = :ts
+                WHERE skill_id = (SELECT skill_id FROM skill_version WHERE skill_version_id = :sv_id)"""),
+        {"sv_id": skill_version_id, "ts": generate_utc_timestamp()}
+    )
+
+
+def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dict) -> None:
     """Update a single node's `data` object inside the nodes JSON array."""
-    import json
     row = db.execute(
-        text("SELECT nodes FROM skill_version WHERE skill_version_id = :id"),
-        {"id": skill_version_id}
+        text("SELECT nodes FROM skill_version WHERE skill_version_id=:sv_id"),
+        {"sv_id": skill_version_id},
     ).mappings().first()
     if not row:
-        return None
+        skill_version_not_found()
 
-    try:
-        nodes = json.loads(row["nodes"] or "[]")
-    except Exception:
-        nodes = []
-
-    node_found = False
-    for node in nodes:
+    items = deserialise_json(row["nodes"], [])
+    found = False
+    for node in items:
         if node.get("id") == node_id:
             node["data"] = data
-            node_found = True
+            found = True
             break
-
-    if not node_found:
-        return None
+    if not found:
+        raise_not_found(f"Node '{node_id}' not found in graph")
 
     db.execute(
-        text("UPDATE skill_version SET nodes = :nodes WHERE skill_version_id = :id"),
-        {"id": skill_version_id, "nodes": json.dumps(nodes, separators=(",", ":"))}
+        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
+        {"nodes": serialise_json(items), "sv_id": skill_version_id},
     )
 
-    # Bump the parent skill's updated_at
     db.execute(
-        text("""
-            UPDATE skill SET updated_at = :ts
-            WHERE skill_id = (SELECT skill_id FROM skill_version WHERE skill_version_id = :id)
-        """),
-        {"id": skill_version_id, "ts": generate_utc_timestamp()}
+        text("""UPDATE skill SET updated_at = :ts
+                WHERE skill_id = (SELECT skill_id FROM skill_version WHERE skill_version_id = :sv_id)"""),
+        {"sv_id": skill_version_id, "ts": generate_utc_timestamp()}
     )
 
-    return {"skill_version_id": skill_version_id, "node_id": node_id, "updated": True}
+
+def save_compiled_output(db: Session, skill_version_id: str, compiled_json_text: str, compile_hash: str) -> None:
+    db.execute(
+        text("UPDATE skill_version SET compiled_skill_json=:json, compile_hash=:hash "
+             "WHERE skill_version_id=:sv_id"),
+        {"json": compiled_json_text, "hash": compile_hash, "sv_id": skill_version_id},
+    )
