@@ -2,6 +2,7 @@
 Skill service — business logic for the Skills Library and Visual Skill Designer.
 """
 from typing import Any, Dict, List, Tuple
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.common.errors import (skill_name_exists, skill_key_exists,
                                skill_version_not_found, skill_version_not_draft,
@@ -10,7 +11,7 @@ from app.common.utils import (generate_unique_id, compute_sha256_hash,
                               deserialise_json, serialise_json)
 from app.skill import repository as skill_repository
 from app.models.skill import (RunSkillResponse, SaveSkillGraphRequest,
-                               SkillGraphConnection, SkillGraphResponse)
+                               SkillGraphConnection, SkillGraphResponse, UpdateSkillVersionStatusRequest)
 from app.logger.logging import logger
 
 
@@ -234,20 +235,38 @@ def compile_graph(db: Session, skill_version_id: str) -> dict:
 # Publish
 # =========================================================================
 
-def publish_skill_version(db: Session, skill_version_id: str, publish_notes: str = None) -> dict:
+def update_skill_version_status(db: Session, skill_version_id: str, request: UpdateSkillVersionStatusRequest) -> dict:
+    """Unified status management for skill versions (publish/unpublish)."""
     version_row = skill_repository.fetch_skill_version_by_id(db, skill_version_id)
     if not version_row:
         skill_version_not_found()
-    if version_row["status"] != "draft":
-        skill_version_not_draft()
-    # if not version_row["compiled_skill_json"]:
-    #     skill_version_not_compiled()
+
+    if request.status == "published":
+        if version_row["status"] == "published":
+            return {"status": "published", "message": "Already published"}
+        # if not version_row["compiled_skill_json"]:
+        #    skill_version_not_compiled()
+        published_at = skill_repository.publish_skill_version(
+            db, skill_version_id, version_row["skill_id"], version_row["environment"], request.notes)
+        return {"status": "published", "published_at": published_at}
     
-    published_at = skill_repository.publish_skill_version(
-        db, skill_version_id, version_row["skill_id"], version_row["environment"], publish_notes)
+    elif request.status == "unpublished":
+        if version_row["status"] == "unpublished":
+            return {"status": "unpublished", "message": "Already unpublished"}
+        skill_repository.unpublish_skill_version(db, skill_version_id)
+        return {"status": "unpublished"}
+
+    elif request.status == "draft":
+        if version_row["status"] == "draft":
+            return {"status": "draft", "message": "Already in draft status"}
+        # Manual revert to draft from published or unpublished
+        db.execute(
+            text("UPDATE skill_version SET status='draft', published_at=NULL WHERE skill_version_id=:sv_id"),
+            {"sv_id": skill_version_id}
+        )
+        return {"status": "draft"}
     
-    logger.debug(f"Published skill version {skill_version_id} at {published_at}")
-    return {"status": "published", "published_at": published_at}
+    return {"status": version_row["status"]}
 
 
 # =========================================================================

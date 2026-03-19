@@ -7,12 +7,11 @@ from app.core.database import get_db_session
 from app.common.response import build_success_response, raise_internal_server_error, raise_not_found
 from app.models.skill import (CreateSkillRequest, UpdateSkillRequest, 
                                SaveSkillGraphRequest, UpdateNodeConfigRequest,
-                               PublishSkillRequest, RunSkillRequest)
+                               UpdateSkillVersionStatusRequest, RunSkillRequest)
 from app.skill import service as skill_service
 from app.logger.logging import logger
 
 router = APIRouter(prefix="/api", tags=["Skills"])
-
 
 # =========================================================================
 # Skills Library (Metadata CRUD)
@@ -216,22 +215,29 @@ def compile_skill_version(
         raise_internal_server_error()
 
 
-@router.post("/skills/versions/{skill_version_id}/publish")
-def publish_skill_version(
+@router.put("/skills/versions/{skill_version_id}/status")
+def update_skill_version_status(
     skill_version_id: str, 
-    request: PublishSkillRequest = None, 
+    request: UpdateSkillVersionStatusRequest,
     db: Session = Depends(get_db_session)
 ):
-    """Mark a compiled draft as published and active for the environment."""
-    logger.debug(f"Publishing skill version: {skill_version_id}")
+    """Unified endpoint to publish or unpublish a skill version."""
+    logger.debug(f"Updating skill version status: {skill_version_id} -> {request.status}")
     try:
-        notes = request.notes if request else None
-        result = skill_service.publish_skill_version(db, skill_version_id, notes)
-        return build_success_response("Published successfully", result)
+        result = skill_service.update_skill_version_status(db, skill_version_id, request)
+        
+        messages = {
+            "published": "Published successfully",
+            "unpublished": "Unpublished successfully",
+            "draft": "Reverted to draft successfully"
+        }
+        message = messages.get(request.status, "Status updated successfully")
+        
+        return build_success_response(message, None)
     except HTTPException:
         raise
     except Exception:
-        logger.exception("Error publishing version")
+        logger.exception("Error updating version status")
         raise_internal_server_error()
 
 

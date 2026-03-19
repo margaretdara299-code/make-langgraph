@@ -177,7 +177,7 @@ All responses return a JSON object with `status` and `message`.
 | **Lifecycle** | | |
 | `POST` | `/skills/versions/{sv_id}/validate` | Check for broken links/cycles |
 | `POST` | `/skills/versions/{sv_id}/compile` | Generate runnable JSON |
-| `POST` | `/skills/versions/{sv_id}/publish` | Push to production |
+| `PUT` | `/skills/versions/{sv_id}/status` | Update status (`published` / `draft` / `unpublished`) |
 | `POST` | `/skills/versions/{sv_id}/run` | Test run with input context |
 
 ### Real Data Samples

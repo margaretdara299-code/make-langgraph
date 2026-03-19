@@ -291,6 +291,15 @@ def publish_skill_version(db: Session, skill_version_id: str, skill_id: str,
     return timestamp
 
 
+def unpublish_skill_version(db: Session, skill_version_id: str) -> None:
+    """Reset a published version back to unpublished status."""
+    db.execute(
+        text("UPDATE skill_version SET status='unpublished', published_at=NULL, is_active=1 "
+             "WHERE skill_version_id=:sv_id"),
+        {"sv_id": skill_version_id},
+    )
+
+
 # =========================================================================
 # Graph Lifecycle (Hybrid Model: Nodes in JSON, Edges in skill_route)
 # =========================================================================
@@ -404,8 +413,6 @@ def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connection
     ).mappings().first()
     if not version_row:
         skill_version_not_found()
-    if version_row["status"] != "draft":
-        skill_version_not_draft()
 
     # 1. Save nodes as JSON — convert Pydantic models to plain dicts if needed
     nodes_serialisable = [
@@ -470,7 +477,7 @@ def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connection
 def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dict) -> None:
     """Update a single node's `data` object inside the nodes JSON array."""
     row = db.execute(
-        text("SELECT nodes FROM skill_version WHERE skill_version_id=:sv_id"),
+        text("SELECT nodes, status FROM skill_version WHERE skill_version_id=:sv_id"),
         {"sv_id": skill_version_id},
     ).mappings().first()
     if not row:

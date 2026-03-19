@@ -126,6 +126,12 @@ class CompilationResult(BaseModel):
     compiled_skill_json: Dict[str, Any]
 
 
+class UpdateSkillVersionStatusRequest(BaseModel):
+    """Payload to update the status (publish/unpublish) of a skill version."""
+    status: Literal["draft", "published", "unpublished"]
+    notes: str | None = None
+
+
 class PublishSkillRequest(BaseModel):
     """Payload to publish a draft skill version."""
     notes: str | None = None
