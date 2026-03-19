@@ -240,8 +240,8 @@ def publish_skill_version(db: Session, skill_version_id: str, publish_notes: str
         skill_version_not_found()
     if version_row["status"] != "draft":
         skill_version_not_draft()
-    if not version_row["compiled_skill_json"]:
-        skill_version_not_compiled()
+    # if not version_row["compiled_skill_json"]:
+    #     skill_version_not_compiled()
     
     published_at = skill_repository.publish_skill_version(
         db, skill_version_id, version_row["skill_id"], version_row["environment"], publish_notes)
