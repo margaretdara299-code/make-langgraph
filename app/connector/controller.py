@@ -57,6 +57,20 @@ def list_connectors(
         raise_internal_server_error()
 
 
+@router.get("/connectors/grouped")
+def list_connectors_grouped(
+    db: Session = Depends(get_db_session)
+):
+    """List all connectors grouped by their connector type (e.g., DATABASE, API)."""
+    logger.debug("API: Fetching connectors grouped by type")
+    try:
+        grouped_connectors_map = connector_service.get_connectors_grouped(db)
+        return build_success_response("Connectors grouped by type fetched successfully", grouped_connectors_map)
+    except Exception:
+        logger.exception("Error fetching grouped connectors")
+        raise_internal_server_error()
+
+
 @router.get("/connectors/{connector_id}")
 def get_connector(
     connector_id: int,

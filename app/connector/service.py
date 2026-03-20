@@ -8,6 +8,12 @@ def get_all_connectors(db: Session, is_active: bool | None = None) -> list:
     return repo.fetch_all_connectors(db, is_active=is_active)
 
 
+def get_connectors_grouped(db: Session) -> dict[str, list[dict]]:
+    """List connectors grouped by type."""
+    logger.debug("Business logic: Fetching connectors grouped by type")
+    return repo.fetch_connectors_grouped(db)
+
+
 def get_connector(db: Session, connector_id: int) -> dict | None:
     """Retrieve a single connector."""
     return repo.fetch_connector_by_id(db, connector_id)

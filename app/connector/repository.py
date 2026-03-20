@@ -28,6 +28,29 @@ def fetch_all_connectors(db: Session, is_active: bool | None = None) -> list:
     return result
 
 
+def fetch_connectors_grouped(db: Session) -> dict[str, list[dict]]:
+    """Fetch all connectors and group them by their connector_type."""
+    query = "SELECT * FROM connector ORDER BY connector_type ASC, name ASC"
+    rows = db.execute(text(query)).mappings().all()
+    
+    grouped_connectors: dict[str, list[dict]] = {}
+    
+    for r in rows:
+        connector_data = dict(r)
+        connector_data["config_json"] = json.loads(connector_data["config_json"])
+        
+        c_type = connector_data.get("connector_type") or "Unknown"
+        # Standardize typing for the key (e.g., uppercase)
+        group_key = c_type.upper()
+        
+        if group_key not in grouped_connectors:
+            grouped_connectors[group_key] = []
+        
+        grouped_connectors[group_key].append(connector_data)
+        
+    return grouped_connectors
+
+
 def fetch_connector_by_id(db: Session, connector_id: int) -> dict | None:
     """Fetch a single connector by its integer ID."""
     row = db.execute(
