@@ -6,10 +6,27 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db_session
 from app.common.response import build_success_response, raise_internal_server_error, raise_not_found, raise_bad_request
 from app.connector import service as connector_service
-from app.connector.models import CreateConnectorRequest, UpdateConnectorRequest, ConnectorResponse
+from app.connector.models import CreateConnectorRequest, UpdateConnectorRequest, ConnectorResponse, ConnectivityValidationRequest
+from app.connector.connectivity_service import verify_connectivity
 from app.logger.logging import logger
 
 router = APIRouter(prefix="/api/v1", tags=["Connectors"])
+
+
+
+@router.post("/connectors/connectivity/verify")
+def verify_connectivity_endpoint(request: ConnectivityValidationRequest):
+    """
+    Enterprise Connectivity Validation.
+    Verifies database credentials and returns rich metadata (latency, version).
+    """
+    result = verify_connectivity(request)
+    if result.status:
+        return build_success_response("Connectivity verified successfully.", result.details)
+    else:
+        # Return 200 with status=False or 500? 
+        # Usually, connectivity failure is a valid business response, but here we use 500 to trigger "error" in UI
+        raise_internal_server_error(result.error_message)
 
 
 @router.post("/connectors", status_code=201)

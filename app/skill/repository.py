@@ -316,7 +316,7 @@ def create_blank_graph(db: Session, skill_version_id: str) -> None:
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
         {"nodes": nodes_json, "sv_id": skill_version_id},
     )
-    edge_id = generate_unique_id("edge_")
+    edge_id = generate_unique_id()
     db.execute(
         text("""INSERT INTO skill_route
            (skill_route_id, skill_version_id, from_node_key, to_node_key,

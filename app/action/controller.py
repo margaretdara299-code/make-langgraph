@@ -4,7 +4,7 @@ Action controller — 4 API routes only. No versioning.
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db_session
-from app.common.response import build_success_response, raise_internal_server_error, raise_not_found
+from app.common.response import build_success_response, raise_internal_server_error, raise_not_found, raise_bad_request
 from app.models.action import CreateActionDefinitionRequest, UpdateActionDefinitionRequest, UpdateActionStatusRequest
 from app.action import service as action_service
 from app.logger.logging import logger
@@ -47,6 +47,22 @@ def list_actions(
         raise
     except Exception:
         logger.exception("Error fetching actions")
+        raise_internal_server_error()
+
+
+@router.get("/actions/grouped")
+def list_actions_grouped(
+    db: Session = Depends(get_db_session)
+):
+    """List actions grouped by their category name."""
+    logger.debug("Fetching actions grouped by category")
+    try:
+        result = action_service.list_actions_grouped(db)
+        return build_success_response("Grouped actions fetched", result)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Error fetching grouped actions")
         raise_internal_server_error()
 
 
@@ -102,5 +118,25 @@ def update_action(
         raise
     except Exception:
         logger.exception("Error updating action")
+        raise_internal_server_error()
+
+
+@router.delete("/actions/{action_definition_id}")
+def delete_action(
+    action_definition_id: str,
+    db: Session = Depends(get_db_session)
+):
+    """Delete an action (only if not in use by any skill graphs)."""
+    logger.debug(f"Deleting action: {action_definition_id}")
+    try:
+        success = action_service.delete_action(db, action_definition_id)
+        if not success:
+            raise_bad_request("Action cannot be deleted: it is currently referenced in one or more skill graphs.")
+            
+        return build_success_response("Action deleted successfully", {"action_definition_id": action_definition_id})
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception(f"Error deleting action {action_definition_id}")
         raise_internal_server_error()
 

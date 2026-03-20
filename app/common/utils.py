@@ -16,9 +16,8 @@ def generate_utc_timestamp() -> str:
 
 
 def generate_unique_id(prefix: str = "") -> str:
-    """Generate a UUID string, optionally prefixed for readability."""
-    unique_id = str(uuid.uuid4())
-    return f"{prefix}{unique_id}" if prefix else unique_id
+    """Generate a standard UUID4 string. (Prefix is ignored for UUID compliance)."""
+    return str(uuid.uuid4())
 
 
 def serialise_json(data: Any) -> str:

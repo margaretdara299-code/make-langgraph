@@ -1,6 +1,3 @@
-"""
-Connector Service — business logic for external system integrations.
-"""
 from sqlalchemy.orm import Session
 from app.connector import repository as repo
 from app.logger.logging import logger

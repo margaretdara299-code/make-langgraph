@@ -38,8 +38,8 @@ def create_skill(db: Session, request, user_id: str = "1") -> Dict:
     if skill_repository.does_skill_key_exist(db, request.client_id, skill_key):
         skill_key_exists()
 
-    skill_id = generate_unique_id("skill_")
-    skill_version_id = generate_unique_id("sv_")
+    skill_id = generate_unique_id()
+    skill_version_id = generate_unique_id()
 
     skill_repository.insert_skill(
         db, skill_id=skill_id, client_id=request.client_id,

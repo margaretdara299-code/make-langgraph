@@ -33,3 +33,18 @@ def update_action_status(db: Session, action_definition_id: str, request) -> dic
     result = repo.update_action_status(db, action_definition_id, request)
     logger.debug(f"Updated status for action '{action_definition_id}'")
     return result
+
+
+def delete_action(db: Session, action_definition_id: str) -> bool:
+    """Business logic for deleting an action. Returns False if in use."""
+    success = repo.delete_action(db, action_definition_id)
+    if success:
+        logger.info(f"Deleted action '{action_definition_id}'")
+    else:
+        logger.warning(f"Could not delete action '{action_definition_id}': it is likely in use.")
+    return success
+
+
+def list_actions_grouped(db: Session) -> dict:
+    """Get actions grouped by category."""
+    return repo.fetch_actions_grouped_by_category(db)

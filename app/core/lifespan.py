@@ -6,7 +6,6 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from app.core.database import engine
 from app.core.schema import initialise_database
-from app.seed import seed_demo_data
 from app.logger.logging import logger
 
 
@@ -22,7 +21,6 @@ async def lifespan(application: FastAPI):
         logger.error(f"Failed to initialize DB connection pool: {error}")
 
     initialise_database()
-    seed_demo_data()
     yield
     engine.dispose()
     logger.debug("Application shutdown complete.")

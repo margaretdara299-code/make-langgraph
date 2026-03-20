@@ -33,8 +33,8 @@ def deserialize_json(value, default=None):
 def insert_action(db: Session, request, user_id: str) -> dict:
     """Create a new action_definition + one action_version (JSON blobs)."""
     timestamp = generate_utc_timestamp()
-    action_definition_id = generate_unique_id("ad_")
-    action_version_id = generate_unique_id("av_")
+    action_definition_id = generate_unique_id()
+    action_version_id = generate_unique_id()
 
     # Duplicate name check
     existing_name = db.execute(
@@ -142,6 +142,33 @@ def fetch_all_actions(db: Session,
     """), params).mappings().all()
 
     return [dict(r) for r in rows]
+
+
+def fetch_actions_grouped_by_category(db: Session) -> dict:
+    """Retrieve all actions joined with categories and group them by category name."""
+    rows = db.execute(text("""
+        SELECT 
+            c.name as category_name,
+            ad.action_definition_id, ad.action_key, ad.name, ad.description, ad.icon
+        FROM action_definition ad
+        LEFT JOIN category c ON ad.category_id = c.category_id
+        ORDER BY c.name, ad.name
+    """)).mappings().all()
+    
+    grouped = {}
+    for row in rows:
+        cat_name = row["category_name"] or "Uncategorized"
+        if cat_name not in grouped:
+            grouped[cat_name] = []
+        
+        grouped[cat_name].append({
+            "action_definition_id": row["action_definition_id"],
+            "action_key": row["action_key"],
+            "name": row["name"],
+            "description": row["description"],
+            "icon": row["icon"]
+        })
+    return grouped
 
 
 # =========================================================================
@@ -288,3 +315,49 @@ def update_action_status(db: Session, action_definition_id: str, request) -> dic
     """), params)
 
     return {"action_definition_id": action_definition_id, "updated_at": timestamp}
+
+
+# =========================================================================
+# DELETE
+# =========================================================================
+def is_action_in_use(db: Session, action_key: str) -> bool:
+    """Check if the action_key is referenced in any skill_version.nodes JSON."""
+    # Search for the action_key inside the nodes JSON blob
+    # Designer uses node type for action nodes (e.g. "action.my_action_key")
+    # or sometimes stores it in data.action_key.
+    query = text("""
+        SELECT 1 FROM skill_version 
+        WHERE nodes LIKE :p1 
+           OR nodes LIKE :p2
+        LIMIT 1
+    """)
+    # Broad patterns to catch both "type" and "action_key" references
+    p1 = f'%"type":"action.{action_key}"%'
+    p2 = f'%"action_key":"{action_key}"%'
+    
+    result = db.execute(query, {"p1": p1, "p2": p2}).first()
+    return result is not None
+
+
+def delete_action(db: Session, action_definition_id: str) -> bool:
+    """Delete an action definition if it's not in use."""
+    row = db.execute(
+        text("SELECT action_key FROM action_definition WHERE action_definition_id = :id"),
+        {"id": action_definition_id}
+    ).first()
+    
+    if not row:
+        action_not_found()
+
+    action_key = row[0]
+    
+    if is_action_in_use(db, action_key):
+        return False # Indicates "In Use"
+
+    db.execute(
+        text("DELETE FROM action_definition WHERE action_definition_id = :id"),
+        {"id": action_definition_id}
+    )
+    db.commit()
+    return True
+
