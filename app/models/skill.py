@@ -44,6 +44,7 @@ class CreateSkillRequest(BaseModel):
 class UpdateSkillRequest(BaseModel):
     """Payload to update an existing skill's metadata."""
     name: str | None = None
+    skill_key: str | None = None
     description: str | None = Field(default=None, max_length=240)
     category_id: int | None = None
     capability_id: int | None = None
@@ -72,10 +73,10 @@ class SkillGraphNode(BaseModel):
 
 
 # =========================================================================
-# Connection DTO (stored in skill_route table, returned as dict keyed by id)
+# Connection DTO (stored alongside nodes in skill_version JSON)
 # =========================================================================
 class SkillGraphConnection(BaseModel):
-    """A single edge between two nodes — persisted in skill_route."""
+    """A single edge between two nodes."""
     id: str
     source: str
     target: str
@@ -83,6 +84,9 @@ class SkillGraphConnection(BaseModel):
     targetHandle: str | None = None
     condition: Dict[str, Any] = Field(default_factory=dict)
     is_default: bool = False
+    data: Dict[str, Any] = Field(default_factory=dict)
+    label: str | None = None
+    labelShowBg: bool | None = None
 
 
 # =========================================================================
@@ -95,6 +99,9 @@ class SkillGraphResponse(BaseModel):
     environment: str
     version: str = "1.0.1"
     status: str = "published"
+    name: str | None = None
+    skill_key: str | None = None
+    description: str | None = None
     nodes: List[SkillGraphNode]
     connections: Dict[str, SkillGraphConnection] = Field(default_factory=dict)
 

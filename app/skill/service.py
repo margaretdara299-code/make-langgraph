@@ -79,6 +79,21 @@ def update_skill(db: Session, skill_id: str, request) -> bool:
     update_data = request.model_dump(exclude_unset=True)
     if not update_data:
         return False
+        
+    if "skill_key" in update_data or "name" in update_data:
+        existing_skill = skill_repository.fetch_skill_by_id(db, skill_id)
+        if not existing_skill:
+            return False
+            
+        client_id = existing_skill["client_id"]
+        
+        if "skill_key" in update_data and update_data["skill_key"] != existing_skill["skill_key"]:
+            if skill_repository.does_skill_key_exist(db, client_id, update_data["skill_key"]):
+                skill_key_exists()
+                
+        if "name" in update_data and update_data["name"] != existing_skill["name"]:
+            if skill_repository.does_skill_name_exist(db, client_id, update_data["name"]):
+                skill_name_exists()
 
     success = skill_repository.update_skill(db, skill_id, update_data)
 

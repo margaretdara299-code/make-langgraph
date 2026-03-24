@@ -305,31 +305,15 @@ def unpublish_skill_version(db: Session, skill_version_id: str) -> None:
 # =========================================================================
 
 def create_blank_graph(db: Session, skill_version_id: str) -> None:
-    """Write a minimal starter graph: trigger → end node, plus one edge in skill_route."""
-    nodes_json = serialise_json([
-        {"id": "start", "type": "trigger.queue", "position": {"x": 120, "y": 160},
-         "data": {"label": "Start", "description": "Entry trigger"}},
-        {"id": "end", "type": "end.success", "position": {"x": 520, "y": 160},
-         "data": {"label": "End", "description": "Terminal node"}},
-    ])
+    """Write an empty graph to allow the user to build from scratch natively in the UI."""
     db.execute(
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": nodes_json, "sv_id": skill_version_id},
-    )
-    edge_id = generate_unique_id()
-    db.execute(
-        text("""INSERT INTO skill_route
-           (skill_route_id, skill_version_id, from_node_key, to_node_key,
-            condition_json, is_default)
-           VALUES (:id, :sv_id, :from_key, :to_key, :cond, :default)"""),
-        {"id": edge_id, "sv_id": skill_version_id,
-         "from_key": "start", "to_key": "end",
-         "cond": serialise_json({}), "default": 1},
+        {"nodes": "[]", "sv_id": skill_version_id},
     )
 
 
 def clone_graph(db: Session, new_skill_version_id: str, source_skill_version_id: str) -> None:
-    """Copy nodes JSON + skill_route rows from source to new version."""
+    """Copy nodes JSON from source to new version. (skill_route is deprecated)."""
     source = db.execute(
         text("SELECT nodes FROM skill_version WHERE skill_version_id=:sv_id"),
         {"sv_id": source_skill_version_id},
@@ -340,28 +324,30 @@ def clone_graph(db: Session, new_skill_version_id: str, source_skill_version_id:
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
         {"nodes": source["nodes"], "sv_id": new_skill_version_id},
     )
-    source_routes = db.execute(
-        text("SELECT from_node_key, to_node_key, from_handle, to_handle, condition_json, is_default "
-             "FROM skill_route WHERE skill_version_id=:sv_id"),
-        {"sv_id": source_skill_version_id},
-    ).mappings().all()
-    for r in source_routes:
-        db.execute(
-            text("""INSERT INTO skill_route
-               (skill_route_id, skill_version_id, from_node_key, to_node_key,
-                from_handle, to_handle, condition_json, is_default)
-               VALUES (:id, :sv_id, :from_key, :to_key, :from_h, :to_h, :cond, :default)"""),
-            {"id": generate_unique_id("edge_"), "sv_id": new_skill_version_id,
-             "from_key": r["from_node_key"], "to_key": r["to_node_key"],
-             "from_h": r["from_handle"], "to_h": r["to_handle"],
-             "cond": r["condition_json"], "default": r["is_default"]},
-        )
+    # --- DEPRECATED skill_route block ---
+    # source_routes = db.execute(
+    #     text("SELECT from_node_key, to_node_key, from_handle, to_handle, condition_json, is_default "
+    #          "FROM skill_route WHERE skill_version_id=:sv_id"),
+    #     {"sv_id": source_skill_version_id},
+    # ).mappings().all()
+    # for r in source_routes:
+    #     db.execute(
+    #         text(\"\"\"INSERT INTO skill_route
+    #            (skill_route_id, skill_version_id, from_node_key, to_node_key,
+    #             from_handle, to_handle, condition_json, is_default)
+    #            VALUES (:id, :sv_id, :from_key, :to_key, :from_h, :to_h, :cond, :default)\"\"\"),
+    #         {"id": generate_unique_id("edge_"), "sv_id": new_skill_version_id,
+    #          "from_key": r["from_node_key"], "to_key": r["to_node_key"],
+    #          "from_h": r["from_handle"], "to_h": r["to_handle"],
+    #          "cond": r["condition_json"], "default": r["is_default"]},
+    #     )
 
 
 def fetch_skill_graph(db: Session, skill_version_id: str) -> SkillGraphResponse:
     """Load the graph (nodes + connections) for a skill version."""
     version_row = db.execute(
-        text("SELECT skill_version.*, skill.skill_id AS _skill_id "
+        text("SELECT skill_version.*, skill.skill_id AS _skill_id, "
+             "skill.name AS skill_name, skill.skill_key, skill.description "
              "FROM skill_version JOIN skill ON skill.skill_id = skill_version.skill_id "
              "WHERE skill_version.skill_version_id=:sv_id"),
         {"sv_id": skill_version_id},
@@ -369,34 +355,35 @@ def fetch_skill_graph(db: Session, skill_version_id: str) -> SkillGraphResponse:
     if not version_row:
         skill_version_not_found()
 
-    # Parse nodes from JSON
-    nodes_data = deserialise_json(version_row["nodes"] or "[]", [])
+    # The nodes column now stores a dictionary: {"nodes": [...], "connections": {...}}
+    raw_nodes_col = deserialise_json(version_row["nodes"] or "{}", {})
+    
+    if isinstance(raw_nodes_col, list):
+        # Legacy fallback if the column still contains just a list of nodes
+        nodes_data = raw_nodes_col
+        connections_data = {}
+        
+        # Optionally, we could still query skill_route here for legacy data, 
+        # but since it's deprecated and we aren't using it, we will just start fresh.
+        # route_rows = db.execute(...)
+    else:
+        # New format
+        nodes_data = raw_nodes_col.get("nodes", [])
+        connections_data = raw_nodes_col.get("connections", {})
+
     nodes = [SkillGraphNode(**n) for n in nodes_data]
-
-    # Read edges from skill_route
-    route_rows = db.execute(
-        text("SELECT skill_route_id, from_node_key, to_node_key, from_handle, to_handle, "
-             "condition_json, is_default FROM skill_route "
-             "WHERE skill_version_id=:sv_id ORDER BY created_at ASC"),
-        {"sv_id": skill_version_id},
-    ).mappings().all()
-
+    
     connections: dict = {}
-    for r in route_rows:
-        edge_id = r["skill_route_id"]
-        connections[edge_id] = SkillGraphConnection(
-            id=edge_id,
-            source=r["from_node_key"],
-            target=r["to_node_key"],
-            sourceHandle=r["from_handle"],
-            targetHandle=r["to_handle"],
-            condition=deserialise_json(r["condition_json"], {}),
-            is_default=bool(r["is_default"]),
-        )
+    for edge_id, conn_dict in connections_data.items():
+        # Ensure compatibility with both dicts and Pydantic models
+        connections[edge_id] = SkillGraphConnection(**conn_dict)
 
     return SkillGraphResponse(
         skill_version_id=version_row["skill_version_id"],
         skill_id=version_row["_skill_id"],
+        name=version_row.get("skill_name"),
+        skill_key=version_row.get("skill_key"),
+        description=version_row.get("description"),
         environment=version_row["environment"],
         version=version_row["version"],
         status=version_row["status"],
@@ -406,7 +393,7 @@ def fetch_skill_graph(db: Session, skill_version_id: str) -> SkillGraphResponse:
 
 
 def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connections: dict) -> None:
-    """Persist the full canvas: nodes into skill_version.nodes, edges into skill_route."""
+    """Persist the full canvas: both nodes and connections into skill_version.nodes JSON column."""
     version_row = db.execute(
         text("SELECT status FROM skill_version WHERE skill_version_id=:sv_id"),
         {"sv_id": skill_version_id},
@@ -414,57 +401,34 @@ def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connection
     if not version_row:
         skill_version_not_found()
 
-    # 1. Save nodes as JSON — convert Pydantic models to plain dicts if needed
+    # 1. Save both nodes and connections as a single composite JSON object
     nodes_serialisable = [
         n.model_dump() if hasattr(n, "model_dump") else n
         for n in nodes
     ]
-    nodes_json = serialise_json(nodes_serialisable)
+    connections_serialisable = {
+        k: (v.model_dump() if hasattr(v, "model_dump") else v)
+        for k, v in connections.items()
+    }
+    
+    composite_data = {
+        "nodes": nodes_serialisable,
+        "connections": connections_serialisable
+    }
+    
+    composite_json = serialise_json(composite_data)
+    
     db.execute(
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": nodes_json, "sv_id": skill_version_id},
+        {"nodes": composite_json, "sv_id": skill_version_id},
     )
 
-    # 2. Sync edges into skill_route (upsert + delete stale)
-    incoming_edge_ids = set(connections.keys())
-    existing_edge_ids = {
-        row["skill_route_id"] for row in db.execute(
-            text("SELECT skill_route_id FROM skill_route WHERE skill_version_id=:sv_id"),
-            {"sv_id": skill_version_id},
-        ).mappings().all()
-    }
-
-    stale_ids = existing_edge_ids - incoming_edge_ids
-    for stale_id in stale_ids:
-        db.execute(
-            text("DELETE FROM skill_route WHERE skill_route_id=:id"),
-            {"id": stale_id},
-        )
-
-    for edge_id, conn in connections.items():
-        # Handle dict or Pydantic if passed
-        source = conn["source"] if isinstance(conn, dict) else conn.source
-        target = conn["target"] if isinstance(conn, dict) else conn.target
-        source_h = conn.get("sourceHandle") if isinstance(conn, dict) else conn.sourceHandle
-        target_h = conn.get("targetHandle") if isinstance(conn, dict) else conn.targetHandle
-        cond = conn.get("condition") if isinstance(conn, dict) else conn.condition
-        comp_default = conn.get("is_default") if isinstance(conn, dict) else conn.is_default
-
-        db.execute(
-            text("""INSERT INTO skill_route
-               (skill_route_id, skill_version_id, from_node_key, to_node_key,
-                from_handle, to_handle, condition_json, is_default)
-               VALUES (:id, :sv_id, :from_key, :to_key, :from_h, :to_h, :cond, :default)
-               ON CONFLICT(skill_route_id) DO UPDATE SET
-                 from_node_key=excluded.from_node_key, to_node_key=excluded.to_node_key,
-                 from_handle=excluded.from_handle, to_handle=excluded.to_handle,
-                 condition_json=excluded.condition_json, is_default=excluded.is_default"""),
-            {"id": edge_id, "sv_id": skill_version_id,
-             "from_key": source, "to_key": target,
-             "from_h": source_h, "to_h": target_h,
-             "cond": serialise_json(cond or {}),
-             "default": 1 if comp_default else 0},
-        )
+    # 2. skill_route usage is now deprecated
+    # incoming_edge_ids = set(connections.keys())
+    # existing_edge_ids = ...
+    # stale_ids = ...
+    # for stale_id in stale_ids: DELETE ...
+    # for edge_id, conn in connections.items(): INSERT ...
 
     # 3. Bump updated_at
     db.execute(
@@ -483,7 +447,15 @@ def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dic
     if not row:
         skill_version_not_found()
 
-    items = deserialise_json(row["nodes"], [])
+    raw_data = deserialise_json(row["nodes"], {})
+    
+    if isinstance(raw_data, list):
+        items = raw_data
+        connections = {}
+    else:
+        items = raw_data.get("nodes", [])
+        connections = raw_data.get("connections", {})
+
     found = False
     for node in items:
         if node.get("id") == node_id:
@@ -493,9 +465,14 @@ def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dic
     if not found:
         raise_not_found(f"Node '{node_id}' not found in graph")
 
+    composite_data = {
+        "nodes": items,
+        "connections": connections
+    }
+
     db.execute(
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": serialise_json(items), "sv_id": skill_version_id},
+        {"nodes": serialise_json(composite_data), "sv_id": skill_version_id},
     )
 
     db.execute(

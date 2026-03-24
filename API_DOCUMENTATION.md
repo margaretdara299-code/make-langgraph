@@ -1,228 +1,223 @@
-# Tensaw Skills Studio — Comprehensive API Documentation
+# Tensaw Skills Studio — API Documentation
 
-**Version:** 0.8.0  
-**Target Audience:** UI/UX Development Team  
 **Base URL:** `http://localhost:8000`  
-**Interactive Docs:** [Swagger UI](/docs) | [ReDoc](/redoc)
+**Interactive Docs:** [Swagger UI](http://localhost:8000/docs) | [ReDoc](http://localhost:8000/redoc)
 
 ---
 
-## 📡 Standard Communication Protocol
+## Standard Response Envelope
 
-### Response Envelope
-All responses return a JSON object with `status`, `message`, and `data`.
+All responses follow this structure:
+
 ```json
-{
-  "status": true,
-  "message": "Human readable confirmation",
-  "data": { ... payload here ... }
-}
+{ "status": true, "message": "...", "data": { ... } }
 ```
 
-### Error Protocol
+**Error:**
 ```json
-{
-  "status": false,
-  "message": "Detailed error message",
-  "data": null
-}
+{ "status": false, "message": "Error details", "data": null }
 ```
 
 ---
 
-## 🏗️ Module 1: Taxonomy
+## Module 1: Categories
+
 **Base Prefix:** `/api/v1`
 
 | Method | Endpoint | Description |
-| :--- | :--- | :--- |
+|:---|:---|:---|
 | `GET` | `/categories` | List all categories |
-| `POST` | `/categories` | Create Category |
-| `GET` | `/categories/{id}` | Get Category details |
-| `PATCH` | `/categories/{id}` | Update Category |
-| `DELETE` | `/categories/{id}` | Delete Category |
-| `GET` | `/capabilities` | List all capabilities |
-| `POST` | `/capabilities` | Create Capability |
-| `GET` | `/capabilities/{id}` | Get Capability details |
-| `PATCH` | `/capabilities/{id}` | Update Capability |
-| `DELETE` | `/capabilities/{id}` | Delete Capability |
+| `POST` | `/categories` | Create a category |
+| `GET` | `/categories/{id}` | Get a category |
+| `PATCH` | `/categories/{id}` | Update a category |
+| `DELETE` | `/categories/{id}` | Delete a category |
 
-### Samples:
-**Create Category (`POST /v1/categories`):**
-```json
-{
-  "name": "AI Services",
-  "description": "Modules for LLM and predictive analytics"
-}
+### GET /api/v1/categories
 ```
-
-**Get Categories (`GET /v1/categories`):**
+GET http://localhost:8000/api/v1/categories
+```
+**Response:**
 ```json
 {
   "status": true,
   "message": "Categories fetched",
   "data": [
-    {"category_id": 1, "name": "AI Services", "description": "...", "created_at": "..."}
+    { "category_id": 1, "name": "Eligibility", "description": "Patient eligibility workflows" },
+    { "category_id": 2, "name": "Claims", "description": "Claim submission and tracking" }
   ]
 }
 ```
 
 ---
 
-## 🔌 Module 2: Connectors
+## Module 2: Capabilities
+
 **Base Prefix:** `/api/v1`
 
 | Method | Endpoint | Description |
-| :--- | :--- | :--- |
+|:---|:---|:---|
+| `GET` | `/capabilities` | List all capabilities |
+| `POST` | `/capabilities` | Create a capability |
+| `GET` | `/capabilities/{id}` | Get a capability |
+| `PATCH` | `/capabilities/{id}` | Update a capability |
+| `DELETE` | `/capabilities/{id}` | Delete a capability |
+
+### GET /api/v1/capabilities
+```
+GET http://localhost:8000/api/v1/capabilities
+```
+
+---
+
+## Module 3: Connectors
+
+**Base Prefix:** `/api/v1`
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
 | `GET` | `/connectors` | List all connectors |
-| `POST` | `/connectors` | Save a new connector |
-| `GET` | `/connectors/{id}` | Get Connector details |
-| `PATCH` | `/connectors/{id}` | Update connector |
-| `DELETE` | `/connectors/{id}` | Delete connector |
-| `GET` | `/connectors/grouped` | Get connectors grouped by type |
-| `POST` | `/connectors/connectivity/verify` | Verify DB credentials |
+| `GET` | `/connectors/grouped` | Connectors grouped by type |
+| `POST` | `/connectors` | Create a connector |
+| `GET` | `/connectors/{id}` | Get a connector |
+| `PATCH` | `/connectors/{id}` | Update a connector |
+| `DELETE` | `/connectors/{id}` | Delete a connector |
+| `POST` | `/connectors/connectivity/verify` | Test DB connection |
 
-### Samples:
+### GET /api/v1/connectors/grouped
+```
+GET http://localhost:8000/api/v1/connectors/grouped
+```
+**Response:**
+```json
+{
+  "status": true,
+  "message": "Connectors grouped by type fetched successfully",
+  "data": {
+    "DATABASE": [
+      { "connector_id": 1, "name": "Main SQL Engine", "connector_type": "database" }
+    ],
+    "API": [
+      { "connector_id": 2, "name": "Generic API Service", "connector_type": "api" }
+    ]
+  }
+}
+```
 
-**Verify Connectivity (`POST /v1/connectors/connectivity/verify`):**
+### POST /api/v1/connectors/connectivity/verify
+```
+POST http://localhost:8000/api/v1/connectors/connectivity/verify
+```
+**Request Body:**
 ```json
 {
   "engine": "mysql",
   "host": "127.0.0.1",
   "port": 3306,
   "username": "root",
-  "password": "password",
-  "database": "prod_db"
-}
-```
-
-**Create Connector (`POST /v1/connectors`):**
-```json
-{
-  "name": "Main SQL Engine",
-  "connector_type": "database",
-  "description": "Primary healthcare database",
-  "config_json": {
-    "engine": "postgresql",
-    "host": "db.internal.local",
-    "port": 5432,
-    "user": "orchestrator",
-    "database": "rcm_prod"
-  }
+  "password": "secret",
+  "database": "rcm_dev"
 }
 ```
 
 ---
 
-## 🧩 Module 3: Action Catalog
+## Module 4: Actions
+
 **Base Prefix:** `/api`
 
 | Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/actions` | List all action definitions |
-| `GET` | `/actions/grouped` | Get actions grouped by category |
-| `POST` | `/actions` | Create Action Definition |
-| `GET` | `/actions/{id}` | Get Full Definition + Logic |
-| `PUT` | `/actions/{id}` | Update Full Definition |
-| `PUT` | `/actions/{id}/status` | Change lifecycle status |
-| `DELETE` | `/actions/{id}` | Delete Action |
+|:---|:---|:---|
+| `GET` | `/actions` | List actions (with filters) |
+| `GET` | `/actions/grouped` | Actions grouped by category |
+| `POST` | `/actions` | Create an action |
+| `GET` | `/actions/{id}` | Get full action definition |
+| `PUT` | `/actions/{id}` | Update an action |
+| `PUT` | `/actions/{id}/status` | Change action status |
+| `DELETE` | `/actions/{id}` | Delete an action |
 
-### Samples:
-
-**Grouped Actions (`GET /api/actions/grouped`):**
+### GET /api/actions/grouped
+```
+GET http://localhost:8000/api/actions/grouped
+```
+**Response:**
 ```json
 {
   "status": true,
   "message": "Grouped actions fetched",
   "data": {
     "Eligibility": [
-      {"action_definition_id": "uuid", "name": "Verify Eligibility", "action_key": "rcm.eligibility", "icon": "activity"}
-    ],
-    "Uncategorized": []
+      { "action_definition_id": "uuid-1", "name": "Verify Eligibility", "action_key": "rcm.eligibility.verify" }
+    ]
   }
-}
-```
-
-**Create Action (`POST /api/actions`):**
-```json
-{
-  "name": "Claim Scrubber",
-  "action_key": "rcm.scrub_claim",
-  "description": "Validate claims against payer rules",
-  "category_id": 2,
-  "capability_id": 5,
-  "status": "published",
-  "inputs_schema_json": {"properties": {"claim_id": {"type": "string"}}},
-  "execution_json": {"provider": "rules-engine", "version": "2.0"}
 }
 ```
 
 ---
 
-## 🌪️ Module 4: Skills & Designer
+## Module 5: Skills & Designer
+
 **Base Prefix:** `/api`
 
 | Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/skills` | List all skill metadata |
-| `POST` | `/skills` | Create Skill (Init version) |
-| `GET` | `/skills/{id}` | Get Skill metadata |
-| `PATCH` | `/skills/{id}` | Update Skill metadata |
-| `DELETE` | `/skills/{id}` | Delete Skill + Versions |
-| `GET` | `/skills/versions/{vid}/graph` | Load Nodes & Connections |
-| `PUT` | `/skills/versions/{vid}/graph` | Save Bulk Layout |
-| `PATCH` | `/skills/versions/{vid}/nodes/{nid}/data` | Update single node state |
-| `POST` | `/skills/versions/{vid}/validate` | Validate graph integrity |
-| `POST` | `/skills/versions/{vid}/compile` | Convert to Runnable JSON |
-| `PUT` | `/skills/versions/{vid}/status` | Publish/Draft lifecycle |
-| `POST` | `/skills/versions/{vid}/run` | Execute/Test runnable |
+|:---|:---|:---|
+| `GET` | `/skills` | List all skills |
+| `POST` | `/skills` | Create a skill |
+| `GET` | `/skills/{id}` | Get skill metadata |
+| `PATCH` | `/skills/{id}` | Update skill metadata |
+| `DELETE` | `/skills/{id}` | Delete skill + all versions |
+| `GET` | `/skills/versions/{vid}/graph` | Load graph (nodes + connections + meta) |
+| `PUT` | `/skills/versions/{vid}/graph` | Save graph (nodes + connections) |
+| `PATCH` | `/skills/versions/{vid}/nodes/{nid}/data` | Update single node config |
+| `POST` | `/skills/versions/{vid}/validate` | Validate graph |
+| `POST` | `/skills/versions/{vid}/compile` | Compile to runnable JSON |
+| `PUT` | `/skills/versions/{vid}/status` | Publish / Draft lifecycle |
+| `POST` | `/skills/versions/{vid}/run` | Run / Test the skill |
 
-### Samples:
-
-**Load Graph (`GET /api/skills/versions/{id}/graph`):**
+### GET /api/skills/versions/{vid}/graph
+```
+GET http://localhost:8000/api/skills/versions/version-uuid-here/graph
+```
+**Response:**
 ```json
 {
   "status": true,
   "message": "Graph loaded",
   "data": {
-    "nodes": [
-      {"id": "n1", "type": "trigger", "position": {"x": 10, "y": 10}, "data": {"label": "Start"}}
-    ],
-    "connections": {
-      "e1": {"id": "e1", "source": "n1", "target": "n2"}
-    }
+    "skill_version_id": "uuid",
+    "skill_id": "uuid",
+    "name": "My RCM Skill",
+    "skill_key": "SK_001",
+    "description": "Skill description",
+    "nodes": [...],
+    "connections": {...}
   }
 }
 ```
 
-**Save Graph (`PUT /api/skills/versions/{id}/graph`):**
+### PUT /api/skills/versions/{vid}/graph
+```
+PUT http://localhost:8000/api/skills/versions/version-uuid-here/graph
+```
+**Request Body:**
 ```json
 {
   "nodes": [
-    {"id": "n1", "type": "trigger", "position": {"x": 50, "y": 50}, "data": {"label": "Start"}},
-    {"id": "n2", "type": "action.rcm", "position": {"x": 300, "y": 50}, "data": {"label": "Process"}}
+    { "id": "n1", "type": "trigger", "position": { "x": 100, "y": 100 }, "data": { "label": "Start" } }
   ],
   "connections": {
-    "e1": {"id": "e1", "source": "n1", "target": "n2"}
+    "e1": { "id": "e1", "source": "n1", "target": "n2" }
   }
-}
-```
-
-**Run Skill (`POST /api/skills/versions/{id}/run`):**
-```json
-{
-  "input_context": {"patient_id": "P-9988"},
-  "max_steps": 25
 }
 ```
 
 ---
 
-## 🚀 Error Registry
+## Error Registry
 
-| Scenario | HTTP | Message Example |
-| :--- | :--- | :--- |
-| **Validation Filter** | 422 | `field required`, `value is not a valid integer` |
-| **Auth/Connectivity** | 500 | `Connectivity failed: Access denied...` |
-| **Not Found** | 404 | `Skill not found`, `Action not found` |
-| **In Use Error** | 400 | `Action cannot be deleted: it is currently referenced...` |
-| **Conflict** | 409 | `Action with key already exists` |
+| HTTP | Scenario | Example Message |
+|:---|:---|:---|
+| `400` | Bad request / in-use conflict | `Action cannot be deleted: currently referenced in skill graphs` |
+| `404` | Resource not found | `Skill not found`, `Action not found` |
+| `409` | Duplicate key conflict | `Skill with this name already exists` |
+| `422` | Validation failed | `Invalid request` |
+| `500` | Internal / connectivity error | `Internal error` |

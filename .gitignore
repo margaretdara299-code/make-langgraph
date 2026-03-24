@@ -43,3 +43,6 @@ tmp/
 
 
 tests/
+
+dump.py
+tmp_connector.json
