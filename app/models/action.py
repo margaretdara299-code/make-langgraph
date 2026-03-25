@@ -24,12 +24,8 @@ class CreateActionDefinitionRequest(BaseModel):
     is_active: bool = True
 
     # ── JSON blobs ──
-    inputs_schema_json: Dict[str, Any] | List[Any] | None = None
-    execution_json: Dict[str, Any] | List[Any] | None = None
-    outputs_schema_json: Dict[str, Any] | List[Any] | None = None
     configurations_json: Dict[str, Any] | List[Any] | None = None
-    ui_form_json: Dict[str, Any] | List[Any] | None = None
-    policy_json: Dict[str, Any] | List[Any] | None = None
+
 
 # =========================================================================
 # Update Action
@@ -48,12 +44,8 @@ class UpdateActionDefinitionRequest(BaseModel):
     is_active: bool | None = None   # true or false
 
     # ── JSON blobs ──
-    inputs_schema_json: Dict[str, Any] | List[Any] | None = None
-    execution_json: Dict[str, Any] | List[Any] | None = None
-    outputs_schema_json: Dict[str, Any] | List[Any] | None = None
     configurations_json: Dict[str, Any] | List[Any] | None = None
-    ui_form_json: Dict[str, Any] | List[Any] | None = None
-    policy_json: Dict[str, Any] | List[Any] | None = None
+
 
 
 # =========================================================================

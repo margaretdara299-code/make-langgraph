@@ -11,8 +11,12 @@ from app.common.utils import generate_unique_id, generate_utc_timestamp
 
 
 def serialize_to_json(value) -> str:
-    """Serialize a value to a compact JSON string. Returns '{}' for falsy values."""
-    if not value and value != 0 and value is not False:
+    """Serialize a value to a compact JSON string. Handles list/dict/None correctly."""
+    if value is None:
+        return '{}'
+    if isinstance(value, list) and not value:
+        return '[]'
+    if isinstance(value, dict) and not value:
         return '{}'
     return json.dumps(value, separators=(',', ':'))
 
@@ -71,8 +75,21 @@ def insert_action(db: Session, request, user_id: str) -> dict:
             "user": user_id,
             "ts": timestamp,
         })
-    except IntegrityError:
-        action_key_exists()
+    except IntegrityError as e:
+        error_msg = str(e).lower()
+        if "foreign key" in error_msg:
+            # Determine if it was category or capability
+            if "category_id" in error_msg:
+                from app.common.response import raise_bad_request
+                raise_bad_request(f"Invalid category_id: {request.category_id}")
+            elif "capability_id" in error_msg:
+                from app.common.response import raise_bad_request
+                raise_bad_request(f"Invalid capability_id: {request.capability_id}")
+            else:
+                from app.common.response import raise_bad_request
+                raise_bad_request("One or more referenced IDs (category/capability) are invalid.")
+        else:
+            action_key_exists()
 
     # Insert action_version — only JSON blobs used, no versioning columns
     db.execute(text("""
@@ -87,13 +104,15 @@ def insert_action(db: Session, request, user_id: str) -> dict:
     """), {
         "av_id": action_version_id,
         "ad_id": action_definition_id,
-        "inputs": serialize_to_json(request.inputs_schema_json),
-        "execution": serialize_to_json(request.execution_json),
-        "outputs": serialize_to_json(request.outputs_schema_json),
+        "inputs": serialize_to_json(None),
+        "execution": serialize_to_json(None),
+        "outputs": serialize_to_json(None),
         "configurations": serialize_to_json(request.configurations_json),
-        "ui_form": serialize_to_json(request.ui_form_json),
-        "policy": serialize_to_json(request.policy_json),
+        "ui_form": serialize_to_json(None),
+        "policy": serialize_to_json(None),
     })
+
+    db.commit()
 
     return {
         "action_definition_id": action_definition_id,
@@ -184,9 +203,8 @@ def fetch_action_by_id(db: Session, action_definition_id: str) -> dict | None:
             ad.status      AS status,
             ad.is_active   AS is_active,
             ad.created_at, ad.updated_at,
-            av.action_version_id,
-            av.inputs_schema_json, av.execution_json, av.outputs_schema_json,
-            av.configurations_json, av.ui_form_json, av.policy_json
+            av.action_version_id,            
+            av.configurations_json
         FROM action_definition ad
         LEFT JOIN action_version av
             ON av.action_definition_id = ad.action_definition_id
@@ -200,18 +218,11 @@ def fetch_action_by_id(db: Session, action_definition_id: str) -> dict | None:
     keys = ["action_definition_id", "action_key", "name", "description",
             "category_id", "capability_id", "icon", "default_node_title",
             "scope", "client_id", "status", "is_active",
-            "created_at", "updated_at", "action_version_id",
-            "inputs_schema_json", "execution_json", "outputs_schema_json",
-            "configurations_json", "ui_form_json", "policy_json"]
+            "created_at", "updated_at", "action_version_id",             
+            "configurations_json"]
     action_dict = dict(zip(keys, row))
-    action_dict["inputs_schema_json"] = deserialize_json(action_dict.get("inputs_schema_json"), {})
-    action_dict["execution_json"] = deserialize_json(action_dict.get("execution_json"), {})
-    action_dict["outputs_schema_json"] = deserialize_json(action_dict.get("outputs_schema_json"), {})
     action_dict["configurations_json"] = deserialize_json(action_dict.get("configurations_json"), {})
-    action_dict["ui_form_json"] = deserialize_json(action_dict.get("ui_form_json"), {})
-    action_dict["policy_json"] = deserialize_json(action_dict.get("policy_json"), {})
     return action_dict
-
 
 # =========================================================================
 # UPDATE
@@ -258,12 +269,16 @@ def update_action(db: Session, action_definition_id: str, request) -> dict:
                 UPDATE action_definition SET {', '.join(set_clauses)}
                 WHERE action_definition_id = :id
             """), params)
-        except IntegrityError:
+        except IntegrityError as e:
+            error_msg = str(e).lower()
+            if "foreign key" in error_msg:
+                from app.common.response import raise_bad_request
+                raise_bad_request("Invalid category_id or capability_id")
             action_key_exists()
 
     # Update action_version JSON blobs
     action_ver_fields = {}
-    json_keys = ["inputs_schema_json", "execution_json", "outputs_schema_json", "configurations_json", "ui_form_json", "policy_json"]
+    json_keys = ["configurations_json"]
     for field_name in json_keys:
         if field_name in update_data:
             action_ver_fields[field_name] = serialize_to_json(update_data[field_name])
@@ -276,6 +291,8 @@ def update_action(db: Session, action_definition_id: str, request) -> dict:
             UPDATE action_version SET {', '.join(action_ver_set_clauses)}
             WHERE action_definition_id = :id
         """), action_ver_params)
+
+    db.commit()
 
     return {"action_definition_id": action_definition_id, "updated_at": timestamp}
 
@@ -313,6 +330,8 @@ def update_action_status(db: Session, action_definition_id: str, request) -> dic
         UPDATE action_definition SET {', '.join(set_clauses)}
         WHERE action_definition_id = :id
     """), params)
+
+    db.commit()
 
     return {"action_definition_id": action_definition_id, "updated_at": timestamp}
 

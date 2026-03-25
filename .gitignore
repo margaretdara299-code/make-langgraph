@@ -46,3 +46,8 @@ tests/
 
 dump.py
 tmp_connector.json
+
+clear_data.py
+get_ids.py
+seed_data.py
+verify_payload.py
