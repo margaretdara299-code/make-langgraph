@@ -168,7 +168,7 @@ def save_skill_graph(
 def update_node_data(
     skill_version_id: str, 
     node_id: str, 
-    request: UpdateNodeConfigRequest, 
+    request: UpdateNodeConfigRequest,
     db: Session = Depends(get_db_session)
 ):
     """Update a single node's configuration data."""

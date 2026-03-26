@@ -307,22 +307,22 @@ def unpublish_skill_version(db: Session, skill_version_id: str) -> None:
 def create_blank_graph(db: Session, skill_version_id: str) -> None:
     """Write an empty graph to allow the user to build from scratch natively in the UI."""
     db.execute(
-        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": "[]", "sv_id": skill_version_id},
+        text("UPDATE skill_version SET nodes=:nodes, connections=:connections WHERE skill_version_id=:sv_id"),
+        {"nodes": "[]", "connections": "{}", "sv_id": skill_version_id},
     )
 
 
 def clone_graph(db: Session, new_skill_version_id: str, source_skill_version_id: str) -> None:
-    """Copy nodes JSON from source to new version. (skill_route is deprecated)."""
+    """Copy nodes and connections JSON from source to new version. (skill_route is deprecated)."""
     source = db.execute(
-        text("SELECT nodes FROM skill_version WHERE skill_version_id=:sv_id"),
+        text("SELECT nodes, connections FROM skill_version WHERE skill_version_id=:sv_id"),
         {"sv_id": source_skill_version_id},
     ).mappings().first()
     if not source:
         return
     db.execute(
-        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": source["nodes"], "sv_id": new_skill_version_id},
+        text("UPDATE skill_version SET nodes=:nodes, connections=:connections WHERE skill_version_id=:sv_id"),
+        {"nodes": source["nodes"], "connections": source["connections"], "sv_id": new_skill_version_id},
     )
     # --- DEPRECATED skill_route block ---
     # source_routes = db.execute(
@@ -355,27 +355,23 @@ def fetch_skill_graph(db: Session, skill_version_id: str) -> SkillGraphResponse:
     if not version_row:
         skill_version_not_found()
 
-    # The nodes column now stores a dictionary: {"nodes": [...], "connections": {...}}
-    raw_nodes_col = deserialise_json(version_row["nodes"] or "{}", {})
+    # Read nodes and connections from their respective columns
+    raw_nodes_col = deserialise_json(version_row["nodes"] or "[]", [])
+    raw_connections_col = deserialise_json(version_row["connections"] or "{}", {})
     
-    if isinstance(raw_nodes_col, list):
-        # Legacy fallback if the column still contains just a list of nodes
-        nodes_data = raw_nodes_col
-        connections_data = {}
-        
-        # Optionally, we could still query skill_route here for legacy data, 
-        # but since it's deprecated and we aren't using it, we will just start fresh.
-        # route_rows = db.execute(...)
-    else:
-        # New format
+    if isinstance(raw_nodes_col, dict) and "nodes" in raw_nodes_col:
+        # Fallback for composite format if it exists in the nodes column
         nodes_data = raw_nodes_col.get("nodes", [])
         connections_data = raw_nodes_col.get("connections", {})
+    else:
+        # New separate column format
+        nodes_data = raw_nodes_col if isinstance(raw_nodes_col, list) else []
+        connections_data = raw_connections_col if isinstance(raw_connections_col, dict) else {}
 
     nodes = [SkillGraphNode(**n) for n in nodes_data]
     
     connections: dict = {}
     for edge_id, conn_dict in connections_data.items():
-        # Ensure compatibility with both dicts and Pydantic models
         connections[edge_id] = SkillGraphConnection(**conn_dict)
 
     return SkillGraphResponse(
@@ -401,7 +397,7 @@ def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connection
     if not version_row:
         skill_version_not_found()
 
-    # 1. Save both nodes and connections as a single composite JSON object
+    # 1. Save nodes and connections into their respective columns
     nodes_serialisable = [
         n.model_dump() if hasattr(n, "model_dump") else n
         for n in nodes
@@ -411,16 +407,12 @@ def save_skill_graph(db: Session, skill_version_id: str, nodes: list, connection
         for k, v in connections.items()
     }
     
-    composite_data = {
-        "nodes": nodes_serialisable,
-        "connections": connections_serialisable
-    }
-    
-    composite_json = serialise_json(composite_data)
+    nodes_json = serialise_json(nodes_serialisable)
+    connections_json = serialise_json(connections_serialisable)
     
     db.execute(
-        text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": composite_json, "sv_id": skill_version_id},
+        text("UPDATE skill_version SET nodes=:nodes, connections=:connections WHERE skill_version_id=:sv_id"),
+        {"nodes": nodes_json, "connections": connections_json, "sv_id": skill_version_id},
     )
 
     # 2. skill_route usage is now deprecated
@@ -447,14 +439,14 @@ def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dic
     if not row:
         skill_version_not_found()
 
-    raw_data = deserialise_json(row["nodes"], {})
+    raw_nodes_col = deserialise_json(row["nodes"] or "[]", [])
     
-    if isinstance(raw_data, list):
-        items = raw_data
-        connections = {}
+    if isinstance(raw_nodes_col, dict) and "nodes" in raw_nodes_col:
+        # Fallback for composite format
+        items = raw_nodes_col.get("nodes", [])
     else:
-        items = raw_data.get("nodes", [])
-        connections = raw_data.get("connections", {})
+        # New separate format
+        items = raw_nodes_col if isinstance(raw_nodes_col, list) else []
 
     found = False
     for node in items:
@@ -465,14 +457,9 @@ def update_node_data(db: Session, skill_version_id: str, node_id: str, data: dic
     if not found:
         raise_not_found(f"Node '{node_id}' not found in graph")
 
-    composite_data = {
-        "nodes": items,
-        "connections": connections
-    }
-
     db.execute(
         text("UPDATE skill_version SET nodes=:nodes WHERE skill_version_id=:sv_id"),
-        {"nodes": serialise_json(composite_data), "sv_id": skill_version_id},
+        {"nodes": serialise_json(items), "sv_id": skill_version_id},
     )
 
     db.execute(
