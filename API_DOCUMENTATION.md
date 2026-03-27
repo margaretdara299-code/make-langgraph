@@ -314,6 +314,34 @@ Executes a workflow defined as a JSON graph. The engine handles core logic (cond
 
 ---
 
+## Module 7: Dummy Claims API (External Simulation)
+This mock API simulates a real-world Claims processing service. It is used to test external service integration and dynamic API nodes.
+
+**Base Path:** `/api/claims`
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/?status=Pending` | List claims (query filter) |
+| `GET` | `/status/{status}` | List claims (path filter) |
+| `GET` | `/{id}` | Fetch a single claim by ID |
+| `POST` | `/` | Create a new dummy claim |
+| `PUT` | `/{id}` | Update an existing claim |
+| `DELETE` | `/{id}` | Delete a claim |
+
+**Sample Claim Object:**
+```json
+{
+  "claim_id": "C001",
+  "mrn": "MRN001",
+  "patient_name": "John Doe",
+  "status": "Pending",
+  "total_billed": 1000.0,
+  "primary_payer": "Aetna"
+}
+```
+
+---
+
 ## Error Registry
 
 | HTTP | Scenario | Example Message |

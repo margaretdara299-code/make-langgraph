@@ -19,6 +19,7 @@ from app.connector.controller import router as connector_router
 from app.category.controller import router as category_router
 from app.capability.controller import router as capability_router
 from app.engine.controller import router as engine_router
+from app.claims.controller import router as claims_router
 
 
 # =========================================================================
@@ -95,6 +96,7 @@ application.include_router(connector_router)
 application.include_router(category_router)
 application.include_router(capability_router)
 application.include_router(engine_router)
+application.include_router(claims_router)
 
 
 # =========================================================================
