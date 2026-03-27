@@ -11,6 +11,7 @@ from langgraph.graph import StateGraph, END
 from app.engine.models import WorkflowDef, WorkflowState
 from app.engine.node_executor import execute_node
 from app.engine.validator import validate_workflow
+from app.engine.sanitizer import build_unique_node_names
 
 
 def compile_workflow_plan(workflow_json: dict) -> dict:
@@ -58,12 +59,17 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
 
     graph = StateGraph(WorkflowState)
 
+    # 0. Build unique, sanitized LangGraph node names
+    name_inputs = [(n.id, n.data.actionKey or n.data.label or n.id) for n in wf.nodes]
+    id_map = build_unique_node_names(name_inputs)
+
     # 1. Add nodes
     for node in wf.nodes:
-        graph.add_node(node.id, _make_node_fn(node.model_dump()))
+        lg_id = id_map[node.id]
+        graph.add_node(lg_id, _make_node_fn(node.model_dump()))
 
     # 2. Entry point
-    entry_node_id = wf.nodes[0].id
+    entry_node_id = id_map[wf.nodes[0].id]
     graph.set_entry_point(entry_node_id)
 
     # 3. Wire edges
@@ -71,14 +77,17 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
     normal_edges: list[tuple[str, str]] = []
 
     for edge in wf.connections.values():
+        lg_source = id_map[edge.source]
+        lg_target = id_map[edge.target]
+        
         # Edge condition is a dict in the DB format, e.g. {"value": "true"} or {"expr": "..."}
         cond_data = edge.condition or {}
         cond_value = cond_data.get("value")
         
         if cond_value in ("true", "false") and not edge.is_default:
-            conditional_sources.setdefault(edge.source, {})[cond_value] = edge.target
+            conditional_sources.setdefault(lg_source, {})[cond_value] = lg_target
         else:
-            normal_edges.append((edge.source, edge.target))
+            normal_edges.append((lg_source, lg_target))
 
     for src, tgt in normal_edges:
         if src not in conditional_sources:
@@ -88,10 +97,11 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
         graph.add_conditional_edges(src, _condition_router, branch_map)
 
     # 4. Terminal nodes
-    sources_set = {e.source for e in wf.connections.values()}
+    sources_set = {id_map[e.source] for e in wf.connections.values()}
     for node in wf.nodes:
-        if node.id not in sources_set:
-            graph.add_edge(node.id, END)
+        lg_id = id_map[node.id]
+        if lg_id not in sources_set:
+            graph.add_edge(lg_id, END)
 
     return graph
 

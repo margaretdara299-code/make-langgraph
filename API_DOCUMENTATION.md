@@ -212,6 +212,108 @@ PUT http://localhost:8000/api/skills/versions/version-uuid-here/graph
 
 ---
 
+## Module 6: Workflow Engine (Execution)
+
+**Base Prefix:** `/api/engine`
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `POST` | `/validate` | Structural check for JSON workflows |
+| `POST` | `/compile` | Compile and hash a workflow plan |
+| `POST` | `/run` | Execute a workflow (direct JSON or plan) |
+| `POST` | `/generate-code` | Convert raw JSON to Python code |
+| `GET` | `/generate-code/{id}` | Fetch version by ID and convert to Python |
+| `GET` | `/actions` | List built-in core actions |
+
+### GET /api/engine/generate-code/{skill_version_id}
+Fetches a specific skill version from the database and returns it as a standalone Python script.
+
+**Sample Request:**
+`GET http://localhost:8000/api/engine/generate-code/sv_12345`
+
+### POST /api/engine/generate-code
+Generates a script from a raw workflow definition (useful for unsaved changes).
+
+**Sample Request (via ID):**
+```json
+{
+  "skill_version_id": "sv_12345"
+}
+```
+
+**Sample Request (via JSON):**
+```json
+{
+  "workflow_json": {
+    "nodes": [...],
+    "connections": {...}
+  }
+}
+```
+
+**Sample Response:**
+```json
+{
+  "status": true,
+  "message": "Python source generated successfully",
+  "data": {
+    "code": "from typing import TypedDict...\nbuilder = StateGraph(WorkflowState)...\ngraph = builder.compile()"
+  }
+}
+```
+
+### POST /api/engine/run
+Executes a workflow defined as a JSON graph. The engine handles core logic (conditions, state saving) internally and treats any other `actionKey` as a dynamic API call.
+
+**Sample Request (Mixed Core and Dynamic Actions):**
+```json
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "action",
+      "data": { 
+        "label": "Get Claim Info", 
+        "actionKey": "rcm.claims.fetch",
+        "configurationsJson": { "claim_id": "CLM-123" }
+      }
+    },
+    {
+      "id": "n2",
+      "type": "action",
+      "data": { 
+        "label": "Data Check", 
+        "actionKey": "condition_check", 
+        "configurationsJson": { "field": "last_result", "op": "exists" } 
+      }
+    },
+    {
+      "id": "n3",
+      "type": "end.success",
+      "data": { 
+        "label": "Finalize", 
+        "actionKey": "direct_reply",
+        "configurationsJson": { "message": "Claim processed successfully" }
+      }
+    }
+  ],
+  "connections": {
+    "e1": { "source": "n1", "target": "n2" },
+    "e2": { "source": "n2", "target": "n3", "condition": { "value": "true" } }
+  }
+}
+```
+
+**Built-in Core Actions:**
+| actionKey | Description |
+|:---|:---|
+| `condition_check` | Logic branching based on state (eq, gt, lt, exists) |
+| `save_result` | Copies `last_result` to `saved_data` for later nodes |
+| `direct_reply` | Sets the final output message for the workflow |
+| `*` (Dynamic) | Any other key dispatches an external API call |
+
+---
+
 ## Error Registry
 
 | HTTP | Scenario | Example Message |

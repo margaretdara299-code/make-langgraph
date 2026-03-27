@@ -1,14 +1,17 @@
 """
 Engine controller — API routes for the Workflow Execution Engine.
 """
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Depends
 from pydantic import BaseModel
 from typing import Any
+from sqlalchemy.orm import Session
+from app.core.database import get_db_session as get_db
+from app.skill.repository import fetch_skill_graph
 from app.common.response import build_success_response, raise_internal_server_error, raise_bad_request
 from app.engine.runner import run_workflow
 from app.engine.validator import validate_workflow
 from app.engine.graph_builder import compile_workflow_plan
-from app.engine.action_registry import ACTION_REGISTRY
+from app.engine.codegen import generate_langgraph_source
 from app.logger.logging import logger
 
 router = APIRouter(prefix="/api", tags=["Workflow Engine"])
@@ -21,6 +24,7 @@ class WorkflowPayload(BaseModel):
     edges: list[dict[str, Any]] | None = None
     compile_hash: str | None = None
     workflow_json: dict[str, Any] | None = None
+    skill_version_id: str | None = None
 
 
 # =========================================================================
@@ -86,18 +90,74 @@ def execute_workflow(
         raise_internal_server_error()
 
 
+
+@router.post("/engine/generate-code")
+def generate_workflow_code(
+    request: WorkflowPayload = Body(...),
+    db: Session = Depends(get_db)
+):
+    """Convert a workflow JSON definition into executable LangGraph Python script."""
+    logger.debug("Engine: generating Python source code")
+    try:
+        if request.skill_version_id:
+            # Fetch from DB if ID is provided
+            skill_graph = fetch_skill_graph(db, request.skill_version_id)
+            workflow_data = {
+                "nodes": [n.model_dump() for n in skill_graph.nodes],
+                "connections": {k: v.model_dump() for k, v in skill_graph.connections.items()}
+            }
+        elif request.workflow_json:
+            workflow_data = request.workflow_json
+        elif request.nodes:
+            # Fallback for direct node/edge input
+            workflow_data = {"nodes": request.nodes, "connections": request.edges or {}}
+        else:
+            raise ValueError("Must provide either 'skill_version_id' or workflow definition.")
+
+        source_code = generate_langgraph_source(workflow_data)
+        return build_success_response("Python source generated successfully", {"code": source_code})
+    except ValueError as e:
+        raise_bad_request(str(e))
+    except Exception:
+        logger.exception("Error generating Python source")
+        raise_internal_server_error()
+
+
+@router.get("/engine/generate-code/{skill_version_id}")
+def generate_workflow_code_by_id(
+    skill_version_id: str,
+    db: Session = Depends(get_db)
+):
+    """Fetch a workflow from DB and convert it into executable LangGraph Python script."""
+    logger.debug(f"Engine: generating Python source code for version {skill_version_id}")
+    try:
+        skill_graph = fetch_skill_graph(db, skill_version_id)
+        workflow_data = {
+            "nodes": [n.model_dump() for n in skill_graph.nodes],
+            "connections": {k: v.model_dump() for k, v in skill_graph.connections.items()}
+        }
+        source_code = generate_langgraph_source(workflow_data)
+        return build_success_response("Python source generated successfully", {"code": source_code})
+    except Exception:
+        logger.exception(f"Error generating Python source for {skill_version_id}")
+        raise_internal_server_error()
+
+
 # =========================================================================
 # List available action handlers
 # =========================================================================
 
 @router.get("/engine/actions")
 def list_engine_actions():
-    """Return a list of all registered action_keys the engine supports."""
+    """Return a list of all built-in action_keys the engine supports."""
     logger.debug("Engine: listing registered actions")
     try:
+        # Core built-in actions in node_executor.py
         actions = [
-            {"action_key": key, "handler": fn.__name__}
-            for key, fn in ACTION_REGISTRY.items()
+            {"action_key": "condition_check", "handler": "_handle_condition_check"},
+            {"action_key": "save_result", "handler": "_handle_save_result"},
+            {"action_key": "direct_reply", "handler": "_handle_direct_reply"},
+            {"action_key": "*", "handler": "_handle_api_action (Dynamic)"},
         ]
         return build_success_response("Registered engine actions", {"items": actions, "total": len(actions)})
     except Exception:

@@ -4,7 +4,6 @@ Returns a validation result with errors list.
 """
 from __future__ import annotations
 from app.engine.models import WorkflowDef
-from app.engine.action_registry import ACTION_REGISTRY
 
 
 def validate_workflow(workflow_json: dict) -> dict:
@@ -44,14 +43,8 @@ def validate_workflow(workflow_json: dict) -> dict:
         if edge.target not in node_id_set:
             errors.append(f"Connection '{edge_id}': target '{edge.target}' not found.")
 
-    # ── 5. All actionKey exist in ACTION_REGISTRY ──────────────────────
-    for node in wf.nodes:
-        action_key = node.data.actionKey
-        if action_key and action_key not in ACTION_REGISTRY:
-            errors.append(
-                f"Node '{node.id}': unknown actionKey '{action_key}'. "
-                f"Available: {list(ACTION_REGISTRY.keys())}"
-            )
+    # ── 5. Action check (Removed ACTION_REGISTRY enforcement) ──────────
+    pass
 
     # ── 6. Triggers and Ends validation (DB specific logic) ────────────
     triggers = [n for n in wf.nodes if n.type and n.type.startswith("trigger.")]
@@ -76,7 +69,16 @@ def validate_workflow(workflow_json: dict) -> dict:
         if node.id not in connected and len(wf.nodes) > 1:
             warnings.append(f"Node '{node.id}' is isolated.")
 
-    # ── 10. Conditional edge validation ────────────────────────────────
+    # ── 10. Cycle Detection (DFS) ──────────────────────────────────────
+    adjacency_by_node_id: dict[str, list[str]] = {nid: [] for nid in node_ids}
+    for edge in wf.connections.values():
+        if edge.source in adjacency_by_node_id:
+            adjacency_by_node_id[edge.source].append(edge.target)
+    
+    if _detect_cycle(node_ids, adjacency_by_node_id):
+        errors.append("Flow graph contains a cycle.")
+
+    # ── 11. Conditional edge validation ────────────────────────────────
     for edge_id, edge in wf.connections.items():
         cond_data = edge.condition or {}
         cond_value = cond_data.get("value")
@@ -93,3 +95,37 @@ def validate_workflow(workflow_json: dict) -> dict:
         "entry_nodes": entry_nodes if not errors else [],
         "terminal_nodes": terminal_nodes if not errors else [],
     }
+
+
+def _detect_cycle(
+    node_ids: list[str],
+    adjacency_by_node_id: dict[str, list[str]],
+) -> bool:
+    """Formal DFS cycle detection."""
+    has_cycle = False
+    visited_node_ids: set[str] = set()
+    active_traversal_node_ids: set[str] = set()
+
+    def traverse_depth_first(node_id: str) -> None:
+        nonlocal has_cycle
+
+        if node_id in active_traversal_node_ids:
+            has_cycle = True
+            return
+
+        if node_id in visited_node_ids or has_cycle:
+            return
+
+        visited_node_ids.add(node_id)
+        active_traversal_node_ids.add(node_id)
+
+        for adjacent_node_id in adjacency_by_node_id.get(node_id, []):
+            traverse_depth_first(adjacent_node_id)
+
+        active_traversal_node_ids.remove(node_id)
+
+    for node_id in node_ids:
+        if node_id not in visited_node_ids:
+            traverse_depth_first(node_id)
+
+    return has_cycle
