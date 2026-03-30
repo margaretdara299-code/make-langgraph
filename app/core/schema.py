@@ -16,171 +16,7 @@ def initialise_database() -> None:
         # 0. Explicitly enable foreign keys for this connection
         raw_connection.execute("PRAGMA foreign_keys = ON;")
 
-        # Create foundational taxonomy tables first so foreign keys resolve
-        raw_connection.executescript("""
-            CREATE TABLE IF NOT EXISTS category (
-              category_id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name        TEXT NOT NULL UNIQUE,
-              description TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS capability (
-              capability_id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name          TEXT NOT NULL UNIQUE,
-              description   TEXT
-            );
-        """)
-
-        # 1. Check if skill table needs rebuild
-        skill_info = raw_connection.execute("PRAGMA table_info(skill);").fetchall()
-        skill_column_names = {row[1] for row in skill_info}
-        
-        # Check if category_id/capability_id are TEXT (they should be INTEGER now)
-        is_skill_old_type = False
-        if "category_id" in skill_column_names:
-            col_type = next(row[2] for row in skill_info if row[1] == "category_id")
-            if col_type.upper() == "TEXT":
-                is_skill_old_type = True
-
-        needs_skill_rebuild = bool(skill_info) and (
-            "payer_id" in skill_column_names or 
-            "owner_user_id" in skill_column_names or 
-            "metadata_json" in skill_column_names or
-            "token" in skill_column_names or
-            "is_active" not in skill_column_names or
-            "category_id" not in skill_column_names or
-            is_skill_old_type
-        )
-
-        if needs_skill_rebuild:
-            logger.info("Rebuilding skill table to use INTEGER IDs...")
-            raw_connection.executescript("""
-                PRAGMA foreign_keys = OFF;
-                DROP TABLE IF EXISTS skill_new;
-                CREATE TABLE skill_new (
-                  skill_id          TEXT PRIMARY KEY,
-                  client_id         TEXT NOT NULL,
-                  name              TEXT NOT NULL,
-                  skill_key         TEXT NOT NULL,
-                  description       TEXT,
-                  category_id       INTEGER,
-                  capability_id     INTEGER,
-                  is_active         INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
-                  created_by        TEXT NOT NULL DEFAULT '1',
-                  created_at        TEXT NOT NULL DEFAULT (datetime('now')),
-                  updated_at        TEXT NOT NULL DEFAULT (datetime('now')),
-                  UNIQUE (client_id, skill_key),
-                  FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT,
-                  FOREIGN KEY (capability_id) REFERENCES capability(capability_id) ON DELETE RESTRICT
-                );
-                -- Note: during type change from TEXT to INTEGER, string IDs from 'category' column 
-                -- might become NULL or incoherent, which is acceptable for this migration phase.
-                INSERT INTO skill_new (skill_id, client_id, name, skill_key, description, is_active, created_at, updated_at)
-                SELECT skill_id, client_id, name, skill_key, description, 1, created_at, updated_at
-                FROM skill;
-                DROP TABLE skill;
-                ALTER TABLE skill_new RENAME TO skill;
-                PRAGMA foreign_keys = ON;
-            """)
-
-        # 2. Check if skill_version table needs rebuild
-        sv_info = raw_connection.execute("PRAGMA table_info(skill_version);").fetchall()
-        sv_indexes = raw_connection.execute("PRAGMA index_list(skill_version);").fetchall()
-        has_unique_skill_id = any(idx[2] == 1 for idx in sv_indexes) 
-        
-        if bool(sv_info) and not has_unique_skill_id:
-            logger.info("Rebuilding skill_version table...")
-            raw_connection.executescript("""
-                PRAGMA foreign_keys = OFF;
-                DROP TABLE IF EXISTS skill_version_new;
-                CREATE TABLE skill_version_new (
-                  skill_version_id    TEXT PRIMARY KEY,
-                  skill_id            TEXT NOT NULL UNIQUE,
-                  environment         TEXT NOT NULL,
-                  version             TEXT NOT NULL DEFAULT '1.0.1',
-                  status              TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('draft','published')),
-                  is_active           INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
-                  created_by          TEXT NOT NULL DEFAULT '1',
-                  created_at          TEXT NOT NULL DEFAULT (datetime('now')),
-                  published_at        TEXT,
-                  notes               TEXT,
-                  compiled_skill_json TEXT,
-                  compile_hash        TEXT,
-                  nodes               TEXT NOT NULL DEFAULT '[]',
-                  connections         TEXT NOT NULL DEFAULT '{}',
-                  FOREIGN KEY (skill_id) REFERENCES skill(skill_id) ON DELETE CASCADE
-                );
-                INSERT INTO skill_version_new (skill_version_id, skill_id, environment, version, status, is_active, created_at, nodes, connections)
-                SELECT skill_version_id, skill_id, environment, '1.0.1', 'published', 1, created_at, nodes, connections
-                FROM skill_version
-                GROUP BY skill_id; 
-                DROP TABLE skill_version;
-                ALTER TABLE skill_version_new RENAME TO skill_version;
-                PRAGMA foreign_keys = ON;
-            """)
-
-        # 3. Check if action_definition table needs rebuild
-        ad_info = raw_connection.execute("PRAGMA table_info(action_definition);").fetchall()
-        ad_column_names = {row[1]: row for row in ad_info}
-        
-        is_ad_old_type = False
-        if "category_id" in ad_column_names:
-            col_type = ad_column_names["category_id"][2]
-            if col_type.upper() == "TEXT":
-                is_ad_old_type = True
-
-        ad_needs_rebuild = bool(ad_info) and (
-            "category_id" not in ad_column_names or
-            "client_id" not in ad_column_names or
-            "connector_id" in ad_column_names or
-            is_ad_old_type
-        )
-
-        if ad_needs_rebuild:
-            logger.info("Rebuilding action_definition table to support INTEGER IDs...")
-            raw_connection.executescript("""
-                PRAGMA foreign_keys = OFF;
-                DROP TABLE IF EXISTS action_definition_new;
-                CREATE TABLE action_definition_new (
-                  action_definition_id TEXT PRIMARY KEY,
-                  action_key           TEXT NOT NULL UNIQUE,
-                  name                 TEXT NOT NULL,
-                  description          TEXT,
-                  category_id          INTEGER,
-                  capability_id        INTEGER,
-                  icon                 TEXT,
-                  default_node_title   TEXT,
-                  scope                TEXT NOT NULL DEFAULT 'global'
-                                       CHECK (scope IN ('global','client')),
-                  client_id            TEXT NOT NULL DEFAULT '1',
-                  status               TEXT NOT NULL DEFAULT 'published'
-                                       CHECK (status IN ('draft','published')),
-                  is_active            INTEGER NOT NULL DEFAULT 1
-                                       CHECK (is_active IN (0,1)),
-                  created_by           TEXT,
-                  created_at           TEXT NOT NULL DEFAULT (datetime('now')),
-                  updated_at           TEXT NOT NULL DEFAULT (datetime('now')),
-                  FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT,
-                  FOREIGN KEY (capability_id) REFERENCES capability(capability_id) ON DELETE RESTRICT
-                );
-                INSERT INTO action_definition_new (
-                    action_definition_id, action_key, name, description,
-                    category_id, capability_id, icon, default_node_title, 
-                    scope, client_id, status, is_active, created_by, created_at, updated_at
-                )
-                SELECT 
-                    action_definition_id, action_key, name, description,
-                    CASE WHEN typeof(category_id)='integer' THEN category_id ELSE NULL END,
-                    CASE WHEN typeof(capability_id)='integer' THEN capability_id ELSE NULL END,
-                    icon, default_node_title, scope, COALESCE(client_id, '1'),
-                    status, is_active, created_by, created_at, updated_at
-                FROM action_definition;
-                DROP TABLE action_definition;
-                ALTER TABLE action_definition_new RENAME TO action_definition;
-                PRAGMA foreign_keys = ON;
-            """)
-
-        # 4. Create all tables with final definitions
+        # Create all tables with final definitions using INTEGER IDs
         raw_connection.executescript("""
             CREATE TABLE IF NOT EXISTS category (
               category_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -209,15 +45,15 @@ def initialise_database() -> None:
             );
 
             CREATE TABLE IF NOT EXISTS skill (
-              skill_id          TEXT PRIMARY KEY,
-              client_id         TEXT NOT NULL,
+              skill_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+              client_id         INTEGER NOT NULL,
               name              TEXT NOT NULL,
               skill_key         TEXT NOT NULL,
               description       TEXT,
               category_id       INTEGER,
               capability_id     INTEGER,
               is_active         INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
-              created_by        TEXT NOT NULL DEFAULT '1',
+              created_by        INTEGER NOT NULL DEFAULT 1,
               created_at        TEXT NOT NULL DEFAULT (datetime('now')),
               updated_at        TEXT NOT NULL DEFAULT (datetime('now')),
               UNIQUE (client_id, skill_key),
@@ -226,13 +62,13 @@ def initialise_database() -> None:
             );
 
             CREATE TABLE IF NOT EXISTS skill_version (
-              skill_version_id    TEXT PRIMARY KEY,
-              skill_id            TEXT NOT NULL UNIQUE,
+              skill_version_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+              skill_id            INTEGER NOT NULL,
               environment         TEXT NOT NULL,
               version             TEXT NOT NULL DEFAULT '1.0.1',
               status              TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('draft','published')),
               is_active           INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
-              created_by          TEXT NOT NULL DEFAULT '1',
+              created_by          INTEGER NOT NULL DEFAULT 1,
               created_at          TEXT NOT NULL DEFAULT (datetime('now')),
               published_at        TEXT,
               notes               TEXT,
@@ -244,8 +80,8 @@ def initialise_database() -> None:
             );
 
             CREATE TABLE IF NOT EXISTS skill_route (
-              skill_route_id    TEXT PRIMARY KEY,
-              skill_version_id  TEXT NOT NULL,
+              skill_route_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+              skill_version_id  INTEGER NOT NULL,
               from_node_key     TEXT NOT NULL,
               to_node_key       TEXT NOT NULL,
               from_handle       TEXT,
@@ -257,14 +93,14 @@ def initialise_database() -> None:
             );
 
             CREATE TABLE IF NOT EXISTS tag (
-              tag_id      TEXT PRIMARY KEY,
+              tag_id      INTEGER PRIMARY KEY AUTOINCREMENT,
               name        TEXT NOT NULL UNIQUE,
               created_at  TEXT NOT NULL DEFAULT (datetime('now'))
             );
 
             CREATE TABLE IF NOT EXISTS skill_tag (
-              skill_id    TEXT NOT NULL,
-              tag_id      TEXT NOT NULL,
+              skill_id    INTEGER NOT NULL,
+              tag_id      INTEGER NOT NULL,
               created_at  TEXT NOT NULL DEFAULT (datetime('now')),
               PRIMARY KEY (skill_id, tag_id),
               FOREIGN KEY (skill_id) REFERENCES skill(skill_id) ON DELETE CASCADE,
@@ -272,7 +108,7 @@ def initialise_database() -> None:
             );
 
             CREATE TABLE IF NOT EXISTS action_definition (
-              action_definition_id TEXT PRIMARY KEY,
+              action_definition_id INTEGER PRIMARY KEY AUTOINCREMENT,
               action_key           TEXT NOT NULL UNIQUE,
               name                 TEXT NOT NULL,
               description          TEXT,
@@ -282,12 +118,12 @@ def initialise_database() -> None:
               default_node_title   TEXT,
               scope                TEXT NOT NULL DEFAULT 'global'
                                    CHECK (scope IN ('global','client')),
-              client_id            TEXT NOT NULL DEFAULT '1',
+              client_id            INTEGER NOT NULL DEFAULT 1,
               status               TEXT NOT NULL DEFAULT 'published'
                                    CHECK (status IN ('draft','published')),
               is_active            INTEGER NOT NULL DEFAULT 1
                                    CHECK (is_active IN (0,1)),
-              created_by           TEXT,
+              created_by           INTEGER,
               created_at           TEXT NOT NULL DEFAULT (datetime('now')),
               updated_at           TEXT NOT NULL DEFAULT (datetime('now')),
               FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT,
@@ -295,8 +131,8 @@ def initialise_database() -> None:
             );
 
             CREATE TABLE IF NOT EXISTS action_version (
-              action_version_id    TEXT PRIMARY KEY,
-              action_definition_id TEXT NOT NULL UNIQUE,
+              action_version_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+              action_definition_id INTEGER NOT NULL UNIQUE,
               inputs_schema_json   TEXT NOT NULL DEFAULT '{}',
               execution_json       TEXT NOT NULL DEFAULT '{}',
               outputs_schema_json  TEXT NOT NULL DEFAULT '{}',
@@ -316,6 +152,45 @@ def initialise_database() -> None:
             CREATE INDEX IF NOT EXISTS idx_skill_tag_tag ON skill_tag(tag_id);
             CREATE INDEX IF NOT EXISTS idx_action_def_category ON action_definition(category_id, capability_id);
         """)
+
+        # 6. Seed Categories and Capabilities
+        # Check if empty first
+        count_cat = raw_connection.execute("SELECT COUNT(*) FROM category").fetchone()[0]
+        if count_cat == 0:
+            logger.debug("Seeding initial categories...")
+            categories = [
+                ("Eligibility", "Insurance verification"),
+                ("Claims", "Claim processing and status"),
+                ("Denials", "Denial management and appeals"),
+                ("Clinical", "Medical records and charts"),
+                ("AI/LLM", "Generative AI tasks"),
+                ("Payments", "Financial transactions"),
+                ("Workflow", "Routing and logic"),
+                ("Messaging", "Notifications and alerts"),
+                ("Analytics", "Data and reporting"),
+                ("Compliance", "Regulatory and audit")
+            ]
+            raw_connection.executemany(
+                "INSERT INTO category (name, description) VALUES (?, ?)", categories
+            )
+
+        count_cap = raw_connection.execute("SELECT COUNT(*) FROM capability").fetchone()[0]
+        if count_cap == 0:
+            logger.debug("Seeding initial capabilities...")
+            capabilities = [
+                ("Condition", "Evaluation and branching (IF/ELSE)"),
+                ("Human", "Manual task for a person"),
+                ("Agent", "Autonomous LLM reasoning"),
+                ("HTTP", "External API call"),
+                ("Function", "Specific code or tool execution"),
+                ("Loop", "Iteration over a list"),
+                ("Tool", "Pre-built utility"),
+                ("Reply", "Send response to source"),
+                ("Database", "SQL or NoSQL operations")
+            ]
+            raw_connection.executemany(
+                "INSERT INTO capability (name, description) VALUES (?, ?)", capabilities
+            )
 
         raw_connection.commit()
         logger.debug("Database schema initialised successfully.")

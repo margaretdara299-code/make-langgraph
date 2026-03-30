@@ -20,19 +20,25 @@ def generate_unique_id(prefix: str = "") -> str:
     return str(uuid.uuid4())
 
 
-def serialise_json(data: Any) -> str:
-    """Compact JSON serialisation (no extra whitespace)."""
-    return json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+def serialize_to_json(value) -> str:
+    """Serialize a value to a compact JSON string. Handles list/dict/None correctly."""
+    if value is None:
+        return '{}'
+    if isinstance(value, list) and not value:
+        return '[]'
+    if isinstance(value, dict) and not value:
+        return '{}'
+    return json.dumps(value, separators=(',', ':'))
 
 
-def deserialise_json(text: str | None, fallback: Any) -> Any:
-    """Safe JSON deserialisation with a fallback value on failure."""
-    if not text:
-        return fallback
+def deserialize_json(value, default=None):
+    """Deserialize a JSON string. Returns default on failure."""
+    if not value:
+        return default
     try:
-        return json.loads(text)
+        return json.loads(value)
     except Exception:
-        return fallback
+        return default
 
 
 def compute_sha256_hash(text: str) -> str:

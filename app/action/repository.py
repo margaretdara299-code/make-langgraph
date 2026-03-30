@@ -34,33 +34,33 @@ def deserialize_json(value, default=None):
 # =========================================================================
 # CREATE
 # =========================================================================
-def insert_action(db: Session, request, user_id: str) -> dict:
+def insert_action(db: Session, request, user_id: int) -> dict:
     """Create a new action_definition + one action_version (JSON blobs)."""
     timestamp = generate_utc_timestamp()
-    action_definition_id = generate_unique_id()
-    action_version_id = generate_unique_id()
 
-    # Duplicate name check
-    existing_name = db.execute(
-        text("SELECT 1 FROM action_definition WHERE name = :name"),
-        {"name": request.name}
+    # Duplicate name or key check
+    existing = db.execute(
+        text("SELECT name, action_key FROM action_definition WHERE name = :name OR action_key = :key"),
+        {"name": request.name, "key": request.action_key}
     ).first()
-    if existing_name:
-        action_name_exists()
+    if existing:
+        if existing[0] == request.name:
+            action_name_exists()
+        else:
+            action_key_exists()
 
     # Insert action_definition
     try:
-        db.execute(text("""
+        res_def = db.execute(text("""
             INSERT INTO action_definition
-              (action_definition_id, action_key, name, description, category_id,
+              (action_key, name, description, category_id,
                capability_id, icon, default_node_title, scope, client_id,
                status, is_active, created_by, created_at, updated_at)
             VALUES
-              (:id, :key, :name, :desc, :cat,
+              (:key, :name, :desc, :cat,
                :cap, :icon, :title, :scope, :client,
                :status, :is_active, :user, :ts, :ts)
         """), {
-            "id": action_definition_id,
             "key": request.action_key,
             "name": request.name,
             "desc": request.description,
@@ -69,14 +69,16 @@ def insert_action(db: Session, request, user_id: str) -> dict:
             "icon": request.icon,
             "title": request.default_node_title,
             "scope": request.scope or "global",
-            "client": request.client_id or "1",
+            "client": request.client_id or 1,
             "status": request.status or "published",
             "is_active": 1 if request.is_active else 0,
             "user": user_id,
             "ts": timestamp,
         })
+        action_definition_id = res_def.lastrowid
     except IntegrityError as e:
         error_msg = str(e).lower()
+        print(f"DEBUG: IntegrityError when inserting action: {e}")
         if "foreign key" in error_msg:
             # Determine if it was category or capability
             if "category_id" in error_msg:
@@ -92,17 +94,16 @@ def insert_action(db: Session, request, user_id: str) -> dict:
             action_key_exists()
 
     # Insert action_version — only JSON blobs used, no versioning columns
-    db.execute(text("""
+    res_ver = db.execute(text("""
         INSERT INTO action_version
-          (action_version_id, action_definition_id,
+          (action_definition_id,
            inputs_schema_json, execution_json, outputs_schema_json,
            configurations_json, ui_form_json, policy_json)
         VALUES
-          (:av_id, :ad_id,
+          (:ad_id,
            :inputs, :execution, :outputs,
            :configurations, :ui_form, :policy)
     """), {
-        "av_id": action_version_id,
         "ad_id": action_definition_id,
         "inputs": serialize_to_json(None),
         "execution": serialize_to_json(None),
@@ -111,6 +112,7 @@ def insert_action(db: Session, request, user_id: str) -> dict:
         "ui_form": serialize_to_json(None),
         "policy": serialize_to_json(None),
     })
+    action_version_id = res_ver.lastrowid
 
     db.commit()
 
@@ -128,8 +130,8 @@ def insert_action(db: Session, request, user_id: str) -> dict:
 # =========================================================================
 def fetch_all_actions(db: Session,
                       status: str | None = None,
-                      capability_id: int | str | None = None,
-                      category_id: int | str | None = None,
+                      capability_id: int | None = None,
+                      category_id: int | None = None,
                       search_query: str | None = None) -> list:
     """List all actions with their JSON blobs joined from action_version."""
     where = ["1=1"]
@@ -141,11 +143,8 @@ def fetch_all_actions(db: Session,
         where.append("ad.capability_id = :capability_id")
         params["capability_id"] = capability_id
     if category_id:
-        if isinstance(category_id, str) and category_id.lower() == "uncategorized":
-            where.append("(ad.category_id IS NULL OR ad.category_id = 0 OR ad.category_id = '')")
-        else:
-            where.append("ad.category_id = :category_id")
-            params["category_id"] = category_id
+        where.append("ad.category_id = :category_id")
+        params["category_id"] = category_id
     if search_query:
         where.append("(ad.name LIKE :q OR ad.action_key LIKE :q)")
         params["q"] = f"%{search_query}%"
@@ -193,7 +192,7 @@ def fetch_actions_grouped_by_category(db: Session) -> dict:
 # =========================================================================
 # GET BY ID
 # =========================================================================
-def fetch_action_by_id(db: Session, action_definition_id: str) -> dict | None:
+def fetch_action_by_id(db: Session, action_definition_id: int) -> dict | None:
     """Get a single action with its JSON blobs."""
     row = db.execute(text("""
         SELECT
@@ -227,7 +226,7 @@ def fetch_action_by_id(db: Session, action_definition_id: str) -> dict | None:
 # =========================================================================
 # UPDATE
 # =========================================================================
-def update_action(db: Session, action_definition_id: str, request) -> dict:
+def update_action(db: Session, action_definition_id: int, request) -> dict:
     """Update action_definition metadata + JSON blobs in action_version."""
     row = db.execute(
         text("SELECT action_definition_id, name FROM action_definition WHERE action_definition_id = :id"),
@@ -236,14 +235,42 @@ def update_action(db: Session, action_definition_id: str, request) -> dict:
     if not row:
         action_not_found()
 
-    # Duplicate name check (exclude self)
-    if request.name is not None:
+    # Duplicate name or key check (exclude self)
+    if request.name is not None or request.action_key is not None:
+        name_val = request.name or row[1]
+        # Query for both name and key, excluding current ID
+        # If action_key is missing in request, we check against current value if name is provided
+        # or we just check the provided key.
+        # However, it's safer to always check the new key if it exists.
+        
+        # Determine values to check
+        check_name = request.name or ""
+        check_key = request.action_key or ""
+        
+        where_clauses = ["action_definition_id != :id"]
+        params = {"id": action_definition_id}
+        
+        if request.name and request.action_key:
+            where_clauses.append("(name = :name OR action_key = :key)")
+            params["name"] = request.name
+            params["key"] = request.action_key
+        elif request.name:
+            where_clauses.append("name = :name")
+            params["name"] = request.name
+        else: # only request.action_key
+            where_clauses.append("action_key = :key")
+            params["key"] = request.action_key
+            
         existing = db.execute(
-            text("SELECT 1 FROM action_definition WHERE name = :name AND action_definition_id != :id"),
-            {"name": request.name, "id": action_definition_id}
+            text(f"SELECT name, action_key FROM action_definition WHERE {' AND '.join(where_clauses)}"),
+            params
         ).first()
+        
         if existing:
-            action_name_exists()
+            if request.name and existing[0] == request.name:
+                action_name_exists()
+            if request.action_key and existing[1] == request.action_key:
+                action_key_exists()
 
     timestamp = generate_utc_timestamp()
 
@@ -300,7 +327,7 @@ def update_action(db: Session, action_definition_id: str, request) -> dict:
 # =========================================================================
 # UPDATE STATUS ONLY
 # =========================================================================
-def update_action_status(db: Session, action_definition_id: str, request) -> dict:
+def update_action_status(db: Session, action_definition_id: int, request) -> dict:
     """Update only the status and is_active fields of an action."""
     row = db.execute(
         text("SELECT action_definition_id FROM action_definition WHERE action_definition_id = :id"),
@@ -358,7 +385,7 @@ def is_action_in_use(db: Session, action_key: str) -> bool:
     return result is not None
 
 
-def delete_action(db: Session, action_definition_id: str) -> bool:
+def delete_action(db: Session, action_definition_id: int) -> bool:
     """Delete an action definition if it's not in use."""
     row = db.execute(
         text("SELECT action_key FROM action_definition WHERE action_definition_id = :id"),
@@ -373,6 +400,13 @@ def delete_action(db: Session, action_definition_id: str) -> bool:
     if is_action_in_use(db, action_key):
         return False # Indicates "In Use"
 
+    # Explicitly delete versions first for extra safety
+    db.execute(
+        text("DELETE FROM action_version WHERE action_definition_id = :id"),
+        {"id": action_definition_id}
+    )
+
+    # Then delete the definition
     db.execute(
         text("DELETE FROM action_definition WHERE action_definition_id = :id"),
         {"id": action_definition_id}

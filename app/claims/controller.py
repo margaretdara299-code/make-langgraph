@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List, Dict, Any
 from app.common.response import build_success_response, raise_not_found
 
-router = APIRouter(prefix="/api/claims", tags=["Dummy Claims API"])
+router = APIRouter(prefix="/claims", tags=["Dummy Claims API"])
 
 # 🔥 In-memory dummy data
 claims_db = [

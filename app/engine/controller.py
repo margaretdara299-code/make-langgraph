@@ -14,7 +14,7 @@ from app.engine.graph_builder import compile_workflow_plan
 from app.engine.codegen import generate_langgraph_source
 from app.logger.logging import logger
 
-router = APIRouter(prefix="/api", tags=["Workflow Engine"])
+router = APIRouter(prefix="/engine", tags=["Workflow Engine"])
 
 
 # ── Request models ─────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ class WorkflowPayload(BaseModel):
 # Validate a workflow
 # =========================================================================
 
-@router.post("/engine/validate")
+@router.post("/validate")
 def validate_engine_workflow(request: dict = Body(...)):
     """Run structural checks on a workflow JSON definition without building it."""
     try:
@@ -46,7 +46,7 @@ def validate_engine_workflow(request: dict = Body(...)):
 # Compile a workflow
 # =========================================================================
 
-@router.post("/engine/compile")
+@router.post("/compile")
 def compile_engine_workflow(request: dict = Body(...)):
     """Validate and hash the workflow definition into a cacheable execution plan."""
     try:
@@ -63,7 +63,7 @@ def compile_engine_workflow(request: dict = Body(...)):
 # Execute a workflow
 # =========================================================================
 
-@router.post("/engine/run", status_code=200)
+@router.post("/run", status_code=200)
 def execute_workflow(
     request: dict = Body(...),
     thread_id: str = "default_session"
@@ -91,7 +91,7 @@ def execute_workflow(
 
 
 
-@router.post("/engine/generate-code")
+@router.post("/generate-code")
 def generate_workflow_code(
     request: WorkflowPayload = Body(...),
     db: Session = Depends(get_db)
@@ -123,7 +123,7 @@ def generate_workflow_code(
         raise_internal_server_error()
 
 
-@router.get("/engine/generate-code/{skill_version_id}")
+@router.get("/generate-code/{skill_version_id}")
 def generate_workflow_code_by_id(
     skill_version_id: str,
     db: Session = Depends(get_db)
@@ -147,7 +147,7 @@ def generate_workflow_code_by_id(
 # List available action handlers
 # =========================================================================
 
-@router.get("/engine/actions")
+@router.get("/actions")
 def list_engine_actions():
     """Return a list of all built-in action_keys the engine supports."""
     logger.debug("Engine: listing registered actions")

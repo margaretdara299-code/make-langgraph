@@ -57,11 +57,13 @@ def validate_workflow(workflow_json: dict) -> dict:
     if not entry_nodes:
         errors.append("No entry node found — every node is a target of some edge (possible cycle).")
 
-    # ── 8. Terminal nodes exist (nodes with no outgoing edge) ──────────
+    # ── 8. Terminal nodes exist & must have an explicit End node ──────
     sources = {e.source for e in wf.connections.values()}
     terminal_nodes = [n.id for n in wf.nodes if n.id not in sources]
-    if not terminal_nodes:
-        warnings.append("No terminal node found — every node has outgoing edges.")
+    
+    end_nodes = [n for n in wf.nodes if n.type and n.type.startswith("end.")]
+    if not end_nodes:
+        errors.append("Workflow must contain at least one terminal node of type 'end.*' (e.g., end.success, end.error).")
 
     # ── 9. Orphan detection (nodes unreachable) ────────────────────────
     connected = sources | targets

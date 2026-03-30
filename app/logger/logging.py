@@ -16,11 +16,11 @@ log_file_path = os.path.join(log_dir, "app.log")
 log_format = "%(asctime)s [%(levelname)s] %(message)s"
 date_format = "%Y-%m-%d %H:%M:%S"
 
-# Rotation: 3MB per file, max 3 backup files (Total ~12MB storage)
+MB = 1024 * 1024
 file_handler = RotatingFileHandler(
     log_file_path,
-    maxBytes=3 * 1024 * 1024,  # 3 Megabytes
-    backupCount=3              # Keep 3 historical log files
+    maxBytes=5 * MB,   # 5 MB
+    backupCount=3
 )
 file_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
 file_handler.setLevel(logging.INFO)
@@ -38,7 +38,6 @@ root_logger.addHandler(file_handler)
 root_logger.addHandler(console_handler)
 
 logger = logging.getLogger(__name__)
-
 
 # =========================================================================
 # @log_execution decorator — auto-logs start, finish, duration, error

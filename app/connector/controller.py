@@ -10,11 +10,11 @@ from app.connector.models import CreateConnectorRequest, UpdateConnectorRequest,
 from app.connector.connectivity_service import verify_connectivity
 from app.logger.logging import logger
 
-router = APIRouter(prefix="/api/v1", tags=["Connectors"])
+router = APIRouter(prefix="/connectors", tags=["Connectors"])
 
 
 
-@router.post("/connectors/connectivity/verify")
+@router.post("/connectivity/verify")
 def verify_connectivity_endpoint(request: ConnectivityValidationRequest):
     """
     Enterprise Connectivity Validation.
@@ -29,7 +29,7 @@ def verify_connectivity_endpoint(request: ConnectivityValidationRequest):
         raise_internal_server_error(result.error_message)
 
 
-@router.post("/connectors", status_code=201)
+@router.post("", status_code=201)
 def create_connector(
     request: CreateConnectorRequest,
     db: Session = Depends(get_db_session)
@@ -43,7 +43,7 @@ def create_connector(
         raise_internal_server_error()
 
 
-@router.get("/connectors")
+@router.get("")
 def list_connectors(
     db: Session = Depends(get_db_session),
     active_only: bool | None = Query(None)
@@ -57,7 +57,7 @@ def list_connectors(
         raise_internal_server_error()
 
 
-@router.get("/connectors/grouped")
+@router.get("/grouped")
 def list_connectors_grouped(
     db: Session = Depends(get_db_session)
 ):
@@ -71,7 +71,7 @@ def list_connectors_grouped(
         raise_internal_server_error()
 
 
-@router.get("/connectors/{connector_id}")
+@router.get("/{connector_id}")
 def get_connector(
     connector_id: int,
     db: Session = Depends(get_db_session)
@@ -89,7 +89,7 @@ def get_connector(
         raise_internal_server_error()
 
 
-@router.patch("/connectors/{connector_id}")
+@router.patch("/{connector_id}")
 def update_connector(
     connector_id: int,
     request: UpdateConnectorRequest,
@@ -110,7 +110,7 @@ def update_connector(
         raise_internal_server_error()
 
 
-@router.delete("/connectors/{connector_id}")
+@router.delete("/{connector_id}")
 def delete_connector(
     connector_id: int,
     db: Session = Depends(get_db_session)
