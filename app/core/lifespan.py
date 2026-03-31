@@ -21,6 +21,7 @@ async def lifespan(application: FastAPI):
         logger.error(f"Failed to initialize DB connection pool: {error}")
 
     initialise_database()
+
     yield
     engine.dispose()
     logger.debug("Application shutdown complete.")

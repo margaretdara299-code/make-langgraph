@@ -164,25 +164,6 @@ def save_skill_graph(
         logger.exception("Error saving graph")
         raise_internal_server_error()
 
-
-@version_router.patch("/{skill_version_id}/nodes/{node_id}/data")
-def update_node_data(
-    skill_version_id: int, 
-    node_id: str, 
-    request: UpdateNodeConfigRequest,
-    db: Session = Depends(get_db_session)
-):
-    """Update a single node's configuration data."""
-    try:
-        skill_service.update_node(db, skill_version_id, node_id, request.data)
-        return build_success_response("Node updated")
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception("Error updating node data")
-        raise_internal_server_error()
-
-
 @version_router.put("/{skill_version_id}/status")
 def update_skill_version_status(
     skill_version_id: int, 
@@ -208,53 +189,5 @@ def update_skill_version_status(
         logger.exception("Error updating version status")
         raise_internal_server_error()
 
-
-@version_router.post("/{skill_version_id}/validate")
-def validate_skill_version(
-    skill_version_id: int,
-    db: Session = Depends(get_db_session)
-):
-    """Run engine validation on a saved skill version."""
-    try:
-        result = skill_service.validate_skill_version(db, skill_version_id)
-        return build_success_response("Validation complete", result)
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception(f"Error validating version {skill_version_id}")
-        raise_internal_server_error()
-
-
-@version_router.post("/{skill_version_id}/compile")
-def compile_skill_version(
-    skill_version_id: int,
-    db: Session = Depends(get_db_session)
-):
-    """Compile a skill version into an execution plan."""
-    try:
-        result = skill_service.compile_skill_version(db, skill_version_id)
-        return build_success_response("Compilation complete", result)
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception(f"Error compiling version {skill_version_id}")
-        raise_internal_server_error()
-
-
-@version_router.post("/{skill_version_id}/run")
-def run_skill_version(
-    skill_version_id: int,
-    request: RunSkillRequest,
-    db: Session = Depends(get_db_session)
-):
-    """Execute a skill version (dry-run)."""
-    try:
-        result = skill_service.run_skill_version(db, skill_version_id, request.input_context)
-        return build_success_response("Execution complete", result)
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception(f"Error running version {skill_version_id}")
-        raise_internal_server_error()
 
 
