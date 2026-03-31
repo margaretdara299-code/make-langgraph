@@ -24,6 +24,26 @@ class DatabaseConfig(BaseSettings):
     )
 
 
+class ClaimsDBConfig(BaseSettings):
+    """MySQL claims database settings. Reads CLAIMS_DB_* env vars."""
+    HOST: str = "54.211.59.215"
+    USER: str = "af_user"
+    PASSWORD: str = "prim1615test"
+    DATABASE: str = "alloFactorV4"
+    PORT: int = 3306
+    POOL_SIZE: int = 5
+    MAX_OVERFLOW: int = 10
+    POOL_TIMEOUT: int = 30
+    POOL_RECYCLE: int = 1800
+
+    model_config = SettingsConfigDict(
+        env_prefix="CLAIMS_DB_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+
 class AppConfig(BaseSettings):
     """Application metadata. Reads APP_* env vars."""
     TITLE: str = "Tensaw Skills Studio API"
@@ -53,5 +73,6 @@ class ServerConfig(BaseSettings):
 
 # Instantiate settings
 db_config = DatabaseConfig()
+claims_db_config = ClaimsDBConfig()
 app_config = AppConfig()
 server_config = ServerConfig()

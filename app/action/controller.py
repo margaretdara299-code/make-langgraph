@@ -10,8 +10,6 @@ from app.action import service as action_service
 from app.logger.logging import logger
 
 router = APIRouter(prefix="/actions", tags=["Actions"])
-designer_router = APIRouter(prefix="/designer", tags=["Designer"])
-
 
 @router.post("", status_code=201)
 def create_action(
