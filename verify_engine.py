@@ -2,9 +2,9 @@ import json
 import os
 from pprint import pprint
 
-from app.engine.validator import validate_workflow
-from app.engine.graph_builder import compile_workflow_plan
-from app.engine.runner import run_workflow
+from app.engine.compiler.validator import validate_workflow
+from app.engine.compiler.builder import compile_workflow_plan
+from app.engine.executor.runner import run_workflow
 
 print("=== 1. Testing Validation Catch ===")
 bad_workflow = {

@@ -13,9 +13,9 @@ from app.skill import repository as skill_repository
 from app.skill.models import (RunSkillResponse, SaveSkillGraphRequest,
                                SkillGraphConnection, SkillGraphResponse, UpdateSkillVersionStatusRequest)
 from app.logger.logging import logger
-from app.engine.validator import validate_workflow
-from app.engine.graph_builder import compile_workflow_plan
-from app.engine.runner import run_workflow
+from app.engine.compiler.validator import validate_workflow
+from app.engine.compiler.builder import compile_workflow_plan
+from app.engine.executor.runner import run_workflow
 
 
 # =========================================================================

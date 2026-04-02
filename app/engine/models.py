@@ -3,8 +3,7 @@ Pydantic models and TypedDict for the workflow JSON schema and LangGraph state.
 """
 from __future__ import annotations
 from typing import Any, TypedDict
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field, AliasChoices
 
 # ─── LangGraph shared state ────────────────────────────────────────────
 class WorkflowState(TypedDict, total=False):
@@ -15,6 +14,7 @@ class WorkflowState(TypedDict, total=False):
     final_reply: str
     condition_result: str          # "true" | "false"
     logs: list[str]
+    node_responses: dict[str, Any]
 
 
 # ─── Workflow JSON shapes (Aligned with DB SkillGraphNode/Connection) ───
@@ -22,7 +22,7 @@ class ActionData(BaseModel):
     """Corresponds to node.data in the React Flow / DB format."""
     actionKey: str | None = Field(None, alias="action_key")
     capability: str | None = None
-    config: dict[str, Any] = Field(default_factory=dict, alias="configurationsJson")
+    config: dict[str, Any] = Field(default_factory=dict, validation_alias=AliasChoices("configurationsJson", "configurations_json", "config"))
     label: str | None = None
     
     model_config = {"populate_by_name": True}
