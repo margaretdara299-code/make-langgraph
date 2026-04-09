@@ -1,6 +1,13 @@
 """
-compiler/builder.py — Dynamically constructs and caches a LangGraph StateGraph
+compiler/builder.py — Dynamically constructs a LangGraph StateGraph
 from a validated workflow definition.
+
+LangGraph design followed here:
+  - One node = one function (wrapped via _make_node_fn closure)
+  - Graph controls node-to-node movement via edges
+  - Node functions do NOT call other node functions
+  - entry point = the "start" node if present, else first node
+  - Fail Fast: _make_node_fn checks state["error"] before invoking node
 """
 from __future__ import annotations
 import functools
@@ -53,10 +60,21 @@ def build_graph(workflow_data: dict, checkpointer=None):
 # ─── Internal ──────────────────────────────────────────────────────────────────
 
 def _make_node_fn(node_dict: dict):
-    """Return a closure that executes a single node within the graph state."""
+    """
+    Return a closure that executes a single node within the graph state.
+
+    LangGraph rule: one node = one function.
+    This closure does NOT call any other node function.
+
+    Fail Fast: if state["error"] is already set by a previous node,
+    the execute_node function will skip immediately (checked inside execute_node).
+    """
     def _fn(state: WorkflowState) -> WorkflowState:
         if "logs" not in state or state["logs"] is None:
             state["logs"] = []
+        if "node_responses" not in state or state["node_responses"] is None:
+            state["node_responses"] = {}
+        # Delegate to executor — which itself checks state["error"] first
         return execute_node(state, node_dict)
     return _fn
 
@@ -71,6 +89,11 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
     """
     Build the uncompiled StateGraph from a JSON string.
     Cached by workflow_str to avoid redundant rebuilds for identical graphs.
+
+    Entry point selection:
+      - If a node with type="start" exists → set_entry_point to that node
+        and wire an edge: start → first_action_node
+      - Otherwise → set_entry_point to first node in the list
     """
     wf    = WorkflowDef(**json.loads(workflow_str))
     graph = StateGraph(WorkflowState)
@@ -79,14 +102,18 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
         [(n.id, n.data.actionKey or n.data.label or n.id) for n in wf.nodes]
     )
 
-    # Register nodes
+    # Register ALL nodes (including start)
     for node in wf.nodes:
         graph.add_node(id_map[node.id], _make_node_fn(node.model_dump()))
 
-    # Set entry point
-    graph.set_entry_point(id_map[wf.nodes[0].id])
+    # ── Entry point: prefer "start" type node, else first node ─────────
+    start_node = next((n for n in wf.nodes if n.type == "start"), None)
+    if start_node:
+        graph.set_entry_point(id_map[start_node.id])
+    else:
+        graph.set_entry_point(id_map[wf.nodes[0].id])
 
-    # Wire edges
+    # ── Wire edges from connections ────────────────────────────────────
     conditional_sources: dict[str, dict[str, str]] = {}
     normal_edges: list[tuple[str, str]] = []
 
@@ -95,9 +122,8 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
         tgt = id_map.get(edge.target)
         if not src or not tgt:
             continue
-            
-        cond_value = (edge.condition or {}).get("value")
 
+        cond_value = (edge.condition or {}).get("value")
         if cond_value in ("true", "false") and not edge.is_default:
             conditional_sources.setdefault(src, {})[cond_value] = tgt
         else:
@@ -110,7 +136,7 @@ def _build_stategraph(workflow_str: str) -> StateGraph:
     for src, branch_map in conditional_sources.items():
         graph.add_conditional_edges(src, _condition_router, branch_map)
 
-    # Terminate leaf nodes
+    # ── Terminate leaf nodes (nodes with no outgoing edges) ────────────
     sources_set = {id_map.get(e.source) for e in wf.connections.values() if id_map.get(e.source)}
     for node in wf.nodes:
         lg_id = id_map.get(node.id)

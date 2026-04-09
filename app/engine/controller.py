@@ -116,10 +116,11 @@ def generate_workflow_code_by_id(
 @router.post("/run/{skill_version_id}")
 def run_workflow_by_id(
     skill_version_id: str,
+    payload: dict[str, Any] = Body(default_factory=dict),
     db: Session = Depends(get_db)
 ):
     """Fetch a workflow from DB, compile it using LangGraph, and execute it."""
-    logger.debug(f"Engine: running workflow for version {skill_version_id}")
+    logger.debug(f"Engine: running workflow for version {skill_version_id} with payload {payload}")
     try:
         skill_graph = fetch_skill_graph(db, skill_version_id)
         workflow_data = {
@@ -129,9 +130,28 @@ def run_workflow_by_id(
         
         # Execute workflow synchronously returning the final dictionary state
         # A thread suffix _api ensures checkpointing works properly across API calls
-        final_state = run_workflow(workflow_data, thread_id=f"api_{skill_version_id}")
+        final_state = run_workflow(
+            workflow_data, 
+            initial_input=payload,
+            thread_id=f"api_{skill_version_id}"
+        )
         
+        # ── Check if any node set an error during execution ──────────────
+        workflow_error = final_state.get("error")
+
+        if workflow_error:
+            logger.warning(f"Workflow {skill_version_id} completed with error: {workflow_error}")
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "status":  False,
+                    "message": f"Workflow failed: {workflow_error}",
+                    "data":    final_state,
+                }
+            )
+
         return build_success_response("Workflow executed successfully", final_state)
+
     except ValueError as ve:
         logger.warning(f"Workflow compilation failed for {skill_version_id}: {ve}")
         return JSONResponse(status_code=400, content={"status": False, "message": str(ve), "data": None})
