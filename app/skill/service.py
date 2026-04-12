@@ -128,7 +128,7 @@ def get_skill_graph(db: Session, skill_version_id: int) -> SkillGraphResponse:
 
 def save_graph(db: Session, skill_version_id: int, request: SaveSkillGraphRequest) -> SkillGraphResponse:
     """Bulk-save the entire graph (nodes + connections) for a skill version."""
-    skill_repository.save_skill_graph(db, skill_version_id, request.nodes, request.connections)
+    skill_repository.save_skill_graph(db, skill_version_id, request.nodes, request.connections, request.viewport_json)
     logger.debug(f"Saved graph for skill version {skill_version_id} "
                 f"({len(request.nodes)} nodes, {len(request.connections)} connections)")
     return skill_repository.fetch_skill_graph(db, skill_version_id)
