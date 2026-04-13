@@ -104,12 +104,14 @@ class SkillGraphResponse(BaseModel):
     description: str | None = None
     nodes: List[SkillGraphNode]
     connections: Dict[str, SkillGraphConnection] = Field(default_factory=dict)
+    viewport_json: Dict[str, float] = Field(default_factory=dict)
 
 
 class SaveSkillGraphRequest(BaseModel):
     """Payload to bulk-save the graph for a skill version."""
     nodes: List[SkillGraphNode]
     connections: Dict[str, SkillGraphConnection] = Field(default_factory=dict)
+    viewport_json: Dict[str, float] = Field(default_factory=dict)
 
 
 class UpdateNodeConfigRequest(BaseModel):

@@ -340,6 +340,7 @@ def fetch_skill_graph(db: Session, skill_version_id: int) -> SkillGraphResponse:
     # Read nodes and connections from their respective columns
     raw_nodes_col = deserialize_json(version_row["nodes"] or "[]", [])
     raw_connections_col = deserialize_json(version_row["connections"] or "{}", {})
+    raw_viewport_col = deserialize_json(version_row.get("viewport_json", "{}") or "{}", {})
     
     if isinstance(raw_nodes_col, dict) and "nodes" in raw_nodes_col:
         # Fallback for composite format if it exists in the nodes column
@@ -356,6 +357,8 @@ def fetch_skill_graph(db: Session, skill_version_id: int) -> SkillGraphResponse:
     for edge_id, conn_dict in connections_data.items():
         connections[edge_id] = SkillGraphConnection(**conn_dict)
 
+    viewport_data = raw_viewport_col if isinstance(raw_viewport_col, dict) else {}
+
     return SkillGraphResponse(
         skill_version_id=version_row["skill_version_id"],
         skill_id=version_row["_skill_id"],
@@ -367,11 +370,12 @@ def fetch_skill_graph(db: Session, skill_version_id: int) -> SkillGraphResponse:
         status=version_row["status"],
         nodes=nodes,
         connections=connections,
+        viewport_json=viewport_data,
     )
 
 
-def save_skill_graph(db: Session, skill_version_id: int, nodes: list, connections: dict) -> None:
-    """Persist the full canvas: both nodes and connections into skill_version.nodes JSON column."""
+def save_skill_graph(db: Session, skill_version_id: int, nodes: list, connections: dict, viewport_json: dict) -> None:
+    """Persist the full canvas: both nodes, connections, and viewport into skill_version."""
     version_row = db.execute(
         text("SELECT status FROM skill_version WHERE skill_version_id=:sv_id"),
         {"sv_id": skill_version_id},
@@ -379,7 +383,7 @@ def save_skill_graph(db: Session, skill_version_id: int, nodes: list, connection
     if not version_row:
         skill_version_not_found()
 
-    # 1. Save nodes and connections into their respective columns
+    # 1. Save nodes, connections, and viewport into their respective columns
     nodes_serialisable = [
         n.model_dump() if hasattr(n, "model_dump") else n
         for n in nodes
@@ -388,13 +392,15 @@ def save_skill_graph(db: Session, skill_version_id: int, nodes: list, connection
         k: (v.model_dump() if hasattr(v, "model_dump") else v)
         for k, v in connections.items()
     }
+    viewport_serialisable = viewport_json
     
     nodes_json = serialize_to_json(nodes_serialisable)
-    connections_json = serialize_to_json(connections_serialisable)
+    connections_json_str = serialize_to_json(connections_serialisable)
+    viewport_json_str = serialize_to_json(viewport_serialisable)
     
     db.execute(
-        text("UPDATE skill_version SET nodes=:nodes, connections=:connections WHERE skill_version_id=:sv_id"),
-        {"nodes": nodes_json, "connections": connections_json, "sv_id": skill_version_id},
+        text("UPDATE skill_version SET nodes=:nodes, connections=:connections, viewport_json=:viewport WHERE skill_version_id=:sv_id"),
+        {"nodes": nodes_json, "connections": connections_json_str, "viewport": viewport_json_str, "sv_id": skill_version_id},
     )
 
     # 3. Bump updated_at

@@ -13,9 +13,9 @@ from app.skill import repository as skill_repository
 from app.skill.models import (RunSkillResponse, SaveSkillGraphRequest,
                                SkillGraphConnection, SkillGraphResponse, UpdateSkillVersionStatusRequest)
 from app.logger.logging import logger
-from app.engine.validator import validate_workflow
-from app.engine.graph_builder import compile_workflow_plan
-from app.engine.runner import run_workflow
+from app.engine.compiler.validator import validate_workflow
+from app.engine.compiler.builder import compile_workflow_plan
+from app.engine.executor.runner import run_workflow
 
 
 # =========================================================================
@@ -128,7 +128,7 @@ def get_skill_graph(db: Session, skill_version_id: int) -> SkillGraphResponse:
 
 def save_graph(db: Session, skill_version_id: int, request: SaveSkillGraphRequest) -> SkillGraphResponse:
     """Bulk-save the entire graph (nodes + connections) for a skill version."""
-    skill_repository.save_skill_graph(db, skill_version_id, request.nodes, request.connections)
+    skill_repository.save_skill_graph(db, skill_version_id, request.nodes, request.connections, request.viewport_json)
     logger.debug(f"Saved graph for skill version {skill_version_id} "
                 f"({len(request.nodes)} nodes, {len(request.connections)} connections)")
     return skill_repository.fetch_skill_graph(db, skill_version_id)

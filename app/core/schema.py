@@ -76,6 +76,7 @@ def initialise_database() -> None:
               compile_hash        TEXT,
               nodes               TEXT NOT NULL DEFAULT '[]',
               connections         TEXT NOT NULL DEFAULT '{}',
+              viewport_json       TEXT NOT NULL DEFAULT '{}',
               FOREIGN KEY (skill_id) REFERENCES skill(skill_id) ON DELETE CASCADE
             );
 

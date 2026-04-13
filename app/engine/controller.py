@@ -2,13 +2,15 @@
 Engine controller — API routes for the Workflow Execution Engine.
 """
 from fastapi import APIRouter, HTTPException, Body, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Any
 from sqlalchemy.orm import Session
 from app.core.database import get_db_session as get_db
 from app.skill.repository import fetch_skill_graph
 from app.common.response import build_success_response, raise_internal_server_error
-from app.engine.codegen import generate_langgraph_source
+from app.engine.codegen.generator import generate_project_files
+from app.engine.executor.runner import run_workflow
 from app.logger.logging import logger
 
 router = APIRouter(prefix="/engine", tags=["Workflow Engine"])
@@ -94,17 +96,65 @@ def generate_workflow_code_by_id(
     skill_version_id: str,
     db: Session = Depends(get_db)
 ):
-    """Fetch a workflow from DB and convert it into executable LangGraph Python script."""
-    logger.debug(f"Engine: generating Python source code for version {skill_version_id}")
+    """Fetch a workflow from DB and generate a complete multi-file LangGraph project."""
+    logger.debug(f"Engine: generating project files for skill version {skill_version_id}")
     try:
         skill_graph = fetch_skill_graph(db, skill_version_id)
         workflow_data = {
             "nodes": [n.model_dump() for n in skill_graph.nodes],
             "connections": {k: v.model_dump() for k, v in skill_graph.connections.items()}
         }
-        source_code = generate_langgraph_source(workflow_data)
-        return build_success_response("Python source generated successfully", {"code": source_code})
+        files = generate_project_files(
+            workflow_data,
+            workflow_name=f"Skill Version {skill_version_id}"
+        )
+        return build_success_response("Project files generated successfully", files)
     except Exception:
-        logger.exception(f"Error generating Python source for {skill_version_id}")
+        logger.exception(f"Error generating project files for {skill_version_id}")
         raise_internal_server_error()
 
+@router.post("/run/{skill_version_id}")
+def run_workflow_by_id(
+    skill_version_id: str,
+    payload: dict[str, Any] = Body(default_factory=dict),
+    db: Session = Depends(get_db)
+):
+    """Fetch a workflow from DB, compile it using LangGraph, and execute it."""
+    logger.debug(f"Engine: running workflow for version {skill_version_id} with payload {payload}")
+    try:
+        skill_graph = fetch_skill_graph(db, skill_version_id)
+        workflow_data = {
+            "nodes": [n.model_dump() for n in skill_graph.nodes],
+            "connections": {k: v.model_dump() for k, v in skill_graph.connections.items()}
+        }
+        
+        # Execute workflow synchronously returning the final dictionary state
+        # A thread suffix _api ensures checkpointing works properly across API calls
+        final_state = run_workflow(
+            workflow_data, 
+            initial_input=payload,
+            thread_id=f"api_{skill_version_id}"
+        )
+        
+        # ── Check if any node set an error during execution ──────────────
+        workflow_error = final_state.get("error")
+
+        if workflow_error:
+            logger.warning(f"Workflow {skill_version_id} completed with error: {workflow_error}")
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "status":  False,
+                    "message": f"Workflow failed: {workflow_error}",
+                    "data":    final_state,
+                }
+            )
+
+        return build_success_response("Workflow executed successfully", final_state)
+
+    except ValueError as ve:
+        logger.warning(f"Workflow compilation failed for {skill_version_id}: {ve}")
+        return JSONResponse(status_code=400, content={"status": False, "message": str(ve), "data": None})
+    except Exception as e:
+        logger.exception(f"Error executing workflow for {skill_version_id}")
+        return raise_internal_server_error()
